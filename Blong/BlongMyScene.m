@@ -18,9 +18,15 @@ const uint32_t brickCat = 0x1 << 4;
 float maxVelocity = 300;
 float maxYVelocity;
 
+int rows = 5;
+int cols = 5;
+
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
         maxYVelocity = maxVelocity*.7;
+        _availableBlockSlots = [NSMutableArray arrayWithObjects:@"0",@"1",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9",
+                                                            @"10",@"11",@"12",@"13",@"14",@"15",@"16",@"17",@"18",@"19",
+                                                            @"20", @"21", @"22", @"23", @"24", nil];
         self.backgroundColor = [SKColor blackColor];
         _leftPaddle = [BlongPaddle paddle:@"left_paddle"];
         _leftPaddle.position = CGPointMake(_leftPaddle.frame.size.width/2, CGRectGetMidY(self.frame));
@@ -29,10 +35,13 @@ float maxYVelocity;
         _rightPaddle.position = CGPointMake(self.frame.size.width - _rightPaddle.frame.size.width/2, CGRectGetMidY(self.frame));
         [self addChild:_rightPaddle];
         
-        _balls = [NSMutableArray array];
-        BlongBall *ball = [BlongBall ball];
-        [self addChild:ball];
-        [_balls addObject:ball];
+        BlongBall *ball1 = [BlongBall ball:YES withFrame:self.frame];
+        [self addChild:ball1];
+        [_balls addObject:ball1];
+        
+        BlongBall *ball2 = [BlongBall ball:NO withFrame:self.frame];
+        [self addChild:ball2];
+        [_balls addObject:ball2];
         
         self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:self.frame];
         self.physicsBody.restitution = 1;
@@ -48,19 +57,38 @@ float maxYVelocity;
         [self addChild:_scoreLabel];
         
         _bricks = [NSMutableArray array];
-        [self newBrick];
+        for (int i = 0; i<rows; i++) {
+            for (int j = 0; j<cols; j++) {
+                [self newBrick];
+            }
+        }
     }
     return self;
 }
 
 -(void)newBrick {
+    if ([_availableBlockSlots count] == 0) {
+        return;
+    }
     BlongBrick *brick = [BlongBrick brick];
     [_bricks addObject:brick];
-    brick.position = CGPointMake(CGRectGetMidX(self.frame), -brick.frame.size.height);
-    
+    NSString *blockSlot = [_availableBlockSlots objectAtIndex:(arc4random() % [_availableBlockSlots count])];
+    [_availableBlockSlots removeObject:blockSlot];
+    int blockSlotNum = [blockSlot intValue];
+    CGPoint topLeft = CGPointMake(CGRectGetMidX(self.frame) - 1.5*brick.frame.size.width, CGRectGetMidY(self.frame) + 1.5*brick.frame.size.height);
+    int row = blockSlotNum % rows;
+    int col = blockSlotNum / cols;
+    CGPoint endPoint = brick.position = CGPointMake(topLeft.x + (row * brick.frame.size.width), topLeft.y - (col * brick.frame.size.height));
+    if (col > cols/2) {
+        brick.position = CGPointMake(topLeft.x + (row * brick.frame.size.width), 0-self.frame.size.height/2);
+    } else {
+        brick.position = CGPointMake(topLeft.x + (row * brick.frame.size.width), self.frame.size.height + brick.frame.size.height/2);
+    }
+    [brick.userData setObject:blockSlot forKey:@"blockSlot"];
     [self addChild:brick];
     
-    SKAction *moveIn = [SKAction moveTo:CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)) duration:.5];
+    
+    SKAction *moveIn = [SKAction moveTo:endPoint duration:.5];
     moveIn.timingMode = SKActionTimingEaseInEaseOut;
     [brick runAction:moveIn];
 }
@@ -96,7 +124,7 @@ float maxYVelocity;
     // this is a check to see if it's moving to slowly horizontally, and give it a little push
     if (secondBody.categoryBitMask & wallCat) {
         if (contact.contactPoint.x < 3 || contact.contactPoint.x > self.frame.size.width - 3) {
-            [self removeBall:(BlongBall *)ball.node];
+            //[self removeBall:(BlongBall *)ball.node];
         } else if (fabsf(ball.velocity.dx) < 30) {
             if (ball.velocity.dx < 0) {
                 [ball applyImpulse:CGVectorMake(-1, 0)];
@@ -114,8 +142,9 @@ float maxYVelocity;
 
 -(void)removeBrick:(BlongBrick *)brick {
     [self updateScore:1];
-    SKAction *shrink = [SKAction scaleTo:0 duration:.07];
+    SKAction *shrink = [SKAction scaleTo:0 duration:.1];
     SKAction *removeFromBricks = [SKAction runBlock:^{
+        [_availableBlockSlots addObject:[brick.userData objectForKey:@"blockSlot"]];
         [_bricks removeObject:brick];
     }];
     SKAction *removeFromParent = [SKAction removeFromParent];
@@ -139,10 +168,6 @@ float maxYVelocity;
     return CGVectorMake(xVelocity, yVelocity);
 }
 
--(void)initalizeBall:(BlongBall *)ball {
-
-}
-
 -(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
     [self processTouches:touches withEvent:event];
 }
@@ -155,14 +180,6 @@ float maxYVelocity;
     for (UITouch *touch in touches) {
         [self processTouch:touch];
     }
-}
-
--(void)initializePaddle:(SKSpriteNode *)paddle {
-    paddle.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:paddle.size];
-    paddle.physicsBody.dynamic = NO;
-    paddle.physicsBody.restitution = 1;
-    paddle.physicsBody.categoryBitMask = paddleCat;
-    [self addChild:paddle];
 }
 
 -(void)processTouch:(UITouch *)touch {

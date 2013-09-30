@@ -20,6 +20,7 @@
 @property NSMutableArray *balls;
 @property NSMutableArray *bricks;
 @property SKLabelNode *scoreLabel;
+@property NSMutableArray *availableBlockSlots;
 @property int score;
 
 extern const uint32_t ballCat;

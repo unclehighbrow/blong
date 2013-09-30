@@ -10,7 +10,7 @@
 #import "BlongMyScene.h"
 
 @implementation BlongBall
-+(BlongBall *)ball {
++(BlongBall *)ball:(BOOL) left withFrame:(CGRect) frame{
     BlongBall *ball = [BlongBall spriteNodeWithImageNamed:@"ball"];
     ball.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:ball.size.height/2];
     ball.physicsBody.dynamic = YES;
@@ -18,10 +18,23 @@
     ball.physicsBody.linearDamping = 0;
     ball.physicsBody.angularDamping = 0;
     ball.physicsBody.categoryBitMask = ballCat;
-    ball.physicsBody.contactTestBitMask = ballCat|paddleCat|wallCat|brickCat;
-    ball.physicsBody.collisionBitMask = ballCat|paddleCat|wallCat|brickCat;
-    ball.position = CGPointMake(50, 50);
-    ball.physicsBody.velocity = CGVectorMake(2, 2);
+    ball.physicsBody.contactTestBitMask = paddleCat|wallCat|brickCat;
+    ball.physicsBody.collisionBitMask = ballCat|paddleCat|brickCat|wallCat;
+    BOOL top = arc4random() % 2 == 0;
+    int x,y;
+    if (top) {
+        y = frame.size.height - (ball.frame.size.height * 2);
+    } else {
+        y = ball.frame.size.height*2;
+    }
+    if (left) {
+        x = ball.frame.size.width * 10;
+    } else {
+        x = frame.size.width - (ball.frame.size.width * 10);
+    }
+    ball.position = CGPointMake(x, y);
+    ball.physicsBody.velocity = CGVectorMake(150, 150);
+
     return ball;
 }
 @end

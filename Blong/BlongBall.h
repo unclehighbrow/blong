@@ -9,6 +9,6 @@
 #import <SpriteKit/SpriteKit.h>
 
 @interface BlongBall : SKSpriteNode
-+(BlongBall *) ball;
++(BlongBall *) ball:(BOOL)left withFrame:(CGRect)frame;
 
 @end

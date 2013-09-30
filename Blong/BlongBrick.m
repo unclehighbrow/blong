@@ -16,6 +16,7 @@
     brick.physicsBody.categoryBitMask = brickCat;
     brick.physicsBody.dynamic = NO;
     brick.physicsBody.restitution = 1;
+    brick.userData = [NSMutableDictionary dictionaryWithCapacity:10];
     return brick;
 }
 @end
