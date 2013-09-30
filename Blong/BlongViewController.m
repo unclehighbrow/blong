@@ -14,14 +14,16 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    
     // Configure the view.
     SKView * skView = (SKView *)self.view;
-    skView.showsFPS = YES;
-    skView.showsNodeCount = YES;
+    skView.showsFPS = NO;
+    skView.showsNodeCount = NO;
     
     // Create and configure the scene.
-    SKScene * scene = [BlongMyScene sceneWithSize:skView.bounds.size];
+    CGSize boundsSize = self.view.bounds.size;
+    SKScene * scene = [BlongMyScene sceneWithSize:CGSizeMake(boundsSize.height, boundsSize.width)];
+    
     scene.scaleMode = SKSceneScaleModeAspectFill;
     
     // Present the scene.
@@ -33,13 +35,14 @@
     return YES;
 }
 
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
+{
+    return UIInterfaceOrientationLandscapeLeft;
+}
+
 - (NSUInteger)supportedInterfaceOrientations
 {
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        return UIInterfaceOrientationMaskAllButUpsideDown;
-    } else {
-        return UIInterfaceOrientationMaskAll;
-    }
+    return UIInterfaceOrientationMaskLandscapeLeft;
 }
 
 - (void)didReceiveMemoryWarning
