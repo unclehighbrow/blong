@@ -23,7 +23,7 @@
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
     NSLog(@"pausing");
     self.scene.paused = YES;
-    [BlongPauseMenu pauseMenuWithScene:self.scene];
+    [BlongPauseMenu pauseMenuWithScene:(BlongMyScene *)self.scene];
 }
 
 @end
