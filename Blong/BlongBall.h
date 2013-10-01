@@ -7,8 +7,9 @@
 //
 
 #import <SpriteKit/SpriteKit.h>
+@class BlongMyScene;
 
-@interface BlongBall : SKSpriteNode
-+(BlongBall *) ball:(BOOL)left withFrame:(CGRect)frame;
+@interface BlongBall : SKSpriteNode 
++(BlongBall *) ballOnLeft:(BOOL) left withScene:(BlongMyScene *) scene;
 
 @end

@@ -10,6 +10,7 @@
 #import "BlongBall.h"
 #import "BlongBrick.h"
 #import "BlongPaddle.h"
+#import "BlongPauseButton.h"
 
 @interface BlongMyScene : SKScene <SKPhysicsContactDelegate> {
     
@@ -27,5 +28,7 @@ extern const uint32_t ballCat;
 extern const uint32_t paddleCat;
 extern const uint32_t wallCat;
 extern const uint32_t brickCat;
+extern int rows;
+extern int cols;
 
 @end

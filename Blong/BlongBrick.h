@@ -7,7 +7,9 @@
 //
 
 #import <SpriteKit/SpriteKit.h>
+@class BlongMyScene;
+
 
 @interface BlongBrick : SKSpriteNode
-+(BlongBrick *)brick;
++(BlongBrick *)brickWithScene:(BlongMyScene * )scene;
 @end

@@ -10,7 +10,7 @@
 #import "BlongMyScene.h"
 
 @implementation BlongBall
-+(BlongBall *)ball:(BOOL) left withFrame:(CGRect) frame{
++(BlongBall *)ballOnLeft:(BOOL) left withScene:(BlongMyScene *) scene{
     BlongBall *ball = [BlongBall spriteNodeWithImageNamed:@"ball"];
     ball.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:ball.size.height/2];
     ball.physicsBody.dynamic = YES;
@@ -23,17 +23,20 @@
     BOOL top = arc4random() % 2 == 0;
     int x,y;
     if (top) {
-        y = frame.size.height - (ball.frame.size.height * 2);
+        y = scene.frame.size.height - (ball.frame.size.height * 2);
     } else {
         y = ball.frame.size.height*2;
     }
     if (left) {
         x = ball.frame.size.width * 10;
     } else {
-        x = frame.size.width - (ball.frame.size.width * 10);
+        x = scene.frame.size.width - (ball.frame.size.width * 10);
     }
     ball.position = CGPointMake(x, y);
     ball.physicsBody.velocity = CGVectorMake(150, 150);
+    
+    [scene addChild:ball];
+    [scene.balls addObject:ball];
 
     return ball;
 }

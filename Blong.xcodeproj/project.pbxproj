@@ -33,6 +33,9 @@
 		BE90E39B178BD1BE00CB47AB /* MyParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = BE90E399178BD1BE00CB47AB /* MyParticle.sks */; };
 		BE90E39C178BD1BE00CB47AB /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = BE90E39A178BD1BE00CB47AB /* spark.png */; };
 		BE90E3A01791F6F200CB47AB /* BlongBall.m in Sources */ = {isa = PBXBuildFile; fileRef = BE90E39F1791F6F200CB47AB /* BlongBall.m */; };
+		BEABEC6517FB10740008B394 /* BlongMainMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = BEABEC6417FB10740008B394 /* BlongMainMenu.m */; };
+		BEABEC6817FB16A70008B394 /* BlongPauseButton.m in Sources */ = {isa = PBXBuildFile; fileRef = BEABEC6717FB16A70008B394 /* BlongPauseButton.m */; };
+		BEABEC6B17FB205C0008B394 /* BlongPauseMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = BEABEC6A17FB205C0008B394 /* BlongPauseMenu.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,6 +84,12 @@
 		BE90E39A178BD1BE00CB47AB /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spark.png; sourceTree = "<group>"; };
 		BE90E39E1791F6F200CB47AB /* BlongBall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlongBall.h; sourceTree = "<group>"; };
 		BE90E39F1791F6F200CB47AB /* BlongBall.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlongBall.m; sourceTree = "<group>"; };
+		BEABEC6317FB10740008B394 /* BlongMainMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlongMainMenu.h; sourceTree = "<group>"; };
+		BEABEC6417FB10740008B394 /* BlongMainMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlongMainMenu.m; sourceTree = "<group>"; };
+		BEABEC6617FB16A70008B394 /* BlongPauseButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlongPauseButton.h; sourceTree = "<group>"; };
+		BEABEC6717FB16A70008B394 /* BlongPauseButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlongPauseButton.m; sourceTree = "<group>"; };
+		BEABEC6917FB205C0008B394 /* BlongPauseMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlongPauseMenu.h; sourceTree = "<group>"; };
+		BEABEC6A17FB205C0008B394 /* BlongPauseMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlongPauseMenu.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,8 +158,14 @@
 				BE90E3681789DCA300CB47AB /* BlongAppDelegate.h */,
 				BE90E3691789DCA300CB47AB /* BlongAppDelegate.m */,
 				BE90E36B1789DCA300CB47AB /* Main.storyboard */,
+				BEABEC6617FB16A70008B394 /* BlongPauseButton.h */,
+				BEABEC6717FB16A70008B394 /* BlongPauseButton.m */,
+				BEABEC6917FB205C0008B394 /* BlongPauseMenu.h */,
+				BEABEC6A17FB205C0008B394 /* BlongPauseMenu.m */,
 				BE90E36E1789DCA300CB47AB /* BlongViewController.h */,
 				BE90E36F1789DCA300CB47AB /* BlongViewController.m */,
+				BEABEC6317FB10740008B394 /* BlongMainMenu.h */,
+				BEABEC6417FB10740008B394 /* BlongMainMenu.m */,
 				BE90E3711789DCA300CB47AB /* BlongMyScene.h */,
 				BE90E3721789DCA300CB47AB /* BlongMyScene.m */,
 				BE18A8D117F9B1230032624A /* BlongPaddle.h */,
@@ -306,8 +321,11 @@
 				BE90E3A01791F6F200CB47AB /* BlongBall.m in Sources */,
 				BE90E3701789DCA300CB47AB /* BlongViewController.m in Sources */,
 				BE18A8D017F9B0A60032624A /* BlongBrick.m in Sources */,
+				BEABEC6817FB16A70008B394 /* BlongPauseButton.m in Sources */,
 				BE90E3661789DCA300CB47AB /* main.m in Sources */,
 				BE90E36A1789DCA300CB47AB /* BlongAppDelegate.m in Sources */,
+				BEABEC6517FB10740008B394 /* BlongMainMenu.m in Sources */,
+				BEABEC6B17FB205C0008B394 /* BlongPauseMenu.m in Sources */,
 				BE90E3731789DCA300CB47AB /* BlongMyScene.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -8,6 +8,7 @@
 
 #import "BlongViewController.h"
 #import "BlongMyScene.h"
+#import "BlongMainMenu.h"
 
 @implementation BlongViewController
 
@@ -22,7 +23,7 @@
     
     // Create and configure the scene.
     CGSize boundsSize = self.view.bounds.size;
-    SKScene * scene = [BlongMyScene sceneWithSize:CGSizeMake(boundsSize.height, boundsSize.width)];
+    SKScene * scene = [BlongMainMenu sceneWithSize:CGSizeMake(boundsSize.height, boundsSize.width)];
     
     scene.scaleMode = SKSceneScaleModeAspectFill;
     

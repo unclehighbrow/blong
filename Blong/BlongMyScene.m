@@ -28,6 +28,8 @@ int cols = 5;
                                                             @"10",@"11",@"12",@"13",@"14",@"15",@"16",@"17",@"18",@"19",
                                                             @"20", @"21", @"22", @"23", @"24", nil];
         self.backgroundColor = [SKColor blackColor];
+        
+        // paddles
         _leftPaddle = [BlongPaddle paddle:@"left_paddle"];
         _leftPaddle.position = CGPointMake(_leftPaddle.frame.size.width/2, CGRectGetMidY(self.frame));
         [self addChild:_leftPaddle];
@@ -35,20 +37,18 @@ int cols = 5;
         _rightPaddle.position = CGPointMake(self.frame.size.width - _rightPaddle.frame.size.width/2, CGRectGetMidY(self.frame));
         [self addChild:_rightPaddle];
         
-        BlongBall *ball1 = [BlongBall ball:YES withFrame:self.frame];
-        [self addChild:ball1];
-        [_balls addObject:ball1];
+        // balls
+        [BlongBall ballOnLeft:YES withScene:self];
+        [BlongBall ballOnLeft:NO withScene:self];
         
-        BlongBall *ball2 = [BlongBall ball:NO withFrame:self.frame];
-        [self addChild:ball2];
-        [_balls addObject:ball2];
-        
+        // physics and walls
         self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:self.frame];
         self.physicsBody.restitution = 1;
         self.physicsBody.categoryBitMask = wallCat;
         self.physicsWorld.gravity = CGVectorMake(0, 0);
         self.physicsWorld.contactDelegate = self;
        
+        // score
         _score = 0;
         _scoreLabel = [SKLabelNode labelNodeWithFontNamed:@"Courier-Bold"];
         [self updateScore:0];
@@ -56,41 +56,18 @@ int cols = 5;
         _scoreLabel.position = CGPointMake(_scoreLabel.frame.size.width/2, 0);
         [self addChild:_scoreLabel];
         
+        // bricks
         _bricks = [NSMutableArray array];
         for (int i = 0; i<rows; i++) {
             for (int j = 0; j<cols; j++) {
-                [self newBrick];
+                [BlongBrick brickWithScene:self];
             }
         }
+        
+        // pause button
+        [BlongPauseButton pauseButtonWithScene:self];
     }
     return self;
-}
-
--(void)newBrick {
-    if ([_availableBlockSlots count] == 0) {
-        return;
-    }
-    BlongBrick *brick = [BlongBrick brick];
-    [_bricks addObject:brick];
-    NSString *blockSlot = [_availableBlockSlots objectAtIndex:(arc4random() % [_availableBlockSlots count])];
-    [_availableBlockSlots removeObject:blockSlot];
-    int blockSlotNum = [blockSlot intValue];
-    CGPoint topLeft = CGPointMake(CGRectGetMidX(self.frame) - 1.5*brick.frame.size.width, CGRectGetMidY(self.frame) + 1.5*brick.frame.size.height);
-    int row = blockSlotNum % rows;
-    int col = blockSlotNum / cols;
-    CGPoint endPoint = brick.position = CGPointMake(topLeft.x + (row * brick.frame.size.width), topLeft.y - (col * brick.frame.size.height));
-    if (col > cols/2) {
-        brick.position = CGPointMake(topLeft.x + (row * brick.frame.size.width), 0-self.frame.size.height/2);
-    } else {
-        brick.position = CGPointMake(topLeft.x + (row * brick.frame.size.width), self.frame.size.height + brick.frame.size.height/2);
-    }
-    [brick.userData setObject:blockSlot forKey:@"blockSlot"];
-    [self addChild:brick];
-    
-    
-    SKAction *moveIn = [SKAction moveTo:endPoint duration:.5];
-    moveIn.timingMode = SKActionTimingEaseInEaseOut;
-    [brick runAction:moveIn];
 }
 
 -(void)updateScore:(int) pointsAdded {
@@ -108,6 +85,7 @@ int cols = 5;
         secondBody = contact.bodyA;
     }
     
+    // TODO: make this less shitty
     if (secondBody.categoryBitMask & paddleCat) {
         float relativeIntersectY = ball.node.position.y - secondBody.node.position.y;
         if (fabsf(ball.velocity.dy) < 500) {
@@ -183,6 +161,11 @@ int cols = 5;
 }
 
 -(void)processTouch:(UITouch *)touch {
+    if (self.paused) {
+        NSLog(@"i'm paused");
+        return;
+    }
+    
     CGPoint location = [touch locationInNode:self];
     if (location.x < CGRectGetMidX(self.frame)) {
         _leftPaddle.position = CGPointMake(_leftPaddle.position.x, location.y);
@@ -193,7 +176,7 @@ int cols = 5;
 
 -(void)update:(CFTimeInterval)currentTime {
     if (_bricks.count == 0) {
-        [self newBrick];
+        [BlongBrick brickWithScene:self];
     }
 }
 
