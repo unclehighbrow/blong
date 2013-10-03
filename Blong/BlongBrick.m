@@ -11,38 +11,59 @@
 
 @implementation BlongBrick
 
-+(BlongBrick *)brickWithScene:(BlongMyScene *) scene {
++(BlongBrick *)brickWithScene:(BlongMyScene *) scene fromRandom:(BOOL)random {
     if ([scene.availableBlockSlots count] == 0) {
         return nil;
     }
     BlongBrick *brick = [BlongBrick spriteNodeWithImageNamed:@"brick"];
-    brick.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:brick.frame.size];
-    brick.physicsBody.categoryBitMask = brickCat;
-    brick.physicsBody.dynamic = NO;
-    brick.physicsBody.restitution = 1;
     brick.userData = [NSMutableDictionary dictionaryWithCapacity:10];
     
     [scene.bricks addObject:brick];
     NSString *blockSlot = [scene.availableBlockSlots objectAtIndex:(arc4random() % [scene.availableBlockSlots count])];
     [scene.availableBlockSlots removeObject:blockSlot];
     int blockSlotNum = [blockSlot intValue];
-    CGPoint topLeft = CGPointMake(CGRectGetMidX(scene.frame) - 1.5*brick.frame.size.width, CGRectGetMidY(scene.frame) + 1.5*brick.frame.size.height);
-    int row = blockSlotNum % rows;
-    int col = blockSlotNum / cols;
-    CGPoint endPoint = brick.position = CGPointMake(topLeft.x + (row * brick.frame.size.width), topLeft.y - (col * brick.frame.size.height));
-    if (col > cols/2) {
-        brick.position = CGPointMake(topLeft.x + (row * brick.frame.size.width), 0-scene.frame.size.height/2);
+    CGPoint topLeft = CGPointMake(CGRectGetMidX(scene.frame) - ((scene.rows/2)*brick.frame.size.width) - brick.frame.size.width/2, scene.frame.size.height - brick.frame.size.height/2);
+    int row = blockSlotNum % scene.rows;
+    int col = blockSlotNum / scene.rows;
+
+    CGPoint endPoint = brick.position = CGPointMake(topLeft.x + (col * brick.frame.size.width), topLeft.y - (row * brick.frame.size.height));
+    int startX, startY;
+    NSMutableArray *moveInSequence = [NSMutableArray array];
+    SKAction *moveIn = [SKAction moveTo:endPoint duration:.3];
+    moveIn.timingMode = SKActionTimingEaseOut;
+
+    [moveInSequence addObject:moveIn];
+    if (random) {
+        startX = arc4random() % (int)scene.frame.size.width;
+        [moveInSequence addObject:[SKAction runBlock:^{ // don't let initial bricks interact with anything on the way in
+            [brick getPhysical];
+        }]];
     } else {
-        brick.position = CGPointMake(topLeft.x + (row * brick.frame.size.width), scene.frame.size.height + brick.frame.size.height/2);
+        startX = topLeft.x + (col * brick.frame.size.width);
+        [brick getPhysical];
     }
+    if (row + 1> scene.rows/2) {
+        startY = -brick.frame.size.height/2;
+    } else {
+        startY = scene.frame.size.height + brick.frame.size.height/2;
+    }
+    brick.position = (CGPointMake(startX, startY));
     [brick.userData setObject:blockSlot forKey:@"blockSlot"];
+    
     [scene addChild:brick];
     
-    
-    SKAction *moveIn = [SKAction moveTo:endPoint duration:.5];
-    moveIn.timingMode = SKActionTimingEaseInEaseOut;
-    [brick runAction:moveIn];
+    [brick runAction:[SKAction sequence:moveInSequence]];
     
     return brick;
+}
+
+-(void)getPhysical {
+    self.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:self.frame.size];
+    self.physicsBody.categoryBitMask = brickCat;
+    self.physicsBody.dynamic = NO;
+    self.physicsBody.restitution = 1;
+    self.physicsBody.linearDamping = 0;
+    self.physicsBody.angularDamping = 0;
+    self.physicsBody.friction = 0;
 }
 @end

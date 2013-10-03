@@ -15,6 +15,7 @@
     ball.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:ball.size.height/2];
     ball.physicsBody.dynamic = YES;
     ball.physicsBody.restitution = 1;
+    ball.physicsBody.allowsRotation = NO;
     ball.physicsBody.linearDamping = 0;
     ball.physicsBody.angularDamping = 0;
     ball.physicsBody.categoryBitMask = ballCat;
@@ -34,6 +35,9 @@
     }
     ball.position = CGPointMake(x, y);
     ball.physicsBody.velocity = CGVectorMake(150, 150);
+    float totalVelocity = sqrtf((ball.physicsBody.velocity.dx * ball.physicsBody.velocity.dx) + (ball.physicsBody.velocity.dy * ball.physicsBody.velocity.dy));
+    NSLog(@"starting total velocity: %f", totalVelocity);
+
     
     [scene addChild:ball];
     [scene.balls addObject:ball];

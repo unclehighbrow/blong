@@ -16,17 +16,23 @@ const uint32_t wallCat = 0x1 << 3;
 const uint32_t brickCat = 0x1 << 4;
 
 float maxVelocity = 300;
+int cockBlockInterval = 10;
 float maxYVelocity;
-
-int rows = 5;
-int cols = 5;
 
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
         maxYVelocity = maxVelocity*.7;
-        _availableBlockSlots = [NSMutableArray arrayWithObjects:@"0",@"1",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9",
-                                                            @"10",@"11",@"12",@"13",@"14",@"15",@"16",@"17",@"18",@"19",
-                                                            @"20", @"21", @"22", @"23", @"24", nil];
+        
+        // score
+        _score = 0;
+        _scoreLabel = [SKLabelNode labelNodeWithFontNamed:@"Courier-Bold"];
+        [self updateScore:0];
+        _scoreLabel.color = [SKColor whiteColor];
+        _scoreLabel.position = CGPointMake(_scoreLabel.frame.size.width/2, 0);
+        [self addChild:_scoreLabel];
+
+        _availableBlockSlots = [NSMutableArray array];
+
         self.backgroundColor = [SKColor blackColor];
         
         // paddles
@@ -37,9 +43,10 @@ int cols = 5;
         _rightPaddle.position = CGPointMake(self.frame.size.width - _rightPaddle.frame.size.width/2, CGRectGetMidY(self.frame));
         [self addChild:_rightPaddle];
         
-        // balls
-        [BlongBall ballOnLeft:YES withScene:self];
-        [BlongBall ballOnLeft:NO withScene:self];
+        // bricks and balls
+        _bricks = [NSMutableArray array];
+        _balls = [NSMutableArray array];
+        _level = 1;
         
         // physics and walls
         self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:self.frame];
@@ -47,27 +54,66 @@ int cols = 5;
         self.physicsBody.categoryBitMask = wallCat;
         self.physicsWorld.gravity = CGVectorMake(0, 0);
         self.physicsWorld.contactDelegate = self;
-       
-        // score
-        _score = 0;
-        _scoreLabel = [SKLabelNode labelNodeWithFontNamed:@"Courier-Bold"];
-        [self updateScore:0];
-        _scoreLabel.color = [SKColor whiteColor];
-        _scoreLabel.position = CGPointMake(_scoreLabel.frame.size.width/2, 0);
-        [self addChild:_scoreLabel];
+        self.physicsWorld.speed = 0;
         
-        // bricks
-        _bricks = [NSMutableArray array];
-        for (int i = 0; i<rows; i++) {
-            for (int j = 0; j<cols; j++) {
-                [BlongBrick brickWithScene:self];
-            }
-        }
-        
-        // pause button
-        [BlongPauseButton pauseButtonWithScene:self];
+        [self startLevel];
     }
     return self;
+}
+
+-(void)startLevel {
+    _nextCockBlock = 0;
+    
+    _rows = 5;
+    _cols = 5;
+    for (int i = 0; i < _rows*_cols; i++) {
+        [_availableBlockSlots addObject:[NSString stringWithFormat:@"%d", i]];
+    }
+    // balls
+    [BlongBall ballOnLeft:YES withScene:self];
+    [BlongBall ballOnLeft:NO withScene:self];
+    
+    SKAction *topToMiddle = [SKAction moveTo:CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)) duration:.3];
+    topToMiddle.timingMode = SKActionTimingEaseIn;
+    SKAction *wait = [SKAction waitForDuration: .3];
+    SKAction *shrinkAway = [SKAction scaleTo:0 duration:.3];
+    
+    SKLabelNode *ready = [SKLabelNode labelNodeWithFontNamed:@"Courier-Bold"];
+    ready.text = @"READY";
+    ready.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
+    [self addChild:ready];
+    [ready runAction:[SKAction sequence:@[wait, wait, topToMiddle, wait, wait, shrinkAway]]];
+    
+    SKLabelNode *steady = [SKLabelNode labelNodeWithFontNamed:@"Courier-Bold"];
+    steady.text = @"STEADY";
+    steady.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
+    [self addChild:steady];
+    [steady runAction:[SKAction sequence:@[wait, wait, wait, wait, wait, wait, topToMiddle, wait, wait, shrinkAway]]];
+    
+    SKLabelNode *blong = [SKLabelNode labelNodeWithFontNamed:@"Courier-Bold"];
+    blong.text = @"BLONG";
+    blong.fontSize = 250;
+    [blong setAlpha:0];
+    SKAction *fadeIn = [SKAction fadeAlphaTo:.2 duration:.3];
+    SKAction *moveInBricks = [SKAction runBlock:^{
+        for (int i = 0; i<_rows; i++) {
+            for (int j = 0; j<_cols; j++) {
+                [BlongBrick brickWithScene:self fromRandom:YES];
+            }
+        }
+    }];
+    SKAction *startPhysics = [SKAction runBlock:^{
+        self.physicsWorld.speed = 1;
+        //_levelStart = [CFTimeInterval
+    }];
+    SKAction *fadeInAndMoveInBricks = [SKAction group:@[fadeIn, moveInBricks]];
+    SKAction *fadeOut = [SKAction fadeOutWithDuration:2];
+    [blong runAction:[SKAction sequence:@[wait, wait, wait, wait, wait, wait, wait, wait, wait, wait, fadeInAndMoveInBricks, startPhysics, fadeOut]]];
+    blong.position = CGPointMake(CGRectGetMidX(self.frame), 0);
+    [self addChild:blong];
+    
+    // pause button
+    [BlongPauseButton pauseButtonWithScene:self];
 }
 
 -(void)updateScore:(int) pointsAdded {
@@ -84,10 +130,27 @@ int cols = 5;
         ball = contact.bodyB;
         secondBody = contact.bodyA;
     }
+    // float totalVelocity = sqrtf((ball.velocity.dx * ball.velocity.dx) + (ball.velocity.dy * ball.velocity.dy));
+    // NSLog(@"total vel: %f", totalVelocity);
     
     // TODO: make this less shitty
     if (secondBody.categoryBitMask & paddleCat) {
         float relativeIntersectY = ball.node.position.y - secondBody.node.position.y;
+
+        
+//        this should be cooler and preserve momentum, but doesn't and ends up with nans
+//        NSLog(@"relative intersect: %f", relativeIntersectY);
+//        float newY = 200 * relativeIntersectY/secondBody.node.frame.size.height;
+//        float totalVelocity = sqrtf((ball.velocity.dx * ball.velocity.dx) + (ball.velocity.dy * ball.velocity.dy));
+//        NSLog(@"old total: %f, x,y: %f,%f", totalVelocity, ball.velocity.dx, ball.velocity.dy);
+//        float newX = sqrtf((totalVelocity * totalVelocity) - (newY * newY));
+//        if (ball.velocity.dx > 0) {
+//            newX = -newX;
+//        }
+//        ball.velocity = CGVectorMake(newX, newY);
+//        float newTotalVelocity = sqrtf((ball.velocity.dx * ball.velocity.dx) + (ball.velocity.dy * ball.velocity.dy));
+//        NSLog(@"new total: %f, x,y: %f,%f", newTotalVelocity, newX, newY);
+
         if (fabsf(ball.velocity.dy) < 500) {
             float yVelocity = maxVelocity * relativeIntersectY/secondBody.node.frame.size.height * 2;
             CGVector velocity = [self calculateVelocityFromY:yVelocity];
@@ -162,7 +225,6 @@ int cols = 5;
 
 -(void)processTouch:(UITouch *)touch {
     if (self.paused) {
-        NSLog(@"i'm paused");
         return;
     }
     
@@ -174,9 +236,41 @@ int cols = 5;
     }
 }
 
--(void)update:(CFTimeInterval)currentTime {
-    if (_bricks.count == 0) {
-        [BlongBrick brickWithScene:self];
+-(void)newLevel {
+    _level++;
+    self.physicsWorld.speed = 0;
+    for (BlongBall *ball in _balls) {
+        [ball removeFromParent];
+    }
+    _balls = [NSMutableArray array];
+    
+    SKLabelNode *levelText = [SKLabelNode labelNodeWithFontNamed:@"Courier-Bold"];
+    levelText.text = [NSString stringWithFormat:@"Level %d", _level];
+    levelText.position = CGPointMake(CGRectGetMidX(self.frame), levelText.frame.size.height * 2);
+    [levelText setAlpha:0];
+    [self addChild:levelText];
+    SKAction *waitFadeInFadeOutStartLevel = [SKAction sequence:@[
+          [SKAction waitForDuration:.5],
+          [SKAction fadeInWithDuration:1],
+          [SKAction waitForDuration:.5],
+          [SKAction fadeOutWithDuration:1],
+          [SKAction runBlock:^{[self startLevel];}]
+    ]];
+    [levelText runAction:waitFadeInFadeOutStartLevel];
+}
+
+// TODO: PAUSING BREAKS COCKBLOCK COUNT
+-(void)update:(NSTimeInterval)currentTime {
+    if (self.physicsWorld.speed > 0) {
+        if (_bricks.count == 0) {
+            [self newLevel];
+        }
+        if (_nextCockBlock == 0) {
+            _nextCockBlock = currentTime + (cockBlockInterval / _level);
+        } else if (currentTime > _nextCockBlock) {
+            [BlongBrick brickWithScene:self fromRandom:NO];
+            _nextCockBlock = 0;
+        }
     }
 }
 

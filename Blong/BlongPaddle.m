@@ -15,6 +15,7 @@
     paddle.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:paddle.size];
     paddle.physicsBody.dynamic = NO;
     paddle.physicsBody.restitution = 1;
+    paddle.physicsBody.friction = 0;
     paddle.name = image;
     paddle.physicsBody.categoryBitMask = paddleCat;
     return paddle;

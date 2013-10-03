@@ -11,5 +11,5 @@
 
 
 @interface BlongBrick : SKSpriteNode
-+(BlongBrick *)brickWithScene:(BlongMyScene * )scene;
++(BlongBrick *)brickWithScene:(BlongMyScene * )scene fromRandom:(BOOL)random;
 @end

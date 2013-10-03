@@ -23,12 +23,14 @@
 @property SKLabelNode *scoreLabel;
 @property NSMutableArray *availableBlockSlots;
 @property int score;
+@property int rows;
+@property int cols;
+@property int level;
+@property NSTimeInterval nextCockBlock;
 
 extern const uint32_t ballCat;
 extern const uint32_t paddleCat;
 extern const uint32_t wallCat;
 extern const uint32_t brickCat;
-extern int rows;
-extern int cols;
 
 @end

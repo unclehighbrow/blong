@@ -32,6 +32,7 @@
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     SKScene *gameScene = [[BlongMyScene alloc] initWithSize:self.size];
     SKTransition *transition = [SKTransition flipHorizontalWithDuration:1];
+    transition.pausesIncomingScene = NO;
     [self.view presentScene:gameScene transition:transition];
 }
 @end
