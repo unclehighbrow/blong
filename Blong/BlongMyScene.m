@@ -19,13 +19,21 @@ float maxVelocity = 300;
 int cockBlockInterval = 10;
 float maxYVelocity;
 
+// for starting
+bool touchedLeft = false;
+bool touchedRight = false;
+bool started = false;
+BlongThumbHole *leftThumbHole;
+BlongThumbHole *rightThumbHole;
+
+
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
         maxYVelocity = maxVelocity*.7;
         
         // score
         _score = 0;
-        _scoreLabel = [SKLabelNode labelNodeWithFontNamed:@"Courier-Bold"];
+        _scoreLabel = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
         [self updateScore:0];
         _scoreLabel.color = [SKColor whiteColor];
         _scoreLabel.position = CGPointMake(_scoreLabel.frame.size.width/2, 0);
@@ -56,7 +64,10 @@ float maxYVelocity;
         self.physicsWorld.contactDelegate = self;
         self.physicsWorld.speed = 0;
         
-        [self startLevel];
+        leftThumbHole = [BlongThumbHole thumbHoleOnLeft:YES WithScene:self];
+        rightThumbHole = [BlongThumbHole thumbHoleOnLeft:NO WithScene:self];
+        
+        //[self startLevel];
     }
     return self;
 }
@@ -78,19 +89,19 @@ float maxYVelocity;
     SKAction *wait = [SKAction waitForDuration: .3];
     SKAction *shrinkAway = [SKAction scaleTo:0 duration:.3];
     
-    SKLabelNode *ready = [SKLabelNode labelNodeWithFontNamed:@"Courier-Bold"];
+    SKLabelNode *ready = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
     ready.text = @"READY";
     ready.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     [self addChild:ready];
     [ready runAction:[SKAction sequence:@[wait, wait, topToMiddle, wait, wait, shrinkAway]]];
     
-    SKLabelNode *steady = [SKLabelNode labelNodeWithFontNamed:@"Courier-Bold"];
+    SKLabelNode *steady = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
     steady.text = @"STEADY";
     steady.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     [self addChild:steady];
     [steady runAction:[SKAction sequence:@[wait, wait, wait, wait, wait, wait, topToMiddle, wait, wait, shrinkAway]]];
     
-    SKLabelNode *blong = [SKLabelNode labelNodeWithFontNamed:@"Courier-Bold"];
+    SKLabelNode *blong = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
     blong.text = @"BLONG";
     blong.fontSize = 250;
     [blong setAlpha:0];
@@ -165,7 +176,7 @@ float maxYVelocity;
     // this is a check to see if it's moving to slowly horizontally, and give it a little push
     if (secondBody.categoryBitMask & wallCat) {
         if (contact.contactPoint.x < 3 || contact.contactPoint.x > self.frame.size.width - 3) {
-            //[self removeBall:(BlongBall *)ball.node];
+            [self removeBall:(BlongBall *)ball.node];
         } else if (fabsf(ball.velocity.dx) < 30) {
             if (ball.velocity.dx < 0) {
                 [ball applyImpulse:CGVectorMake(-1, 0)];
@@ -230,9 +241,21 @@ float maxYVelocity;
     
     CGPoint location = [touch locationInNode:self];
     if (location.x < CGRectGetMidX(self.frame)) {
+        if (!touchedLeft) {
+            touchedLeft = YES;
+            [leftThumbHole explode];
+        }
         _leftPaddle.position = CGPointMake(_leftPaddle.position.x, location.y);
     } else {
+        if (!touchedRight) {
+            touchedRight = YES;
+            [rightThumbHole explode];
+        }
         _rightPaddle.position = CGPointMake(_rightPaddle.position.x, location.y);
+    }
+    if (!started && touchedRight && touchedLeft) {
+        started = YES;
+        [self startLevel];
     }
 }
 
@@ -244,7 +267,7 @@ float maxYVelocity;
     }
     _balls = [NSMutableArray array];
     
-    SKLabelNode *levelText = [SKLabelNode labelNodeWithFontNamed:@"Courier-Bold"];
+    SKLabelNode *levelText = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
     levelText.text = [NSString stringWithFormat:@"Level %d", _level];
     levelText.position = CGPointMake(CGRectGetMidX(self.frame), levelText.frame.size.height * 2);
     [levelText setAlpha:0];
@@ -259,6 +282,14 @@ float maxYVelocity;
     [levelText runAction:waitFadeInFadeOutStartLevel];
 }
 
+-(void)gameOver {
+    // save high score
+    
+    SKScene *gameOverScene = [[BlongGameOverScene alloc] initWithSize:self.size];
+    SKTransition *transition = [SKTransition fadeWithDuration:2];
+    [self.view presentScene:gameOverScene transition:transition];
+}
+
 // TODO: PAUSING BREAKS COCKBLOCK COUNT
 -(void)update:(NSTimeInterval)currentTime {
     if (self.physicsWorld.speed > 0) {
@@ -270,6 +301,11 @@ float maxYVelocity;
         } else if (currentTime > _nextCockBlock) {
             [BlongBrick brickWithScene:self fromRandom:NO];
             _nextCockBlock = 0;
+        }
+        
+        if (_balls.count == 0) {
+            self.physicsWorld.speed = 0;
+            [self gameOver];
         }
     }
 }
