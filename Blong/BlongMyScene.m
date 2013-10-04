@@ -20,9 +20,9 @@ int cockBlockInterval = 10;
 float maxYVelocity;
 
 // for starting
-bool touchedLeft = false;
-bool touchedRight = false;
-bool started = false;
+bool touchedLeft;
+bool touchedRight;
+bool started;
 BlongThumbHole *leftThumbHole;
 BlongThumbHole *rightThumbHole;
 
@@ -51,7 +51,7 @@ BlongThumbHole *rightThumbHole;
         _rightPaddle.position = CGPointMake(self.frame.size.width - _rightPaddle.frame.size.width/2, CGRectGetMidY(self.frame));
         [self addChild:_rightPaddle];
         
-        // bricks and balls
+        // bricks and balls holders
         _bricks = [NSMutableArray array];
         _balls = [NSMutableArray array];
         _level = 1;
@@ -67,7 +67,10 @@ BlongThumbHole *rightThumbHole;
         leftThumbHole = [BlongThumbHole thumbHoleOnLeft:YES WithScene:self];
         rightThumbHole = [BlongThumbHole thumbHoleOnLeft:NO WithScene:self];
         
-        //[self startLevel];
+        started = NO;
+        touchedLeft = NO;
+        touchedRight = NO;
+        
     }
     return self;
 }
