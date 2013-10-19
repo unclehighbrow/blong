@@ -10,7 +10,7 @@
 
 @implementation BlongThumbHole
 +(BlongThumbHole *) thumbHoleOnLeft:(BOOL)left WithScene:(BlongMyScene *)scene {
-    BlongThumbHole* thumbHole = [BlongThumbHole spriteNodeWithImageNamed:@"ball"];
+    BlongThumbHole* thumbHole = [BlongThumbHole spriteNodeWithImageNamed:@"spark"];
     int x;
     if (left) {
         x = thumbHole.frame.size.width;

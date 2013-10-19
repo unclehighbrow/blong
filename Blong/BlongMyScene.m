@@ -45,10 +45,10 @@ BlongThumbHole *rightThumbHole;
         
         // paddles
         _leftPaddle = [BlongPaddle paddle:@"left_paddle"];
-        _leftPaddle.position = CGPointMake(_leftPaddle.frame.size.width/2, CGRectGetMidY(self.frame));
+        _leftPaddle.position = CGPointMake(3.5 * _leftPaddle.frame.size.width, CGRectGetMidY(self.frame));
         [self addChild:_leftPaddle];
         _rightPaddle = [BlongPaddle paddle:@"right_paddle"];
-        _rightPaddle.position = CGPointMake(self.frame.size.width - _rightPaddle.frame.size.width/2, CGRectGetMidY(self.frame));
+        _rightPaddle.position = CGPointMake(self.frame.size.width - 3.5*_rightPaddle.frame.size.width, CGRectGetMidY(self.frame));
         [self addChild:_rightPaddle];
         
         // bricks and balls holders
@@ -78,7 +78,7 @@ BlongThumbHole *rightThumbHole;
 -(void)startLevel {
     _nextCockBlock = 0;
     
-    _rows = 5;
+    _rows = 5 + _level;
     _cols = 5;
     for (int i = 0; i < _rows*_cols; i++) {
         [_availableBlockSlots addObject:[NSString stringWithFormat:@"%d", i]];
@@ -104,9 +104,7 @@ BlongThumbHole *rightThumbHole;
     [self addChild:steady];
     [steady runAction:[SKAction sequence:@[wait, wait, wait, wait, wait, wait, topToMiddle, wait, wait, shrinkAway]]];
     
-    SKLabelNode *blong = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
-    blong.text = @"BLONG";
-    blong.fontSize = 250;
+    SKSpriteNode *blong = [SKSpriteNode spriteNodeWithImageNamed:@"blong_background"];
     [blong setAlpha:0];
     SKAction *fadeIn = [SKAction fadeAlphaTo:.2 duration:.3];
     SKAction *moveInBricks = [SKAction runBlock:^{
@@ -118,12 +116,11 @@ BlongThumbHole *rightThumbHole;
     }];
     SKAction *startPhysics = [SKAction runBlock:^{
         self.physicsWorld.speed = 1;
-        //_levelStart = [CFTimeInterval
     }];
     SKAction *fadeInAndMoveInBricks = [SKAction group:@[fadeIn, moveInBricks]];
     SKAction *fadeOut = [SKAction fadeOutWithDuration:2];
     [blong runAction:[SKAction sequence:@[wait, wait, wait, wait, wait, wait, wait, wait, wait, wait, fadeInAndMoveInBricks, startPhysics, fadeOut]]];
-    blong.position = CGPointMake(CGRectGetMidX(self.frame), 0);
+    blong.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     [self addChild:blong];
     
     // pause button
@@ -176,7 +173,7 @@ BlongThumbHole *rightThumbHole;
         }
     }
     
-    // this is a check to see if it's moving to slowly horizontally, and give it a little push
+    // this is a check to see if it's moving too slowly horizontally, and give it a little push
     if (secondBody.categoryBitMask & wallCat) {
         if (contact.contactPoint.x < 3 || contact.contactPoint.x > self.frame.size.width - 3) {
             [self removeBall:(BlongBall *)ball.node];
@@ -268,6 +265,7 @@ BlongThumbHole *rightThumbHole;
     for (BlongBall *ball in _balls) {
         [ball removeFromParent];
     }
+
     _balls = [NSMutableArray array];
     
     SKLabelNode *levelText = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
@@ -282,12 +280,12 @@ BlongThumbHole *rightThumbHole;
           [SKAction fadeOutWithDuration:1],
           [SKAction runBlock:^{[self startLevel];}]
     ]];
+
     [levelText runAction:waitFadeInFadeOutStartLevel];
 }
 
 -(void)gameOver {
-    // save high score
-    
+    // TODO: save high score
     SKScene *gameOverScene = [[BlongGameOverScene alloc] initWithSize:self.size];
     SKTransition *transition = [SKTransition fadeWithDuration:2];
     [self.view presentScene:gameOverScene transition:transition];
@@ -296,9 +294,6 @@ BlongThumbHole *rightThumbHole;
 // TODO: PAUSING BREAKS COCKBLOCK COUNT
 -(void)update:(NSTimeInterval)currentTime {
     if (self.physicsWorld.speed > 0) {
-        if (_bricks.count == 0) {
-            [self newLevel];
-        }
         if (_nextCockBlock == 0) {
             _nextCockBlock = currentTime + (cockBlockInterval / _level);
         } else if (currentTime > _nextCockBlock) {
@@ -310,7 +305,24 @@ BlongThumbHole *rightThumbHole;
             self.physicsWorld.speed = 0;
             [self gameOver];
         }
+        
+        if (_bricks.count == 0) {
+            [self newLevel];
+        }
     }
+}
+
+-(CGPoint) getRandomOffScreenPointForNode:(SKNode * )node {
+    float x = arc4random() % (int) self.scene.frame.size.width;
+    float y;
+    BOOL top = arc4random() % 2;
+    if (top) {
+        y = self.scene.frame.size.height + node.frame.size.height;
+    } else {
+        y = -node.frame.size.height;
+    }
+    
+    return CGPointMake(x,y);
 }
 
 -(void)didSimulatePhysics {

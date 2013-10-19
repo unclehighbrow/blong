@@ -21,7 +21,7 @@
     ball.physicsBody.categoryBitMask = ballCat;
     ball.physicsBody.contactTestBitMask = paddleCat|wallCat|brickCat;
     ball.physicsBody.collisionBitMask = ballCat|paddleCat|brickCat|wallCat;
-    BOOL top = arc4random() % 2 == 0;
+    BOOL top = arc4random() % 2;
     int x,y;
     if (top) {
         y = scene.frame.size.height - (ball.frame.size.height * 2);

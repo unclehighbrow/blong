@@ -13,7 +13,7 @@
 @implementation BlongPauseButton
 
 +(BlongPauseButton *) pauseButtonWithScene:(BlongMyScene *)scene {
-    BlongPauseButton *pauseButton = [BlongPauseButton spriteNodeWithImageNamed:@"ball"];
+    BlongPauseButton *pauseButton = [BlongPauseButton spriteNodeWithImageNamed:@"pause_button"];
     pauseButton.userInteractionEnabled = YES;
     pauseButton.position = CGPointMake(scene.size.width - pauseButton.size.width, pauseButton.size.height/2);
     [scene addChild:pauseButton];
@@ -21,7 +21,6 @@
 }
 
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    NSLog(@"pausing");
     self.scene.paused = YES;
     [BlongPauseMenu pauseMenuWithScene:(BlongMyScene *)self.scene];
 }

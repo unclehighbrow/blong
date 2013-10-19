@@ -15,34 +15,37 @@
     if ([scene.availableBlockSlots count] == 0) {
         return nil;
     }
-    BlongBrick *brick = [BlongBrick spriteNodeWithImageNamed:@"brick"];
+    BlongBrick *brick = [BlongBrick spriteNodeWithImageNamed:[NSString stringWithFormat:@"brick%d", scene.rows]];
     brick.userData = [NSMutableDictionary dictionaryWithCapacity:10];
-    
     [scene.bricks addObject:brick];
     NSString *blockSlot = [scene.availableBlockSlots objectAtIndex:(arc4random() % [scene.availableBlockSlots count])];
     [scene.availableBlockSlots removeObject:blockSlot];
     int blockSlotNum = [blockSlot intValue];
-    CGPoint topLeft = CGPointMake(CGRectGetMidX(scene.frame) - ((scene.rows/2)*brick.frame.size.width) - brick.frame.size.width/2, scene.frame.size.height - brick.frame.size.height/2);
+    CGPoint topLeft = CGPointMake(CGRectGetMidX(scene.frame) - ((((float)scene.cols)/2.0)*brick.frame.size.width) - brick.frame.size.width/2.0, scene.frame.size.height - brick.frame.size.height/2.0);
     int row = blockSlotNum % scene.rows;
     int col = blockSlotNum / scene.rows;
 
     CGPoint endPoint = brick.position = CGPointMake(topLeft.x + (col * brick.frame.size.width), topLeft.y - (row * brick.frame.size.height));
-    int startX, startY;
+    float startX, startY;
     NSMutableArray *moveInSequence = [NSMutableArray array];
     SKAction *moveIn = [SKAction moveTo:endPoint duration:.3];
-    moveIn.timingMode = SKActionTimingEaseOut;
+    moveIn.timingMode = SKActionTimingEaseIn;
 
-    [moveInSequence addObject:moveIn];
     if (random) {
         startX = arc4random() % (int)scene.frame.size.width;
+        brick.zRotation = ((float) (arc4random() % ((unsigned)M_PI + 1)) / M_PI) * M_PI;
+        SKAction *rotateIn = [SKAction rotateToAngle:0 duration:.3];
+        rotateIn.timingMode = SKActionTimingEaseIn;
+        [moveInSequence addObject:[SKAction group:@[moveIn, rotateIn]]];
         [moveInSequence addObject:[SKAction runBlock:^{ // don't let initial bricks interact with anything on the way in
             [brick getPhysical];
         }]];
     } else {
         startX = topLeft.x + (col * brick.frame.size.width);
+        [moveInSequence addObject:moveIn];
         [brick getPhysical];
     }
-    if (row + 1> scene.rows/2) {
+    if (row + 1 > scene.rows/2) {
         startY = -brick.frame.size.height/2;
     } else {
         startY = scene.frame.size.height + brick.frame.size.height/2;
