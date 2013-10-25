@@ -25,6 +25,8 @@
 @property NSMutableArray *bricks;
 @property SKLabelNode *scoreLabel;
 @property NSMutableArray *availableBlockSlots;
+@property NSString *lastBlockCleared;
+@property BOOL brokenThrough;
 @property int score;
 @property int rows;
 @property int cols;

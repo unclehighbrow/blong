@@ -45,7 +45,6 @@
 		BE90E3971789DD0200CB47AB /* left_paddle.png in Resources */ = {isa = PBXBuildFile; fileRef = BE90E3941789DD0200CB47AB /* left_paddle.png */; };
 		BE90E3981789DD0200CB47AB /* right_paddle.png in Resources */ = {isa = PBXBuildFile; fileRef = BE90E3951789DD0200CB47AB /* right_paddle.png */; };
 		BE90E39B178BD1BE00CB47AB /* MyParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = BE90E399178BD1BE00CB47AB /* MyParticle.sks */; };
-		BE90E39C178BD1BE00CB47AB /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = BE90E39A178BD1BE00CB47AB /* spark.png */; };
 		BE90E3A01791F6F200CB47AB /* BlongBall.m in Sources */ = {isa = PBXBuildFile; fileRef = BE90E39F1791F6F200CB47AB /* BlongBall.m */; };
 		BEABEC6517FB10740008B394 /* BlongMainMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = BEABEC6417FB10740008B394 /* BlongMainMenu.m */; };
 		BEABEC6817FB16A70008B394 /* BlongPauseButton.m in Sources */ = {isa = PBXBuildFile; fileRef = BEABEC6717FB16A70008B394 /* BlongPauseButton.m */; };
@@ -113,7 +112,6 @@
 		BE90E3941789DD0200CB47AB /* left_paddle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = left_paddle.png; sourceTree = "<group>"; };
 		BE90E3951789DD0200CB47AB /* right_paddle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = right_paddle.png; sourceTree = "<group>"; };
 		BE90E399178BD1BE00CB47AB /* MyParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MyParticle.sks; sourceTree = "<group>"; };
-		BE90E39A178BD1BE00CB47AB /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spark.png; sourceTree = "<group>"; };
 		BE90E39E1791F6F200CB47AB /* BlongBall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlongBall.h; sourceTree = "<group>"; };
 		BE90E39F1791F6F200CB47AB /* BlongBall.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlongBall.m; sourceTree = "<group>"; };
 		BEABEC6317FB10740008B394 /* BlongMainMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlongMainMenu.h; sourceTree = "<group>"; };
@@ -183,17 +181,6 @@
 		BE90E35F1789DCA300CB47AB /* Blong */ = {
 			isa = PBXGroup;
 			children = (
-				BE50C017181309E500F43777 /* blong_background@2x.png */,
-				BE50C01B18130D6F00F43777 /* ball@2x.png */,
-				BE50C01918130BB600F43777 /* pause_button@2x.png */,
-				BE90E3941789DD0200CB47AB /* left_paddle.png */,
-				BE168BAF17FD1623000A90D8 /* title.png */,
-				BE50C0031813027E00F43777 /* brick6@2x.png */,
-				BE50C0041813027E00F43777 /* brick7@2x.png */,
-				BE50C0051813027E00F43777 /* brick8@2x.png */,
-				BE50C0061813027E00F43777 /* brick9@2x.png */,
-				BE50C0071813027E00F43777 /* brick10@2x.png */,
-				BE90E3951789DD0200CB47AB /* right_paddle.png */,
 				BE90E3681789DCA300CB47AB /* BlongAppDelegate.h */,
 				BE90E3691789DCA300CB47AB /* BlongAppDelegate.m */,
 				BE4EC4B817FDF1020047E241 /* BlongScoreManager.h */,
@@ -221,12 +208,8 @@
 				BE90E39F1791F6F200CB47AB /* BlongBall.m */,
 				BE4EC4B517FDEE120047E241 /* Score.h */,
 				BE4EC4B617FDEE120047E241 /* Score.m */,
+				BEDAD1131819E14D009D4563 /* img */,
 				BE90E399178BD1BE00CB47AB /* MyParticle.sks */,
-				BE90E39A178BD1BE00CB47AB /* spark.png */,
-				BE50C00D1813066900F43777 /* continue.png */,
-				BE50C00E1813066900F43777 /* main_menu.png */,
-				BE50C00F1813066900F43777 /* spark@2x.png */,
-				BE90E3741789DCA300CB47AB /* Spaceship.png */,
 				BE90E3761789DCA300CB47AB /* Images.xcassets */,
 				BE90E3601789DCA300CB47AB /* Supporting Files */,
 			);
@@ -260,6 +243,28 @@
 				BE90E3861789DCA300CB47AB /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		BEDAD1131819E14D009D4563 /* img */ = {
+			isa = PBXGroup;
+			children = (
+				BE50C00D1813066900F43777 /* continue.png */,
+				BE50C00E1813066900F43777 /* main_menu.png */,
+				BE50C00F1813066900F43777 /* spark@2x.png */,
+				BE90E3741789DCA300CB47AB /* Spaceship.png */,
+				BE50C017181309E500F43777 /* blong_background@2x.png */,
+				BE50C01B18130D6F00F43777 /* ball@2x.png */,
+				BE50C01918130BB600F43777 /* pause_button@2x.png */,
+				BE90E3941789DD0200CB47AB /* left_paddle.png */,
+				BE168BAF17FD1623000A90D8 /* title.png */,
+				BE50C0031813027E00F43777 /* brick6@2x.png */,
+				BE50C0041813027E00F43777 /* brick7@2x.png */,
+				BE50C0051813027E00F43777 /* brick8@2x.png */,
+				BE50C0061813027E00F43777 /* brick9@2x.png */,
+				BE50C0071813027E00F43777 /* brick10@2x.png */,
+				BE90E3951789DD0200CB47AB /* right_paddle.png */,
+			);
+			name = img;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -342,7 +347,6 @@
 				BE90E3981789DD0200CB47AB /* right_paddle.png in Resources */,
 				BE50C01A18130BB600F43777 /* pause_button@2x.png in Resources */,
 				BE50C0081813027E00F43777 /* brick6@2x.png in Resources */,
-				BE90E39C178BD1BE00CB47AB /* spark.png in Resources */,
 				BE90E3971789DD0200CB47AB /* left_paddle.png in Resources */,
 				BE50C0101813066900F43777 /* continue.png in Resources */,
 				BE90E3641789DCA300CB47AB /* InfoPlist.strings in Resources */,
@@ -517,6 +521,7 @@
 				GCC_PREFIX_HEADER = "Blong/Blong-Prefix.pch";
 				INFOPLIST_FILE = "Blong/Blong-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "388CC9EE-AECF-4E4C-B228-A47DD22BFBA3";
 				SPRITEKIT_TEXTURE_ATLAS_OUTPUT = YES;
 				WRAPPER_EXTENSION = app;
 			};
@@ -531,6 +536,7 @@
 				GCC_PREFIX_HEADER = "Blong/Blong-Prefix.pch";
 				INFOPLIST_FILE = "Blong/Blong-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "388CC9EE-AECF-4E4C-B228-A47DD22BFBA3";
 				SPRITEKIT_TEXTURE_ATLAS_OUTPUT = YES;
 				WRAPPER_EXTENSION = app;
 			};

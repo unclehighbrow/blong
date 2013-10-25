@@ -71,15 +71,20 @@ BlongThumbHole *rightThumbHole;
         touchedLeft = NO;
         touchedRight = NO;
         
+        
+        // pause button
+        [BlongPauseButton pauseButtonWithScene:self];
+        
     }
     return self;
 }
 
 -(void)startLevel {
     _nextCockBlock = 0;
+    _brokenThrough = NO;
     
     _rows = 5 + _level;
-    _cols = 5;
+    _cols = 3;
     for (int i = 0; i < _rows*_cols; i++) {
         [_availableBlockSlots addObject:[NSString stringWithFormat:@"%d", i]];
     }
@@ -87,8 +92,33 @@ BlongThumbHole *rightThumbHole;
     [BlongBall ballOnLeft:YES withScene:self];
     [BlongBall ballOnLeft:NO withScene:self];
     
-    SKAction *topToMiddle = [SKAction moveTo:CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)) duration:.3];
-    topToMiddle.timingMode = SKActionTimingEaseIn;
+    //SKAction *topToMiddle = [SKAction moveTo:CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)) duration:.3];
+    //topToMiddle.timingMode = SKActionTimingEaseIn;
+
+    float duration = .5;
+    float yDelta = -CGRectGetMidY(self.frame);
+    float beginningY = self.frame.size.height;
+    SKAction *topToMiddle = [SKAction customActionWithDuration:duration actionBlock:^(SKNode *node, CGFloat timeElapsed) {
+		float s = 1.70158;
+        float p = 0;
+        float a = yDelta;
+		if (timeElapsed==0)
+            node.position = CGPointMake(CGRectGetMidX(self.frame),beginningY);
+        if ((timeElapsed/=duration)==1)
+            node.position = CGPointMake(CGRectGetMidX(self.frame),beginningY+yDelta);
+        if (p==0) p=duration*.3;
+        
+		if (a < fabsf(yDelta))  {
+            a=yDelta;
+            s=p/4;
+        } else {
+            s = p/(2*M_PI) * asinf(yDelta/a);
+        }
+		node.position = CGPointMake(CGRectGetMidX(self.frame), a*powf(2,-10*timeElapsed) * sinf((timeElapsed*duration-s)*(2*M_PI)/p ) + yDelta + beginningY);
+    }];
+
+    
+    
     SKAction *wait = [SKAction waitForDuration: .3];
     SKAction *shrinkAway = [SKAction scaleTo:0 duration:.3];
     
@@ -122,9 +152,7 @@ BlongThumbHole *rightThumbHole;
     [blong runAction:[SKAction sequence:@[wait, wait, wait, wait, wait, wait, wait, wait, wait, wait, fadeInAndMoveInBricks, startPhysics, fadeOut]]];
     blong.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     [self addChild:blong];
-    
-    // pause button
-    [BlongPauseButton pauseButtonWithScene:self];
+
 }
 
 -(void)updateScore:(int) pointsAdded {
@@ -196,12 +224,34 @@ BlongThumbHole *rightThumbHole;
     [self updateScore:1];
     SKAction *shrink = [SKAction scaleTo:0 duration:.1];
     SKAction *removeFromBricks = [SKAction runBlock:^{
-        [_availableBlockSlots addObject:[brick.userData objectForKey:@"blockSlot"]];
+        _lastBlockCleared = [brick.userData objectForKey:@"blockSlot"];
+        [_availableBlockSlots addObject:_lastBlockCleared];
         [_bricks removeObject:brick];
+        [self checkBreakthrough];
     }];
     SKAction *removeFromParent = [SKAction removeFromParent];
     
     [brick runAction: [SKAction sequence: @[shrink, removeFromBricks, removeFromParent]]];
+    
+}
+
+-(void)checkBreakthrough {
+    if (!_brokenThrough) {
+        for (int i = 0; i < _rows; i++) {
+            bool justBrokeThrough = YES;
+            for (int j = 0; j < _cols; j++) {
+                if (![_availableBlockSlots containsObject:[NSString stringWithFormat:@"%d", i*_cols + j]]) {
+                    justBrokeThrough = NO;
+                    break;
+                }
+            }
+            if (justBrokeThrough) {
+                NSLog(@"process breakthrough");
+                _brokenThrough = YES;
+                break;
+            }
+        }
+    }
 }
 
 -(void)removeBall:(BlongBall *)ball {

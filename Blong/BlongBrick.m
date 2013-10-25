@@ -22,8 +22,8 @@
     [scene.availableBlockSlots removeObject:blockSlot];
     int blockSlotNum = [blockSlot intValue];
     CGPoint topLeft = CGPointMake(CGRectGetMidX(scene.frame) - ((((float)scene.cols)/2.0)*brick.frame.size.width) - brick.frame.size.width/2.0, scene.frame.size.height - brick.frame.size.height/2.0);
-    int row = blockSlotNum % scene.rows;
-    int col = blockSlotNum / scene.rows;
+    int col = blockSlotNum % scene.cols;
+    int row = blockSlotNum / scene.cols;
 
     CGPoint endPoint = brick.position = CGPointMake(topLeft.x + (col * brick.frame.size.width), topLeft.y - (row * brick.frame.size.height));
     float startX, startY;

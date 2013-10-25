@@ -27,8 +27,8 @@
 }
 
 -(void)explode {
-    SKAction *fadeOut = [SKAction fadeAlphaTo:0 duration:.5];
-    SKAction *grow = [SKAction scaleBy:4 duration:.5];
+    SKAction *fadeOut = [SKAction fadeAlphaTo:0 duration:.6];
+    SKAction *grow = [SKAction scaleBy:8 duration:.7];
     SKAction *fadeOutAndGrow = [SKAction group:@[fadeOut, grow]];
     SKAction *remove = [SKAction removeFromParent];
     SKAction *fadeOutGrowAndRemove = [SKAction sequence:@[fadeOutAndGrow, remove]];
