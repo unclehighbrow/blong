@@ -25,6 +25,7 @@ bool touchedRight;
 bool started;
 BlongThumbHole *leftThumbHole;
 BlongThumbHole *rightThumbHole;
+NSTimeInterval levelStart = 0;
 
 
 -(id)initWithSize:(CGSize)size {
@@ -64,16 +65,35 @@ BlongThumbHole *rightThumbHole;
         self.physicsWorld.contactDelegate = self;
         self.physicsWorld.speed = 0;
         
+        float duration = .5;
+        float yDelta = -CGRectGetMidY(self.frame);
+        float beginningY = self.frame.size.height;
+        _topToMiddle = [SKAction customActionWithDuration:duration actionBlock:^(SKNode *node, CGFloat timeElapsed) {
+            float s = 1.70158;
+            float p = 0;
+            float a = yDelta;
+            if (timeElapsed==0)
+                node.position = CGPointMake(CGRectGetMidX(self.frame),beginningY);
+            if ((timeElapsed/=duration)==1)
+                node.position = CGPointMake(CGRectGetMidX(self.frame),beginningY+yDelta);
+            if (p==0) p=duration*.3;
+            
+            if (a < fabsf(yDelta))  {
+                a=yDelta;
+                s=p/4;
+            } else {
+                s = p/(2*M_PI) * asinf(yDelta/a);
+            }
+            node.position = CGPointMake(CGRectGetMidX(self.frame), a*powf(2,-10*timeElapsed) * sinf((timeElapsed*duration-s)*(2*M_PI)/p ) + yDelta + beginningY);
+        }];
+        
+        
         leftThumbHole = [BlongThumbHole thumbHoleOnLeft:YES WithScene:self];
         rightThumbHole = [BlongThumbHole thumbHoleOnLeft:NO WithScene:self];
         
         started = NO;
         touchedLeft = NO;
         touchedRight = NO;
-        
-        
-        // pause button
-        [BlongPauseButton pauseButtonWithScene:self];
         
     }
     return self;
@@ -92,33 +112,6 @@ BlongThumbHole *rightThumbHole;
     [BlongBall ballOnLeft:YES withScene:self];
     [BlongBall ballOnLeft:NO withScene:self];
     
-    //SKAction *topToMiddle = [SKAction moveTo:CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)) duration:.3];
-    //topToMiddle.timingMode = SKActionTimingEaseIn;
-
-    float duration = .5;
-    float yDelta = -CGRectGetMidY(self.frame);
-    float beginningY = self.frame.size.height;
-    SKAction *topToMiddle = [SKAction customActionWithDuration:duration actionBlock:^(SKNode *node, CGFloat timeElapsed) {
-		float s = 1.70158;
-        float p = 0;
-        float a = yDelta;
-		if (timeElapsed==0)
-            node.position = CGPointMake(CGRectGetMidX(self.frame),beginningY);
-        if ((timeElapsed/=duration)==1)
-            node.position = CGPointMake(CGRectGetMidX(self.frame),beginningY+yDelta);
-        if (p==0) p=duration*.3;
-        
-		if (a < fabsf(yDelta))  {
-            a=yDelta;
-            s=p/4;
-        } else {
-            s = p/(2*M_PI) * asinf(yDelta/a);
-        }
-		node.position = CGPointMake(CGRectGetMidX(self.frame), a*powf(2,-10*timeElapsed) * sinf((timeElapsed*duration-s)*(2*M_PI)/p ) + yDelta + beginningY);
-    }];
-
-    
-    
     SKAction *wait = [SKAction waitForDuration: .3];
     SKAction *shrinkAway = [SKAction scaleTo:0 duration:.3];
     
@@ -126,13 +119,13 @@ BlongThumbHole *rightThumbHole;
     ready.text = @"READY";
     ready.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     [self addChild:ready];
-    [ready runAction:[SKAction sequence:@[wait, wait, topToMiddle, wait, wait, shrinkAway]]];
+    [ready runAction:[SKAction sequence:@[wait, wait, _topToMiddle, wait, wait, shrinkAway]]];
     
     SKLabelNode *steady = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
     steady.text = @"STEADY";
     steady.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     [self addChild:steady];
-    [steady runAction:[SKAction sequence:@[wait, wait, wait, wait, wait, wait, topToMiddle, wait, wait, shrinkAway]]];
+    [steady runAction:[SKAction sequence:@[wait, wait, wait, wait, wait, wait, _topToMiddle, wait, wait, shrinkAway]]];
     
     SKSpriteNode *blong = [SKSpriteNode spriteNodeWithImageNamed:@"blong_background"];
     [blong setAlpha:0];
@@ -152,6 +145,9 @@ BlongThumbHole *rightThumbHole;
     [blong runAction:[SKAction sequence:@[wait, wait, wait, wait, wait, wait, wait, wait, wait, wait, fadeInAndMoveInBricks, startPhysics, fadeOut]]];
     blong.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     [self addChild:blong];
+    
+    // pause button
+    [BlongPauseButton pauseButtonWithScene:self];
 
 }
 
@@ -246,7 +242,8 @@ BlongThumbHole *rightThumbHole;
                 }
             }
             if (justBrokeThrough) {
-                NSLog(@"process breakthrough");
+                CGPoint lastBrickPoint = [BlongBrick calculatePositionFromSlot:_lastBlockCleared withNode:[_balls objectAtIndex:0] withScene:self];
+                [BlongBall ballWithX:lastBrickPoint.x withY:lastBrickPoint.y withScene:self];
                 _brokenThrough = YES;
                 break;
             }
@@ -343,7 +340,10 @@ BlongThumbHole *rightThumbHole;
 
 // TODO: PAUSING BREAKS COCKBLOCK COUNT
 -(void)update:(NSTimeInterval)currentTime {
-    if (self.physicsWorld.speed > 0) {
+    if (self.physicsWorld.speed > 0 && !self.paused) {
+        if (levelStart == 0) {
+            levelStart = currentTime;
+        }
         if (_nextCockBlock == 0) {
             _nextCockBlock = currentTime + (cockBlockInterval / _level);
         } else if (currentTime > _nextCockBlock) {
@@ -354,11 +354,27 @@ BlongThumbHole *rightThumbHole;
         if (_balls.count == 0) {
             self.physicsWorld.speed = 0;
             [self gameOver];
+        } else if (_balls.count == 1) {
+            [self startCountdown];
         }
         
         if (_bricks.count == 0) {
             [self newLevel];
         }
+    }
+}
+
+-(void)startCountdown {
+    if (!_countdownTimer) {
+        _countdownTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(updateCountdown:) userInfo:nil repeats:YES];
+        _secondsLeft = 30;
+    }
+}
+
+-(void)updateCountdown:(NSTimer *) timer {
+    if (!self.paused) {
+        _secondsLeft--;
+        NSLog(@"counting down %d", _secondsLeft);
     }
 }
 

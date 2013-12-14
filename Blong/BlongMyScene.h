@@ -31,7 +31,11 @@
 @property int rows;
 @property int cols;
 @property int level;
+@property CGSize brickSize;
 @property NSTimeInterval nextCockBlock;
+@property NSTimer *countdownTimer;
+@property SKAction *topToMiddle;
+@property int secondsLeft;
 
 extern const uint32_t ballCat;
 extern const uint32_t paddleCat;

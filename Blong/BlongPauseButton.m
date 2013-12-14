@@ -21,8 +21,10 @@
 }
 
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    self.scene.paused = YES;
-    [BlongPauseMenu pauseMenuWithScene:(BlongMyScene *)self.scene];
+    if (self.scene.paused == NO) {
+        self.scene.paused = YES;
+        [BlongPauseMenu pauseMenuWithScene:(BlongMyScene *)self.scene];
+    }
 }
 
 @end

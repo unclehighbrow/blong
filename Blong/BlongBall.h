@@ -11,5 +11,5 @@
 
 @interface BlongBall : SKSpriteNode 
 +(BlongBall *) ballOnLeft:(BOOL) left withScene:(BlongMyScene *) scene;
-
++(BlongBall *) ballWithX:(int)X withY:(int)y withScene:(BlongMyScene *) scene;
 @end

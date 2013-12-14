@@ -24,7 +24,6 @@
     // Create and configure the scene.
     CGSize boundsSize = self.view.bounds.size;
     SKScene *scene = [BlongMainMenu sceneWithSize:CGSizeMake(boundsSize.height, boundsSize.width)];
-    //SKScene *scene = [BlongMyScene sceneWithSize:CGSizeMake(boundsSize.height, boundsSize.width)];
     
     scene.scaleMode = SKSceneScaleModeAspectFill;
     
