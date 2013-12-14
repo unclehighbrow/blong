@@ -35,6 +35,8 @@
 @property NSTimeInterval nextCockBlock;
 @property NSTimer *countdownTimer;
 @property SKAction *topToMiddle;
+@property SKAction *wait;
+@property SKAction *shrinkAway;
 @property int secondsLeft;
 
 extern const uint32_t ballCat;

@@ -86,6 +86,8 @@ NSTimeInterval levelStart = 0;
             }
             node.position = CGPointMake(CGRectGetMidX(self.frame), a*powf(2,-10*timeElapsed) * sinf((timeElapsed*duration-s)*(2*M_PI)/p ) + yDelta + beginningY);
         }];
+        _wait = [SKAction waitForDuration: .3];
+        _shrinkAway = [SKAction scaleTo:0 duration:.3];
         
         
         leftThumbHole = [BlongThumbHole thumbHoleOnLeft:YES WithScene:self];
@@ -111,21 +113,19 @@ NSTimeInterval levelStart = 0;
     // balls
     [BlongBall ballOnLeft:YES withScene:self];
     [BlongBall ballOnLeft:NO withScene:self];
-    
-    SKAction *wait = [SKAction waitForDuration: .3];
-    SKAction *shrinkAway = [SKAction scaleTo:0 duration:.3];
+
     
     SKLabelNode *ready = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
     ready.text = @"READY";
     ready.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     [self addChild:ready];
-    [ready runAction:[SKAction sequence:@[wait, wait, _topToMiddle, wait, wait, shrinkAway]]];
+    [ready runAction:[SKAction sequence:@[_wait, _wait, _topToMiddle, _wait, _wait, _shrinkAway]]];
     
     SKLabelNode *steady = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
     steady.text = @"STEADY";
     steady.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     [self addChild:steady];
-    [steady runAction:[SKAction sequence:@[wait, wait, wait, wait, wait, wait, _topToMiddle, wait, wait, shrinkAway]]];
+    [steady runAction:[SKAction sequence:@[_wait, _wait, _wait, _wait, _wait, _wait, _topToMiddle, _wait, _wait, _shrinkAway]]];
     
     SKSpriteNode *blong = [SKSpriteNode spriteNodeWithImageNamed:@"blong_background"];
     [blong setAlpha:0];
@@ -142,7 +142,7 @@ NSTimeInterval levelStart = 0;
     }];
     SKAction *fadeInAndMoveInBricks = [SKAction group:@[fadeIn, moveInBricks]];
     SKAction *fadeOut = [SKAction fadeOutWithDuration:2];
-    [blong runAction:[SKAction sequence:@[wait, wait, wait, wait, wait, wait, wait, wait, wait, wait, fadeInAndMoveInBricks, startPhysics, fadeOut]]];
+    [blong runAction:[SKAction sequence:@[_wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, fadeInAndMoveInBricks, startPhysics, fadeOut]]];
     blong.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     [self addChild:blong];
     
@@ -242,6 +242,11 @@ NSTimeInterval levelStart = 0;
                 }
             }
             if (justBrokeThrough) {
+                SKLabelNode *breakthrough = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
+                breakthrough.text = @"BREAKTHROUGH";
+                breakthrough.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + breakthrough.frame.size.height/2);
+                [self addChild:breakthrough];
+                [breakthrough runAction:[SKAction sequence:@[_topToMiddle, _wait, _wait, _shrinkAway]]];
                 CGPoint lastBrickPoint = [BlongBrick calculatePositionFromSlot:_lastBlockCleared withNode:[_balls objectAtIndex:0] withScene:self];
                 [BlongBall ballWithX:lastBrickPoint.x withY:lastBrickPoint.y withScene:self];
                 _brokenThrough = YES;
