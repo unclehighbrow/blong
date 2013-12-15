@@ -15,9 +15,7 @@
 #import "Score.h"
 #import "BlongThumbHole.h"
 
-@interface BlongMyScene : SKScene <SKPhysicsContactDelegate> {
-    
-}
+@interface BlongMyScene : SKScene <SKPhysicsContactDelegate> 
 
 @property BlongPaddle *leftPaddle;
 @property BlongPaddle *rightPaddle;
@@ -37,7 +35,8 @@
 @property SKAction *topToMiddle;
 @property SKAction *wait;
 @property SKAction *shrinkAway;
-@property int secondsLeft;
+@property float secondsLeft;
+@property SKLabelNode *countdownClock;
 
 extern const uint32_t ballCat;
 extern const uint32_t paddleCat;

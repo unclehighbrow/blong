@@ -36,7 +36,7 @@ NSTimeInterval levelStart = 0;
         _score = 0;
         _scoreLabel = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
         [self updateScore:0];
-        _scoreLabel.color = [SKColor whiteColor];
+        _scoreLabel.fontColor = [SKColor whiteColor];
         _scoreLabel.position = CGPointMake(_scoreLabel.frame.size.width/2, 0);
         [self addChild:_scoreLabel];
 
@@ -244,9 +244,10 @@ NSTimeInterval levelStart = 0;
             if (justBrokeThrough) {
                 SKLabelNode *breakthrough = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
                 breakthrough.text = @"BREAKTHROUGH";
-                breakthrough.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + breakthrough.frame.size.height/2);
+                breakthrough.position = CGPointMake(CGRectGetMidX(self.frame), 0);
+                breakthrough.fontColor = [SKColor blueColor];
                 [self addChild:breakthrough];
-                [breakthrough runAction:[SKAction sequence:@[_topToMiddle, _wait, _wait, _shrinkAway]]];
+                [breakthrough runAction:[SKAction sequence:@[_wait, _wait, _shrinkAway]]];
                 CGPoint lastBrickPoint = [BlongBrick calculatePositionFromSlot:_lastBlockCleared withNode:[_balls objectAtIndex:0] withScene:self];
                 [BlongBall ballWithX:lastBrickPoint.x withY:lastBrickPoint.y withScene:self];
                 _brokenThrough = YES;
@@ -317,6 +318,7 @@ NSTimeInterval levelStart = 0;
     for (BlongBall *ball in _balls) {
         [ball removeFromParent];
     }
+    [self stopCountdown];
 
     _balls = [NSMutableArray array];
     
@@ -361,6 +363,8 @@ NSTimeInterval levelStart = 0;
             [self gameOver];
         } else if (_balls.count == 1) {
             [self startCountdown];
+        } else if (_balls.count > 1 && _countdownTimer.isValid) {
+            [self stopCountdown];
         }
         
         if (_bricks.count == 0) {
@@ -369,17 +373,30 @@ NSTimeInterval levelStart = 0;
     }
 }
 
+-(void)stopCountdown {
+    [_countdownTimer invalidate];
+    [_countdownClock removeFromParent];
+}
+
 -(void)startCountdown {
-    if (!_countdownTimer) {
-        _countdownTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(updateCountdown:) userInfo:nil repeats:YES];
+    if (!_countdownTimer || !_countdownTimer.isValid) {
+        _countdownTimer = [NSTimer scheduledTimerWithTimeInterval:.1f target:self selector:@selector(updateCountdown:) userInfo:nil repeats:YES];
         _secondsLeft = 30;
+        _countdownClock = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
+        _countdownClock.text = [NSString stringWithFormat:@"%.2f", _secondsLeft];
+        _countdownClock.fontColor = [SKColor redColor];
+        _countdownClock.position = CGPointMake(CGRectGetMidX(self.frame), 0);
+        [self addChild:_countdownClock];
     }
 }
 
--(void)updateCountdown:(NSTimer *) timer {
+-(void) updateCountdown:(NSTimer *)timer {
     if (!self.paused) {
-        _secondsLeft--;
-        NSLog(@"counting down %d", _secondsLeft);
+        _secondsLeft -= .1;
+        _countdownClock.text = [NSString stringWithFormat:@"%.2f", _secondsLeft];
+        if (_secondsLeft == 0.0) {
+            [self gameOver];
+        }
     }
 }
 
