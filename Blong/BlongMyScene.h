@@ -30,12 +30,13 @@
 @property int cols;
 @property int level;
 @property CGSize brickSize;
-@property NSTimeInterval nextCockBlock;
 @property NSTimer *countdownTimer;
+@property NSTimer *cockblockTimer;
 @property SKAction *topToMiddle;
 @property SKAction *wait;
 @property SKAction *shrinkAway;
 @property float secondsLeft;
+@property int nextCockblock;
 @property SKLabelNode *countdownClock;
 
 extern const uint32_t ballCat;

@@ -16,7 +16,6 @@ const uint32_t wallCat = 0x1 << 3;
 const uint32_t brickCat = 0x1 << 4;
 
 float maxVelocity = 300;
-int cockBlockInterval = 10;
 float maxYVelocity;
 
 // for starting
@@ -25,7 +24,6 @@ bool touchedRight;
 bool started;
 BlongThumbHole *leftThumbHole;
 BlongThumbHole *rightThumbHole;
-NSTimeInterval levelStart = 0;
 
 
 -(id)initWithSize:(CGSize)size {
@@ -102,7 +100,6 @@ NSTimeInterval levelStart = 0;
 }
 
 -(void)startLevel {
-    _nextCockBlock = 0;
     _brokenThrough = NO;
     
     _rows = 5 + _level;
@@ -148,7 +145,22 @@ NSTimeInterval levelStart = 0;
     
     // pause button
     [BlongPauseButton pauseButtonWithScene:self];
+    
+    if (_cockblockTimer.isValid) {
+        [_cockblockTimer invalidate];
+    }
+    _cockblockTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(incrementCockblock:) userInfo:nil repeats:YES];
 
+}
+
+-(void)incrementCockblock:(NSTimer *)timer {
+    if (!self.paused) {
+        _nextCockblock++;
+        if (_nextCockblock >= 10) {
+            _nextCockblock = 0;
+            [BlongBrick brickWithScene:self fromRandom:NO];
+        }
+    }
 }
 
 -(void)updateScore:(int) pointsAdded {
@@ -319,6 +331,7 @@ NSTimeInterval levelStart = 0;
         [ball removeFromParent];
     }
     [self stopCountdown];
+    _nextCockblock = 0;
 
     _balls = [NSMutableArray array];
     
@@ -345,19 +358,8 @@ NSTimeInterval levelStart = 0;
     [self.view presentScene:gameOverScene transition:transition];
 }
 
-// TODO: PAUSING BREAKS COCKBLOCK COUNT
 -(void)update:(NSTimeInterval)currentTime {
     if (self.physicsWorld.speed > 0 && !self.paused) {
-        if (levelStart == 0) {
-            levelStart = currentTime;
-        }
-        if (_nextCockBlock == 0) {
-            _nextCockBlock = currentTime + (cockBlockInterval / _level);
-        } else if (currentTime > _nextCockBlock) {
-            [BlongBrick brickWithScene:self fromRandom:NO];
-            _nextCockBlock = 0;
-        }
-        
         if (_balls.count == 0) {
             self.physicsWorld.speed = 0;
             [self gameOver];
@@ -380,7 +382,7 @@ NSTimeInterval levelStart = 0;
 
 -(void)startCountdown {
     if (!_countdownTimer || !_countdownTimer.isValid) {
-        _countdownTimer = [NSTimer scheduledTimerWithTimeInterval:.1f target:self selector:@selector(updateCountdown:) userInfo:nil repeats:YES];
+        _countdownTimer = [NSTimer scheduledTimerWithTimeInterval:.01f target:self selector:@selector(updateCountdown:) userInfo:nil repeats:YES];
         _secondsLeft = 30;
         _countdownClock = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
         _countdownClock.text = [NSString stringWithFormat:@"%.2f", _secondsLeft];
@@ -392,9 +394,9 @@ NSTimeInterval levelStart = 0;
 
 -(void) updateCountdown:(NSTimer *)timer {
     if (!self.paused) {
-        _secondsLeft -= .1;
+        _secondsLeft -= .01;
         _countdownClock.text = [NSString stringWithFormat:@"%.2f", _secondsLeft];
-        if (_secondsLeft == 0.0) {
+        if (_secondsLeft <= 0.0) {
             [self gameOver];
         }
     }
