@@ -12,7 +12,6 @@
 #import "BlongPaddle.h"
 #import "BlongPauseButton.h"
 #import "BlongGameOverScene.h"
-#import "Score.h"
 #import "BlongThumbHole.h"
 
 @interface BlongMyScene : SKScene <SKPhysicsContactDelegate> 

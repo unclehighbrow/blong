@@ -11,8 +11,6 @@
 		BE168BB317FDDECF000A90D8 /* BlongGameOverScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BE168BB217FDDECF000A90D8 /* BlongGameOverScene.m */; };
 		BE18A8D017F9B0A60032624A /* BlongBrick.m in Sources */ = {isa = PBXBuildFile; fileRef = BE18A8CF17F9B0A60032624A /* BlongBrick.m */; };
 		BE18A8D317F9B1230032624A /* BlongPaddle.m in Sources */ = {isa = PBXBuildFile; fileRef = BE18A8D217F9B1230032624A /* BlongPaddle.m */; };
-		BE4EC4B717FDEE120047E241 /* Score.m in Sources */ = {isa = PBXBuildFile; fileRef = BE4EC4B617FDEE120047E241 /* Score.m */; };
-		BE4EC4BA17FDF1020047E241 /* BlongScoreManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BE4EC4B917FDF1020047E241 /* BlongScoreManager.m */; };
 		BE4EC50717FE1F3D0047E241 /* BlongThumbHole.m in Sources */ = {isa = PBXBuildFile; fileRef = BE4EC50617FE1F3D0047E241 /* BlongThumbHole.m */; };
 		BE50C0081813027E00F43777 /* brick6@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE50C0031813027E00F43777 /* brick6@2x.png */; };
 		BE50C0091813027E00F43777 /* brick7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE50C0041813027E00F43777 /* brick7@2x.png */; };
@@ -69,10 +67,6 @@
 		BE18A8CF17F9B0A60032624A /* BlongBrick.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlongBrick.m; sourceTree = "<group>"; };
 		BE18A8D117F9B1230032624A /* BlongPaddle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlongPaddle.h; sourceTree = "<group>"; };
 		BE18A8D217F9B1230032624A /* BlongPaddle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlongPaddle.m; sourceTree = "<group>"; };
-		BE4EC4B517FDEE120047E241 /* Score.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Score.h; sourceTree = "<group>"; };
-		BE4EC4B617FDEE120047E241 /* Score.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Score.m; sourceTree = "<group>"; };
-		BE4EC4B817FDF1020047E241 /* BlongScoreManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlongScoreManager.h; sourceTree = "<group>"; };
-		BE4EC4B917FDF1020047E241 /* BlongScoreManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlongScoreManager.m; sourceTree = "<group>"; };
 		BE4EC50517FE1F3D0047E241 /* BlongThumbHole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlongThumbHole.h; sourceTree = "<group>"; };
 		BE4EC50617FE1F3D0047E241 /* BlongThumbHole.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlongThumbHole.m; sourceTree = "<group>"; };
 		BE50C0031813027E00F43777 /* brick6@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "brick6@2x.png"; sourceTree = "<group>"; };
@@ -183,8 +177,6 @@
 			children = (
 				BE90E3681789DCA300CB47AB /* BlongAppDelegate.h */,
 				BE90E3691789DCA300CB47AB /* BlongAppDelegate.m */,
-				BE4EC4B817FDF1020047E241 /* BlongScoreManager.h */,
-				BE4EC4B917FDF1020047E241 /* BlongScoreManager.m */,
 				BE90E36B1789DCA300CB47AB /* Main.storyboard */,
 				BE4EC50517FE1F3D0047E241 /* BlongThumbHole.h */,
 				BE4EC50617FE1F3D0047E241 /* BlongThumbHole.m */,
@@ -206,8 +198,6 @@
 				BE168BB217FDDECF000A90D8 /* BlongGameOverScene.m */,
 				BE90E39E1791F6F200CB47AB /* BlongBall.h */,
 				BE90E39F1791F6F200CB47AB /* BlongBall.m */,
-				BE4EC4B517FDEE120047E241 /* Score.h */,
-				BE4EC4B617FDEE120047E241 /* Score.m */,
 				BEDAD1131819E14D009D4563 /* img */,
 				BE90E399178BD1BE00CB47AB /* MyParticle.sks */,
 				BE90E3761789DCA300CB47AB /* Images.xcassets */,
@@ -385,7 +375,6 @@
 				BE90E3A01791F6F200CB47AB /* BlongBall.m in Sources */,
 				BE90E3701789DCA300CB47AB /* BlongViewController.m in Sources */,
 				BE18A8D017F9B0A60032624A /* BlongBrick.m in Sources */,
-				BE4EC4B717FDEE120047E241 /* Score.m in Sources */,
 				BEABEC6817FB16A70008B394 /* BlongPauseButton.m in Sources */,
 				BE90E3661789DCA300CB47AB /* main.m in Sources */,
 				BE90E36A1789DCA300CB47AB /* BlongAppDelegate.m in Sources */,
@@ -394,7 +383,6 @@
 				BE4EC50717FE1F3D0047E241 /* BlongThumbHole.m in Sources */,
 				BEABEC6B17FB205C0008B394 /* BlongPauseMenu.m in Sources */,
 				BE90E3731789DCA300CB47AB /* BlongMyScene.m in Sources */,
-				BE4EC4BA17FDF1020047E241 /* BlongScoreManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

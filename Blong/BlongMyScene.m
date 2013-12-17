@@ -258,6 +258,7 @@ BlongThumbHole *rightThumbHole;
                 breakthrough.text = @"BREAKTHROUGH";
                 breakthrough.position = CGPointMake(CGRectGetMidX(self.frame), 0);
                 breakthrough.fontColor = [SKColor blueColor];
+                breakthrough.zPosition = 1;
                 [self addChild:breakthrough];
                 [breakthrough runAction:[SKAction sequence:@[_wait, _wait, _shrinkAway]]];
                 CGPoint lastBrickPoint = [BlongBrick calculatePositionFromSlot:_lastBlockCleared withNode:[_balls objectAtIndex:0] withScene:self];
@@ -388,6 +389,7 @@ BlongThumbHole *rightThumbHole;
         _countdownClock.text = [NSString stringWithFormat:@"%.2f", _secondsLeft];
         _countdownClock.fontColor = [SKColor redColor];
         _countdownClock.position = CGPointMake(CGRectGetMidX(self.frame), 0);
+        _countdownClock.zPosition = 1;
         [self addChild:_countdownClock];
     }
 }
