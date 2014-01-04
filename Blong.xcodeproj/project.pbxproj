@@ -305,6 +305,9 @@
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "Will Carlough";
 				TargetAttributes = {
+					BE90E3531789DCA300CB47AB = {
+						DevelopmentTeam = G9CLW83GC3;
+					};
 					BE90E37B1789DCA300CB47AB = {
 						TestTargetID = BE90E3531789DCA300CB47AB;
 					};
@@ -505,11 +508,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Blong/Blong-Prefix.pch";
 				INFOPLIST_FILE = "Blong/Blong-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "388CC9EE-AECF-4E4C-B228-A47DD22BFBA3";
+				PROVISIONING_PROFILE = "";
 				SPRITEKIT_TEXTURE_ATLAS_OUTPUT = YES;
 				WRAPPER_EXTENSION = app;
 			};
@@ -520,11 +525,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Blong/Blong-Prefix.pch";
 				INFOPLIST_FILE = "Blong/Blong-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "388CC9EE-AECF-4E4C-B228-A47DD22BFBA3";
+				PROVISIONING_PROFILE = "";
 				SPRITEKIT_TEXTURE_ATLAS_OUTPUT = YES;
 				WRAPPER_EXTENSION = app;
 			};

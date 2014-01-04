@@ -10,13 +10,24 @@
 #import "BlongMyScene.h"
 #import "BlongPauseMenu.h"
 #import <SpriteKit/SpriteKit.h>
+#import <GameKit/GameKit.h>
 
 
 @implementation BlongAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
+    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+    localPlayer.authenticateHandler = ^(UIViewController *loginVC, NSError *error) {
+        NSLog(@"woooo %@", error);
+        if ([GKLocalPlayer localPlayer].authenticated) {
+            NSLog(@"what ho %@", [GKLocalPlayer localPlayer].alias);
+        } else if (loginVC) {
+            [self.window.rootViewController presentViewController:loginVC animated:YES completion:nil];
+        } else {
+            NSLog(@"no dice");
+        }
+    };
     return YES;
 }
 							
