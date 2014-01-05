@@ -276,7 +276,7 @@ BlongThumbHole *rightThumbHole;
                 [particle runAction:[SKAction sequence:@[_wait, stop, [SKAction waitForDuration:2], [SKAction removeFromParent]]]];
                 [self addChild:particle];
                 _brokenThrough = YES;
-                break;
+                break; // dicks
             }
         }
     }
