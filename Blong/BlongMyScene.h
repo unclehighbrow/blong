@@ -13,6 +13,7 @@
 #import "BlongPauseButton.h"
 #import "BlongGameOverScene.h"
 #import "BlongThumbHole.h"
+#import <GameKit/GameKit.h>
 
 @interface BlongMyScene : SKScene <SKPhysicsContactDelegate> 
 

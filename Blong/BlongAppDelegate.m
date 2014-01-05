@@ -10,7 +10,6 @@
 #import "BlongMyScene.h"
 #import "BlongPauseMenu.h"
 #import <SpriteKit/SpriteKit.h>
-#import <GameKit/GameKit.h>
 
 
 @implementation BlongAppDelegate
@@ -21,7 +20,7 @@
     localPlayer.authenticateHandler = ^(UIViewController *loginVC, NSError *error) {
         NSLog(@"woooo %@", error);
         if ([GKLocalPlayer localPlayer].authenticated) {
-            NSLog(@"what ho %@", [GKLocalPlayer localPlayer].alias);
+            // yay
         } else if (loginVC) {
             [self.window.rootViewController presentViewController:loginVC animated:YES completion:nil];
         } else {
@@ -34,9 +33,11 @@
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     SKView *view = (SKView *) self.window.rootViewController.view;
-    BlongMyScene *scene = (BlongMyScene *) view.scene;
-    scene.paused = YES;
-    [BlongPauseMenu pauseMenuWithScene:(BlongMyScene *)scene];
+    if ([view.scene isKindOfClass:[BlongMyScene class]]) {
+        BlongMyScene *scene = (BlongMyScene *) view.scene;
+        scene.paused = YES;
+        [BlongPauseMenu pauseMenuWithScene:(BlongMyScene *)scene];
+    }
 
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.

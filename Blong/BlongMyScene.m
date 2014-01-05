@@ -8,6 +8,7 @@
 
 #import "BlongMyScene.h"
 
+
 @implementation BlongMyScene
 
 const uint32_t ballCat = 0x1 << 1;
@@ -352,8 +353,22 @@ BlongThumbHole *rightThumbHole;
     [levelText runAction:waitFadeInFadeOutStartLevel];
 }
 
+-(void)reportScore {
+    if ([GKLocalPlayer localPlayer]) { // logged in
+        GKScore *scoreReporter = [[GKScore alloc] initWithLeaderboardIdentifier:@"default2014"];
+        scoreReporter.value = _score;
+        scoreReporter.context = 0;
+        
+        [GKScore reportScores:@[scoreReporter] withCompletionHandler:^(NSError *error) {
+            if (error) {
+                NSLog(@"that went poorly: %@", error);
+            }
+        }];
+    }
+}
+
 -(void)gameOver {
-    // TODO: save high score
+    [self reportScore];
     SKScene *gameOverScene = [[BlongGameOverScene alloc] initWithSize:self.size];
     SKTransition *transition = [SKTransition fadeWithDuration:2];
     [self.view presentScene:gameOverScene transition:transition];
