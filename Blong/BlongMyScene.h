@@ -35,6 +35,7 @@
 @property SKAction *topToMiddle;
 @property SKAction *wait;
 @property SKAction *shrinkAway;
+@property SKAction *fadeOut;
 @property float secondsLeft;
 @property int nextCockblock;
 @property SKLabelNode *countdownClock;

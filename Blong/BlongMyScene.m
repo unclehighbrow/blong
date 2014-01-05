@@ -19,6 +19,8 @@ const uint32_t brickCat = 0x1 << 4;
 float maxVelocity = 300;
 float maxYVelocity;
 
+int countdown = 30;
+
 // for starting
 bool touchedLeft;
 bool touchedRight;
@@ -85,8 +87,10 @@ BlongThumbHole *rightThumbHole;
             }
             node.position = CGPointMake(CGRectGetMidX(self.frame), a*powf(2,-10*timeElapsed) * sinf((timeElapsed*duration-s)*(2*M_PI)/p ) + yDelta + beginningY);
         }];
-        _wait = [SKAction waitForDuration: .3];
+        _wait = [SKAction waitForDuration:.3];
         _shrinkAway = [SKAction scaleTo:0 duration:.3];
+        _fadeOut = [SKAction fadeOutWithDuration:2];
+
         
         
         leftThumbHole = [BlongThumbHole thumbHoleOnLeft:YES WithScene:self];
@@ -139,8 +143,7 @@ BlongThumbHole *rightThumbHole;
         self.physicsWorld.speed = 1;
     }];
     SKAction *fadeInAndMoveInBricks = [SKAction group:@[fadeIn, moveInBricks]];
-    SKAction *fadeOut = [SKAction fadeOutWithDuration:2];
-    [blong runAction:[SKAction sequence:@[_wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, fadeInAndMoveInBricks, startPhysics, fadeOut]]];
+    [blong runAction:[SKAction sequence:@[_wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, fadeInAndMoveInBricks, startPhysics, _fadeOut]]];
     blong.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     [self addChild:blong];
     
@@ -264,6 +267,14 @@ BlongThumbHole *rightThumbHole;
                 [breakthrough runAction:[SKAction sequence:@[_wait, _wait, _shrinkAway]]];
                 CGPoint lastBrickPoint = [BlongBrick calculatePositionFromSlot:_lastBlockCleared withNode:[_balls objectAtIndex:0] withScene:self];
                 [BlongBall ballWithX:lastBrickPoint.x withY:lastBrickPoint.y withScene:self];
+                NSString *particlePath = [[NSBundle mainBundle] pathForResource:@"MyParticle" ofType:@"sks"];
+                SKEmitterNode *particle = [NSKeyedUnarchiver unarchiveObjectWithFile:particlePath];
+                particle.position = lastBrickPoint;
+                SKAction *stop = [SKAction runBlock:^{
+                    particle.particleBirthRate = 0;
+                }];
+                [particle runAction:[SKAction sequence:@[_wait, stop, [SKAction waitForDuration:2], [SKAction removeFromParent]]]];
+                [self addChild:particle];
                 _brokenThrough = YES;
                 break;
             }
@@ -342,7 +353,7 @@ BlongThumbHole *rightThumbHole;
     levelText.position = CGPointMake(CGRectGetMidX(self.frame), levelText.frame.size.height * 2);
     [levelText setAlpha:0];
     [self addChild:levelText];
-    SKAction *waitFadeInFadeOutStartLevel = [SKAction sequence:@[
+    SKAction *waitFadeIn_fadeOutStartLevel = [SKAction sequence:@[
           [SKAction waitForDuration:.5],
           [SKAction fadeInWithDuration:1],
           [SKAction waitForDuration:.5],
@@ -350,7 +361,7 @@ BlongThumbHole *rightThumbHole;
           [SKAction runBlock:^{[self startLevel];}]
     ]];
 
-    [levelText runAction:waitFadeInFadeOutStartLevel];
+    [levelText runAction:waitFadeIn_fadeOutStartLevel];
 }
 
 -(void)reportScore {
@@ -399,11 +410,12 @@ BlongThumbHole *rightThumbHole;
 -(void)startCountdown {
     if (!_countdownTimer || !_countdownTimer.isValid) {
         _countdownTimer = [NSTimer scheduledTimerWithTimeInterval:.01f target:self selector:@selector(updateCountdown:) userInfo:nil repeats:YES];
-        _secondsLeft = 30;
+        _secondsLeft = countdown;
         _countdownClock = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
-        _countdownClock.text = [NSString stringWithFormat:@"%.2f", _secondsLeft];
+        _countdownClock.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
+        _countdownClock.text = [NSString stringWithFormat:@"%.02f", _secondsLeft];
         _countdownClock.fontColor = [SKColor redColor];
-        _countdownClock.position = CGPointMake(CGRectGetMidX(self.frame), 0);
+        _countdownClock.position = CGPointMake(CGRectGetMidX(self.frame) - _countdownClock.frame.size.width/2, 0);
         _countdownClock.zPosition = 1;
         [self addChild:_countdownClock];
     }
@@ -412,9 +424,14 @@ BlongThumbHole *rightThumbHole;
 -(void) updateCountdown:(NSTimer *)timer {
     if (!self.paused) {
         _secondsLeft -= .01;
-        _countdownClock.text = [NSString stringWithFormat:@"%.2f", _secondsLeft];
         if (_secondsLeft <= 0.0) {
+            _countdownClock.text = @"0.00";
+            if (_countdownTimer.isValid)
+                NSLog(@"still valid");
+            [_countdownTimer invalidate];
             [self gameOver];
+        } else {
+            _countdownClock.text = [NSString stringWithFormat:@"%.02f", _secondsLeft];
         }
     }
 }
