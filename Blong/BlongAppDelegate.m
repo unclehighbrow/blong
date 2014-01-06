@@ -14,19 +14,20 @@
 
 @implementation BlongAppDelegate
 
+BOOL gameCenter = NO;
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
-    localPlayer.authenticateHandler = ^(UIViewController *loginVC, NSError *error) {
-        NSLog(@"woooo %@", error);
-        if ([GKLocalPlayer localPlayer].authenticated) {
-            // yay
-        } else if (loginVC) {
-            [self.window.rootViewController presentViewController:loginVC animated:YES completion:nil];
-        } else {
-            NSLog(@"no dice");
-        }
-    };
+    if (gameCenter) {
+        GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+        localPlayer.authenticateHandler = ^(UIViewController *loginVC, NSError *error) {
+            if ([GKLocalPlayer localPlayer].authenticated) { // logged in
+            } else if (loginVC) { // logging in
+                [self.window.rootViewController presentViewController:loginVC animated:YES completion:nil];
+            } else { // logged out
+            }
+        };
+    }
     return YES;
 }
 							
@@ -35,7 +36,6 @@
     SKView *view = (SKView *) self.window.rootViewController.view;
     if ([view.scene isKindOfClass:[BlongMyScene class]]) {
         BlongMyScene *scene = (BlongMyScene *) view.scene;
-        scene.paused = YES;
         [BlongPauseMenu pauseMenuWithScene:(BlongMyScene *)scene];
     }
 

@@ -26,7 +26,7 @@
         mainMenuButton.name = @"main_menu";
         mainMenuButton.position = CGPointMake(CGRectGetMidX(scene.frame), CGRectGetMidY(scene.frame) - mainMenuButton.size.height);
         [pauseMenu addChild:mainMenuButton];
-        
+        scene.paused = YES;
         
         return pauseMenu;
     }
