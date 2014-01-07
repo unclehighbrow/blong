@@ -11,41 +11,53 @@
 
 @implementation BlongBall
 +(BlongBall *)ballOnLeft:(BOOL) left withScene:(BlongMyScene *) scene {
-    BlongBall *ball = [BlongBall spriteNodeWithImageNamed:@"ball"]; // this is wasteful
-    int x,y;
+    BlongBall *ball = [BlongBall spriteNodeWithImageNamed:@"ball"];
+    int endX,endY,startX,startY;
     BOOL top = arc4random() % 2;
     if (top) {
-        y = scene.frame.size.height - (ball.frame.size.height * 2);
+        startY = 0 - (ball.frame.size.height/2);
+        endY = scene.frame.size.height - (ball.frame.size.height * 2);
     } else {
-        y = ball.frame.size.height*2;
+        startY = scene.frame.size.height + (ball.frame.size.height/2);
+        endY = ball.frame.size.height*2;
     }
     if (left) {
-        x = ball.frame.size.width * 10;
+        startX = scene.frame.size.width - (ball.frame.size.width * 10);
+        endX = ball.frame.size.width * 10;
     } else {
-        x = scene.frame.size.width - (ball.frame.size.width * 10);
+        startX = ball.frame.size.width * 10;
+        endX = scene.frame.size.width - (ball.frame.size.width * 10);
     }
-    return [BlongBall ballWithX:x withY:y withScene:scene];
+    
+    ball.position = CGPointMake(startX, startY);
+    [ball prepareWithScene:scene];
+    SKAction *moveIn = [SKAction moveTo:CGPointMake(endX, endY) duration:.3];
+    moveIn.timingMode = SKActionTimingEaseIn;
+    [ball runAction:moveIn];
+    return ball;
 }
 
 +(BlongBall *) ballWithX:(int)x withY:(int)y withScene:(BlongMyScene *) scene {
     BlongBall *ball = [BlongBall spriteNodeWithImageNamed:@"ball"];
     ball.position = CGPointMake(x, y);
-    ball.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:ball.size.height/2];
-    ball.physicsBody.dynamic = YES;
-    ball.physicsBody.restitution = 1;
-    ball.physicsBody.allowsRotation = NO;
-    ball.physicsBody.linearDamping = 0;
-    ball.physicsBody.angularDamping = 0;
-    ball.physicsBody.categoryBitMask = ballCat;
-    ball.physicsBody.contactTestBitMask = paddleCat|wallCat|brickCat;
-    ball.physicsBody.collisionBitMask = ballCat|paddleCat|brickCat|wallCat;
-    ball.physicsBody.velocity = CGVectorMake(150, 150);
-    float totalVelocity = sqrtf((ball.physicsBody.velocity.dx * ball.physicsBody.velocity.dx) + (ball.physicsBody.velocity.dy * ball.physicsBody.velocity.dy));
-    NSLog(@"starting total velocity: %f", totalVelocity);
-    
-    [scene addChild:ball];
-    [scene.balls addObject:ball];
+    [ball prepareWithScene:scene];
     return ball;
+}
+
+-(void)prepareWithScene:(BlongMyScene *)scene {
+    self.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:self.size.height/2];
+    self.physicsBody.dynamic = YES;
+    self.physicsBody.restitution = 1;
+    self.physicsBody.allowsRotation = NO;
+    self.physicsBody.linearDamping = 0;
+    self.physicsBody.angularDamping = 0;
+    self.physicsBody.categoryBitMask = ballCat;
+    self.physicsBody.contactTestBitMask = paddleCat|wallCat|brickCat;
+    self.physicsBody.collisionBitMask = ballCat|paddleCat|brickCat|wallCat;
+    self.physicsBody.velocity = CGVectorMake(150, 150); // 212
+    
+    [scene addChild:self];
+    [scene.balls addObject:self];
 }
 
 

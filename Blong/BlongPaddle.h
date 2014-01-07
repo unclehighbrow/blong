@@ -12,5 +12,6 @@
 
 }
 +(BlongPaddle *) paddle:(NSString *)image;
+-(void) shrink:(float)shrinkage;
 
 @end

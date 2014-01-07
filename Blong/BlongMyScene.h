@@ -15,7 +15,9 @@
 #import "BlongThumbHole.h"
 #import <GameKit/GameKit.h>
 
-@interface BlongMyScene : SKScene <SKPhysicsContactDelegate> 
+@interface BlongMyScene : SKScene <SKPhysicsContactDelegate>
+
+-(CGPoint) getRandomOffScreenPointForNode:(SKNode * )node;
 
 @property BlongPaddle *leftPaddle;
 @property BlongPaddle *rightPaddle;

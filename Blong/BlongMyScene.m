@@ -126,26 +126,33 @@ BlongThumbHole *rightThumbHole;
     for (int i = 0; i < _rows*_cols; i++) {
         [_availableBlockSlots addObject:[NSString stringWithFormat:@"%d", i]];
     }
-    // balls
-    [BlongBall ballOnLeft:YES withScene:self];
-    [BlongBall ballOnLeft:NO withScene:self];
-
     
+
+
+
+
+    // ready
     SKLabelNode *ready = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
     ready.text = @"READY";
     ready.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     [self addChild:ready];
     [ready runAction:[SKAction sequence:@[_wait, _wait, _topToMiddle, _wait, _wait, _shrinkAway]]];
     
+    // balls
+    [self runAction:[SKAction sequence:@[_wait,_wait,_wait, [SKAction runBlock:^{
+                                                                        [BlongBall ballOnLeft:YES withScene:self];
+                                                                        [BlongBall ballOnLeft:NO withScene:self];}]]]];
+    
+    
+    // steady
     SKLabelNode *steady = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
     steady.text = @"STEADY";
     steady.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
+    steady.zPosition = 1;
     [self addChild:steady];
-    [steady runAction:[SKAction sequence:@[_wait, _wait, _wait, _wait, _wait, _wait, _topToMiddle, _wait, _wait, _shrinkAway]]];
+    [steady runAction:[SKAction sequence:@[_wait, _wait, _wait, _wait, _wait, _wait, _topToMiddle, _wait, _shrinkAway]]];
     
-    SKSpriteNode *blong = [SKSpriteNode spriteNodeWithImageNamed:@"blong_background"];
-    [blong setAlpha:0];
-    SKAction *fadeIn = [SKAction fadeAlphaTo:.2 duration:.3];
+    // bricks
     SKAction *moveInBricks = [SKAction runBlock:^{
         for (int i = 0; i<_rows; i++) {
             for (int j = 0; j<_cols; j++) {
@@ -153,11 +160,16 @@ BlongThumbHole *rightThumbHole;
             }
         }
     }];
+    [self runAction:[SKAction sequence:@[_wait, _wait, _wait, _wait, _wait, _wait, _wait, moveInBricks]]];
+
+    // blong
+    SKSpriteNode *blong = [SKSpriteNode spriteNodeWithImageNamed:@"blong_background"];
     SKAction *startPhysics = [SKAction runBlock:^{
         self.physicsWorld.speed = 1;
     }];
-    SKAction *fadeInAndMoveInBricks = [SKAction group:@[fadeIn, moveInBricks]];
-    [blong runAction:[SKAction sequence:@[_wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, fadeInAndMoveInBricks, startPhysics, _fadeOut]]];
+    [blong setAlpha:0];
+    SKAction *fadeIn = [SKAction fadeAlphaTo:.2 duration:.3];
+    [blong runAction:[SKAction sequence:@[_wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, startPhysics, fadeIn, _fadeOut]]];
     blong.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     [self addChild:blong];
     
@@ -281,14 +293,7 @@ BlongThumbHole *rightThumbHole;
                 [breakthrough runAction:[SKAction sequence:@[_wait, _wait, _shrinkAway]]];
                 CGPoint lastBrickPoint = [BlongBrick calculatePositionFromSlot:_lastBlockCleared withNode:[_balls objectAtIndex:0] withScene:self];
                 [BlongBall ballWithX:lastBrickPoint.x withY:lastBrickPoint.y withScene:self];
-                NSString *particlePath = [[NSBundle mainBundle] pathForResource:@"MyParticle" ofType:@"sks"];
-                SKEmitterNode *particle = [NSKeyedUnarchiver unarchiveObjectWithFile:particlePath];
-                particle.position = lastBrickPoint;
-                SKAction *stop = [SKAction runBlock:^{
-                    particle.particleBirthRate = 0;
-                }];
-                [particle runAction:[SKAction sequence:@[_wait, stop, [SKAction waitForDuration:2], [SKAction removeFromParent]]]];
-                [self addChild:particle];
+                [self makeParticleAt:lastBrickPoint];
                 _brokenThrough = YES;
                 break; // dicks
             }
@@ -354,10 +359,17 @@ BlongThumbHole *rightThumbHole;
 -(void)newLevel {
     _level++;
     self.physicsWorld.speed = 0;
-    for (BlongBall *ball in _balls) {
-        [ball removeFromParent];
-    }
     [self stopCountdown];
+    NSMutableArray *ballSequence = [NSMutableArray array];
+    for (BlongBall *ball in _balls) {
+        [ballSequence addObject:_wait];
+        [ballSequence addObject:[SKAction runBlock:^{
+            [self makeParticleAt:ball.position];
+            [ball removeFromParent];
+            [self updateScore:10];
+        }]];
+    }
+    [self runAction:[SKAction sequence:ballSequence]];
     _nextCockblock = 0;
 
     _balls = [NSMutableArray array];
@@ -376,6 +388,9 @@ BlongThumbHole *rightThumbHole;
     ]];
 
     [levelText runAction:waitFadeIn_fadeOutStartLevel];
+    
+    [_leftPaddle shrink:.9];
+    [_rightPaddle shrink:.9];
 }
 
 -(void)reportScore {
@@ -457,6 +472,17 @@ BlongThumbHole *rightThumbHole;
             _countdownClock.text = [NSString stringWithFormat:@"%.02f", _secondsLeft];
         }
     }
+}
+
+-(void)makeParticleAt:(CGPoint) point {
+    NSString *particlePath = [[NSBundle mainBundle] pathForResource:@"MyParticle" ofType:@"sks"];
+    SKEmitterNode *particle = [NSKeyedUnarchiver unarchiveObjectWithFile:particlePath];
+    particle.position = point;
+    SKAction *stop = [SKAction runBlock:^{
+        particle.particleBirthRate = 0;
+    }];
+    [particle runAction:[SKAction sequence:@[_wait, stop, [SKAction waitForDuration:2], [SKAction removeFromParent]]]];
+    [self addChild:particle];
 }
 
 -(CGPoint) getRandomOffScreenPointForNode:(SKNode * )node {

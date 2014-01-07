@@ -31,7 +31,7 @@
     blockSlotNum = [slot intValue];
 
     
-    CGPoint topLeft = CGPointMake(CGRectGetMidX(scene.frame) - ((((float)scene.cols)/2.0)*brick.frame.size.width) - brick.frame.size.width/2.0, scene.frame.size.height - brick.frame.size.height/2.0);
+    CGPoint topLeft = CGPointMake(CGRectGetMidX(scene.frame) - ((((float)scene.cols)/2.0)*brick.frame.size.width) + brick.frame.size.width/2.0, scene.frame.size.height - brick.frame.size.height/2.0);
     int col = blockSlotNum % scene.cols;
     int row = blockSlotNum / scene.cols;
 
@@ -43,10 +43,10 @@
 
     if (random) {
         startX = arc4random() % (int)scene.frame.size.width;
-        brick.zRotation = ((float) (arc4random() % ((unsigned)M_PI + 1)) / M_PI) * M_PI;
-        SKAction *rotateIn = [SKAction rotateToAngle:0 duration:.3];
-        rotateIn.timingMode = SKActionTimingEaseIn;
-        [moveInSequence addObject:[SKAction group:@[moveIn, rotateIn]]];
+        // brick.zRotation = ((float) (arc4random() % ((unsigned)M_PI + 1)) / M_PI) * M_PI;
+        // SKAction *rotateIn = [SKAction rotateToAngle:0 duration:.3];
+        // rotateIn.timingMode = SKActionTimingEaseIn;
+        [moveInSequence addObject:[SKAction group:@[moveIn]]]; //]]]]]rotateIn]]];
         [moveInSequence addObject:[SKAction runBlock:^{ // don't let initial bricks interact with anything on the way in
             [brick getPhysical];
         }]];
@@ -73,7 +73,7 @@
 +(CGPoint) calculatePositionFromSlot:(NSString *)slot withNode:(SKNode *)node withScene:(BlongMyScene *)scene {
     int blockSlotNum = [slot intValue];
     
-    CGPoint topLeft = CGPointMake(CGRectGetMidX(scene.frame) - ((((float)scene.cols)/2.0)*scene.brickSize.width) - scene.brickSize.width/2.0, scene.frame.size.height - scene.brickSize.height/2.0);
+    CGPoint topLeft = CGPointMake(CGRectGetMidX(scene.frame) - ((((float)scene.cols)/2.0)*scene.brickSize.width) + scene.brickSize.width/2.0, scene.frame.size.height - scene.brickSize.height/2.0);
     int col = blockSlotNum % scene.cols;
     int row = blockSlotNum / scene.cols;
     
