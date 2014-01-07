@@ -59,9 +59,23 @@ BlongThumbHole *rightThumbHole;
         _level = 1;
         
         // physics and walls
-        self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:self.frame];
-        self.physicsBody.restitution = 1;
-        self.physicsBody.categoryBitMask = wallCat;
+        SKNode *topWall = [SKNode node];
+        topWall.physicsBody = [SKPhysicsBody bodyWithEdgeFromPoint:CGPointMake(0,0) toPoint:CGPointMake(self.frame.size.width,0)];
+        topWall.physicsBody.restitution = 1;
+        topWall.physicsBody.categoryBitMask = wallCat;
+        topWall.physicsBody.friction = 0;
+        topWall.position = CGPointMake(0, self.frame.size.height);
+        [self addChild:topWall];
+
+        SKNode *bottomWall = [SKNode node];
+        bottomWall.physicsBody = [SKPhysicsBody bodyWithEdgeFromPoint:CGPointMake(0,0) toPoint:CGPointMake(self.frame.size.width,0)];
+        bottomWall.physicsBody.restitution = 1;
+        bottomWall.physicsBody.categoryBitMask = wallCat;
+        bottomWall.physicsBody.friction = NO;
+        bottomWall.position = CGPointMake(0,0);
+        [self addChild:bottomWall];
+        
+                          
         self.physicsWorld.gravity = CGVectorMake(0, 0);
         self.physicsWorld.contactDelegate = self;
         self.physicsWorld.speed = 0;
@@ -215,9 +229,7 @@ BlongThumbHole *rightThumbHole;
     
     // this is a check to see if it's moving too slowly horizontally, and give it a little push
     if (secondBody.categoryBitMask & wallCat) {
-        if (contact.contactPoint.x < 3 || contact.contactPoint.x > self.frame.size.width - 3) {
-            [self removeBall:(BlongBall *)ball.node];
-        } else if (fabsf(ball.velocity.dx) < 30) {
+        if (fabsf(ball.velocity.dx) < 30) {
             if (ball.velocity.dx < 0) {
                 [ball applyImpulse:CGVectorMake(-1, 0)];
             } else {
@@ -394,6 +406,15 @@ BlongThumbHole *rightThumbHole;
             [self startCountdown];
         } else if (_balls.count > 1 && _countdownTimer.isValid) {
             [self stopCountdown];
+        }
+        
+        // sometimes balls stick around forever and i don't know why
+        for (BlongBall *ball in _balls) {
+            if (ball.position.x < 0 || ball.position.x > self.frame.size.width ||
+                ball.position.y < 0 || ball.position.y > self.frame.size.height) {
+                [self removeBall:ball];
+                break;
+            }
         }
         
         if (_bricks.count == 0) {
