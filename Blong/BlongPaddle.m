@@ -18,6 +18,8 @@
     paddle.physicsBody.friction = 0;
     paddle.name = image;
     paddle.physicsBody.categoryBitMask = paddleCat;
+    paddle.centerRect = CGRectMake(.5, .25, 0, .5);
+    
     return paddle;
 }
 @end

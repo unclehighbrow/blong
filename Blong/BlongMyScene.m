@@ -232,8 +232,10 @@ BlongThumbHole *rightThumbHole;
         if (fabsf(ball.velocity.dx) < 30) {
             if (ball.velocity.dx < 0) {
                 [ball applyImpulse:CGVectorMake(-1, 0)];
+                NSLog(@"going left, pushing left");
             } else {
                 [ball applyImpulse:CGVectorMake(1, 0)];
+                NSLog(@"going right, pushing right");
             }
         }
         
