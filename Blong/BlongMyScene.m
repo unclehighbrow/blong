@@ -150,7 +150,7 @@ BlongThumbHole *rightThumbHole;
     steady.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     steady.zPosition = 1;
     [self addChild:steady];
-    [steady runAction:[SKAction sequence:@[_wait, _wait, _wait, _wait, _wait, _wait, _topToMiddle, _wait, _shrinkAway]]];
+    [steady runAction:[SKAction sequence:@[_wait, _wait, _wait, _wait, _wait, _wait, _topToMiddle, _shrinkAway]]];
     
     // bricks
     SKAction *moveInBricks = [SKAction runBlock:^{
@@ -168,8 +168,10 @@ BlongThumbHole *rightThumbHole;
         self.physicsWorld.speed = 1;
     }];
     [blong setAlpha:0];
-    SKAction *fadeIn = [SKAction fadeAlphaTo:.2 duration:.3];
-    [blong runAction:[SKAction sequence:@[_wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, startPhysics, fadeIn, _fadeOut]]];
+    SKAction *fadeIn = [SKAction fadeAlphaTo:.2 duration:0];
+    SKAction *makeNoise = [SKAction playSoundFileNamed:@"level_start.wav" waitForCompletion:NO];
+
+    [blong runAction:[SKAction sequence:@[_wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, startPhysics, makeNoise, fadeIn, _fadeOut]]];
     blong.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     [self addChild:blong];
     
@@ -207,8 +209,6 @@ BlongThumbHole *rightThumbHole;
         ball = contact.bodyB;
         secondBody = contact.bodyA;
     }
-    // float totalVelocity = sqrtf((ball.velocity.dx * ball.velocity.dx) + (ball.velocity.dy * ball.velocity.dy));
-    // NSLog(@"total vel: %f", totalVelocity);
     
     // TODO: make this less shitty
     if (secondBody.categoryBitMask & paddleCat) {
@@ -237,6 +237,7 @@ BlongThumbHole *rightThumbHole;
             }
             ball.velocity = velocity;
         }
+        [self runAction:[SKAction playSoundFileNamed:@"bip.wav" waitForCompletion:NO]];
     }
     
     // this is a check to see if it's moving too slowly horizontally, and give it a little push
@@ -255,6 +256,7 @@ BlongThumbHole *rightThumbHole;
     
     if (secondBody.categoryBitMask & brickCat) {
         [self removeBrick:(BlongBrick *)secondBody.node];
+        [self runAction:[SKAction playSoundFileNamed:@"bop.wav" waitForCompletion:NO]];
     }
 }
 
@@ -367,6 +369,7 @@ BlongThumbHole *rightThumbHole;
             [self makeParticleAt:ball.position];
             [ball removeFromParent];
             [self updateScore:10];
+            [self runAction:[SKAction playSoundFileNamed:@"game_over2.wav" waitForCompletion:NO]];
         }]];
     }
     [self runAction:[SKAction sequence:ballSequence]];
@@ -411,6 +414,7 @@ BlongThumbHole *rightThumbHole;
     [self reportScore];
     SKScene *gameOverScene = [[BlongGameOverScene alloc] initWithSize:self.size];
     SKTransition *transition = [SKTransition fadeWithDuration:2];
+    [self runAction:[SKAction playSoundFileNamed:@"game_over.wav" waitForCompletion:NO]];
     [self.view presentScene:gameOverScene transition:transition];
 }
 
