@@ -14,6 +14,7 @@
 #import "BlongGameOverScene.h"
 #import "BlongThumbHole.h"
 #import <GameKit/GameKit.h>
+#import "BlongEasing.h"
 
 @interface BlongMyScene : SKScene <SKPhysicsContactDelegate>
 

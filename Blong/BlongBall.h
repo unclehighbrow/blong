@@ -7,6 +7,7 @@
 //
 
 #import <SpriteKit/SpriteKit.h>
+#import "BlongEasing.h"
 @class BlongMyScene;
 
 @interface BlongBall : SKSpriteNode 

@@ -80,27 +80,9 @@ BlongThumbHole *rightThumbHole;
         self.physicsWorld.contactDelegate = self;
         self.physicsWorld.speed = 0;
         
-        float duration = .5;
-        float yDelta = -CGRectGetMidY(self.frame);
-        float beginningY = self.frame.size.height;
-        _topToMiddle = [SKAction customActionWithDuration:duration actionBlock:^(SKNode *node, CGFloat timeElapsed) {
-            float s = 1.70158;
-            float p = 0;
-            float a = yDelta;
-            if (timeElapsed==0)
-                node.position = CGPointMake(CGRectGetMidX(self.frame),beginningY);
-            if ((timeElapsed/=duration)==1)
-                node.position = CGPointMake(CGRectGetMidX(self.frame),beginningY+yDelta);
-            if (p==0) p=duration*.3;
-            
-            if (a < fabsf(yDelta))  {
-                a=yDelta;
-                s=p/4;
-            } else {
-                s = p/(2*M_PI) * asinf(yDelta/a);
-            }
-            node.position = CGPointMake(CGRectGetMidX(self.frame), a*powf(2,-10*timeElapsed) * sinf((timeElapsed*duration-s)*(2*M_PI)/p ) + yDelta + beginningY);
-        }];
+        CGPoint start = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height);
+        CGPoint end = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
+        _topToMiddle = [BlongEasing easeOutElasticFrom:start to:end for:.5];
         _wait = [SKAction waitForDuration:.3];
         _shrinkAway = [SKAction scaleTo:0 duration:.3];
         _fadeOut = [SKAction fadeOutWithDuration:2];

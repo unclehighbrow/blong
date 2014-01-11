@@ -31,8 +31,7 @@
     
     ball.position = CGPointMake(startX, startY);
     [ball prepareWithScene:scene];
-    SKAction *moveIn = [SKAction moveTo:CGPointMake(endX, endY) duration:.3];
-    moveIn.timingMode = SKActionTimingEaseIn;
+    SKAction *moveIn = [BlongEasing easeOutElasticFrom:ball.position to:CGPointMake(endX, endY) for:.3];
     [ball runAction:moveIn];
     return ball;
 }

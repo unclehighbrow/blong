@@ -11,6 +11,7 @@
 		BE168BB317FDDECF000A90D8 /* BlongGameOverScene.m in Sources */ = {isa = PBXBuildFile; fileRef = BE168BB217FDDECF000A90D8 /* BlongGameOverScene.m */; };
 		BE18A8D017F9B0A60032624A /* BlongBrick.m in Sources */ = {isa = PBXBuildFile; fileRef = BE18A8CF17F9B0A60032624A /* BlongBrick.m */; };
 		BE18A8D317F9B1230032624A /* BlongPaddle.m in Sources */ = {isa = PBXBuildFile; fileRef = BE18A8D217F9B1230032624A /* BlongPaddle.m */; };
+		BE31C56E18818B0D006E3DCF /* BlongEasing.m in Sources */ = {isa = PBXBuildFile; fileRef = BE31C56D18818B0D006E3DCF /* BlongEasing.m */; };
 		BE4EC50717FE1F3D0047E241 /* BlongThumbHole.m in Sources */ = {isa = PBXBuildFile; fileRef = BE4EC50617FE1F3D0047E241 /* BlongThumbHole.m */; };
 		BE50C0081813027E00F43777 /* brick6@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE50C0031813027E00F43777 /* brick6@2x.png */; };
 		BE50C0091813027E00F43777 /* brick7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE50C0041813027E00F43777 /* brick7@2x.png */; };
@@ -73,6 +74,8 @@
 		BE18A8CF17F9B0A60032624A /* BlongBrick.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlongBrick.m; sourceTree = "<group>"; };
 		BE18A8D117F9B1230032624A /* BlongPaddle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlongPaddle.h; sourceTree = "<group>"; };
 		BE18A8D217F9B1230032624A /* BlongPaddle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlongPaddle.m; sourceTree = "<group>"; };
+		BE31C56C18818B0D006E3DCF /* BlongEasing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlongEasing.h; sourceTree = "<group>"; };
+		BE31C56D18818B0D006E3DCF /* BlongEasing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlongEasing.m; sourceTree = "<group>"; };
 		BE4EC50517FE1F3D0047E241 /* BlongThumbHole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlongThumbHole.h; sourceTree = "<group>"; };
 		BE4EC50617FE1F3D0047E241 /* BlongThumbHole.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlongThumbHole.m; sourceTree = "<group>"; };
 		BE50C0031813027E00F43777 /* brick6@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "brick6@2x.png"; sourceTree = "<group>"; };
@@ -215,6 +218,8 @@
 				BEABEC6417FB10740008B394 /* BlongMainMenu.m */,
 				BE90E3711789DCA300CB47AB /* BlongMyScene.h */,
 				BE90E3721789DCA300CB47AB /* BlongMyScene.m */,
+				BE31C56C18818B0D006E3DCF /* BlongEasing.h */,
+				BE31C56D18818B0D006E3DCF /* BlongEasing.m */,
 				BE18A8D117F9B1230032624A /* BlongPaddle.h */,
 				BE18A8D217F9B1230032624A /* BlongPaddle.m */,
 				BE18A8CE17F9B0A60032624A /* BlongBrick.h */,
@@ -410,6 +415,7 @@
 				BE90E3A01791F6F200CB47AB /* BlongBall.m in Sources */,
 				BE90E3701789DCA300CB47AB /* BlongViewController.m in Sources */,
 				BE18A8D017F9B0A60032624A /* BlongBrick.m in Sources */,
+				BE31C56E18818B0D006E3DCF /* BlongEasing.m in Sources */,
 				BEABEC6817FB16A70008B394 /* BlongPauseButton.m in Sources */,
 				BE90E3661789DCA300CB47AB /* main.m in Sources */,
 				BE90E36A1789DCA300CB47AB /* BlongAppDelegate.m in Sources */,
