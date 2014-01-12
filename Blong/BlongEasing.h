@@ -12,5 +12,7 @@
 @interface BlongEasing : NSObject
 
 +(SKAction *) easeOutElasticFrom:(CGPoint)start to:(CGPoint)end for:(CGFloat)duration;
++(SKAction *) scaleElastic:(CGFloat)scale for:(CGFloat)duration;
+
 
 @end

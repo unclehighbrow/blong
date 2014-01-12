@@ -25,15 +25,15 @@
 }
 
 +(SKAction *) scaleElastic:(CGFloat)scale for:(CGFloat)duration {
-    float delta = 1 - scale;
+    float scaleDelta = scale - 1;
     float p = duration*.3;
     float s = p*.25;
     
     return [SKAction customActionWithDuration:duration actionBlock:^(SKNode *node, CGFloat timeElapsed) {
         float dicks = powf(2,-10*timeElapsed/duration) * sinf((timeElapsed-s)*(2*M_PI)/p);
-        float scale = delta*dicks;
-        [node setScale:scale];
+        [node setScale:scaleDelta*dicks + scaleDelta + 1];
     }];}
+
 
 //public static function easeOut (t:Number, b:Number, c:Number, d:Number):Number {
 //    if ((t/=d) < (1/2.75)) {
@@ -46,5 +46,6 @@
 //        return c*(7.5625*(t-=(2.625/2.75))*t + .984375) + b;
 //    }
 //}
+
 
 @end
