@@ -28,6 +28,32 @@ bool started;
 BlongThumbHole *leftThumbHole;
 BlongThumbHole *rightThumbHole;
 
+// bigger
+int minRows = 5;
+int maxRows = 10;
+int incRows = 3;
+
+int minCols = 3;
+int maxCols = 3;
+int incCols = 0;
+
+int minBalls = 2;
+int maxBalls = 4;
+int incBalls = 10;
+
+// smaller
+int minCockBlock = 10;
+int maxCockBlock = 5;
+int incCockBlock = 4;
+
+int minScale = 1;
+int maxScale = .1;
+int incScale = 2;
+
+int minTimer = 30;
+int maxTimer = 10;
+int incTimer = 1;
+
 
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
