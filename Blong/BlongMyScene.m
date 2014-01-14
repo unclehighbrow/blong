@@ -22,12 +22,11 @@ float maxYVelocity;
 int countdown = 30;
 
 // for starting
+bool started;
 bool touchedLeft;
 bool touchedRight;
-bool started;
-BlongThumbHole *leftThumbHole;
-BlongThumbHole *rightThumbHole;
 
+// leveling
 // bigger
 int minRows = 5;
 int maxRows = 10;
@@ -100,30 +99,44 @@ int incTimer = 1;
         bottomWall.physicsBody.friction = NO;
         bottomWall.position = CGPointMake(0,0);
         [self addChild:bottomWall];
-        
                           
         self.physicsWorld.gravity = CGVectorMake(0, 0);
         self.physicsWorld.contactDelegate = self;
-        self.physicsWorld.speed = 0;
+        self.physicsWorld.speed = 1;
         
-        CGPoint start = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height);
-        CGPoint end = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
-        _topToMiddle = [BlongEasing easeOutElasticFrom:start to:end for:.5];
+        // pause button
+        [BlongPauseButton pauseButtonWithScene:self];
+        
+        // SKActions
+        CGPoint textStart = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height);
+        CGPoint textEnd = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
+        _topToMiddle = [BlongEasing easeOutElasticFrom:textStart to:textEnd for:.5];
         _wait = [SKAction waitForDuration:.3];
         _shrinkAway = [SKAction scaleTo:0 duration:.3];
         _fadeOut = [SKAction fadeOutWithDuration:2];
 
-        
-        
-        leftThumbHole = [BlongThumbHole thumbHoleOnLeft:YES WithScene:self];
-        rightThumbHole = [BlongThumbHole thumbHoleOnLeft:NO WithScene:self];
-        
-        started = NO;
+
         touchedLeft = NO;
         touchedRight = NO;
         
+        [self firstLevel];
+        
     }
     return self;
+}
+
+-(void)firstLevel {
+    _brokenThrough = NO;
+    _rows = 6;
+    _cols = 3;
+    for (int i = 0; i < _rows*_cols; i++) {
+        [_availableBlockSlots addObject:[NSString stringWithFormat:@"%d", i]];
+    }
+    for (int i = 0; i<_rows; i++) {
+        for (int j = 0; j<_cols; j++) {
+            [BlongBrick brickWithScene:self fromRandom:YES];
+        }
+    }
 }
 
 -(void)startLevel {
@@ -134,10 +147,6 @@ int incTimer = 1;
     for (int i = 0; i < _rows*_cols; i++) {
         [_availableBlockSlots addObject:[NSString stringWithFormat:@"%d", i]];
     }
-    
-
-
-
 
     // ready
     SKLabelNode *ready = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
@@ -182,9 +191,6 @@ int incTimer = 1;
     [blong runAction:[SKAction sequence:@[_wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, startPhysics, makeNoise, fadeIn, _fadeOut]]];
     blong.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     [self addChild:blong];
-    
-    // pause button
-    [BlongPauseButton pauseButtonWithScene:self];
     
     if (_cockblockTimer.isValid) {
         [_cockblockTimer invalidate];
@@ -348,21 +354,22 @@ int incTimer = 1;
     
     CGPoint location = [touch locationInNode:self];
     if (location.x < CGRectGetMidX(self.frame)) {
+        CGPoint point = CGPointMake(_leftPaddle.position.x, location.y);
+        _leftPaddle.position = point;
         if (!touchedLeft) {
             touchedLeft = YES;
-            [leftThumbHole explode];
+            [BlongBall shootBallAtPoint:point withScene:self];
         }
-        _leftPaddle.position = CGPointMake(_leftPaddle.position.x, location.y);
     } else {
+        CGPoint point = CGPointMake(_rightPaddle.position.x, location.y);
+        _rightPaddle.position = point;
         if (!touchedRight) {
             touchedRight = YES;
-            [rightThumbHole explode];
+            [BlongBall shootBallAtPoint:point withScene:self];
         }
-        _rightPaddle.position = CGPointMake(_rightPaddle.position.x, location.y);
     }
-    if (!started && touchedRight && touchedLeft) {
+    if (touchedLeft && touchedRight) {
         started = YES;
-        [self startLevel];
     }
 }
 
@@ -427,11 +434,11 @@ int incTimer = 1;
 }
 
 -(void)update:(NSTimeInterval)currentTime {
-    if (self.physicsWorld.speed > 0 && !self.paused) {
+    if (self.physicsWorld.speed > 0 && !self.paused && started) {
         if (_balls.count == 0) {
             self.physicsWorld.speed = 0;
             [self gameOver];
-        } else if (_balls.count == 1) {
+        } else if (_balls.count == 1 && _level != 1) {
             [self startCountdown];
         } else if (_balls.count > 1 && _countdownTimer.isValid) {
             [self stopCountdown];
@@ -508,6 +515,10 @@ int incTimer = 1;
     }
     
     return CGPointMake(x,y);
+}
+
+-(CGPoint) topLeft {
+    return CGPointMake(CGRectGetMidX(self.frame) - ((((float)self.cols)/2.0)*self.brickSize.width) + self.brickSize.width/2.0, self.frame.size.height - self.brickSize.height/2.0);
 }
 
 -(void)didSimulatePhysics {

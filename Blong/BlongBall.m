@@ -30,7 +30,7 @@
     }
     
     ball.position = CGPointMake(startX, startY);
-    [ball prepareWithScene:scene];
+    [ball prepareWithScene:scene withVelocity:CGVectorMake(150, 150)];
     SKAction *moveIn = [BlongEasing easeOutElasticFrom:ball.position to:CGPointMake(endX, endY) for:.3];
     [ball runAction:moveIn];
     return ball;
@@ -39,11 +39,11 @@
 +(BlongBall *) ballWithX:(int)x withY:(int)y withScene:(BlongMyScene *) scene {
     BlongBall *ball = [BlongBall spriteNodeWithImageNamed:@"ball"];
     ball.position = CGPointMake(x, y);
-    [ball prepareWithScene:scene];
+    [ball prepareWithScene:scene withVelocity:CGVectorMake(150, 150)];
     return ball;
 }
 
--(void)prepareWithScene:(BlongMyScene *)scene {
+-(void)prepareWithScene:(BlongMyScene *)scene withVelocity:(CGVector)velocity {
     self.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:self.size.height/2];
     self.physicsBody.dynamic = YES;
     self.physicsBody.restitution = 1;
@@ -53,10 +53,27 @@
     self.physicsBody.categoryBitMask = ballCat;
     self.physicsBody.contactTestBitMask = paddleCat|wallCat|brickCat;
     self.physicsBody.collisionBitMask = ballCat|paddleCat|brickCat|wallCat;
-    self.physicsBody.velocity = CGVectorMake(150, 150); // 212
+    self.physicsBody.velocity = velocity;
     
     [scene addChild:self];
     [scene.balls addObject:self];
+}
+
++(void)shootBallAtPoint:(CGPoint)point withScene:(BlongMyScene *)scene {
+    BlongBall *ball = [BlongBall spriteNodeWithImageNamed:@"ball"];
+    BOOL left = point.x < scene.frame.size.width / 2;
+    CGPoint topLeft = [scene topLeft];
+    CGVector velocity;
+    if (left) {
+        ball.position = CGPointMake(topLeft.x - (ball.frame.size.width*2), point.y);
+        velocity = CGVectorMake(-212, 20);
+    } else {
+        ball.position = CGPointMake(topLeft.x + (scene.brickSize.width*scene.cols) + (ball.frame.size.width*2), point.y);
+        velocity = CGVectorMake(212, 20);
+    }
+    
+    [ball prepareWithScene:scene withVelocity:velocity];
+    
 }
 
 

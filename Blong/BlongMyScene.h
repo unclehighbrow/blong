@@ -19,6 +19,7 @@
 @interface BlongMyScene : SKScene <SKPhysicsContactDelegate>
 
 -(CGPoint) getRandomOffScreenPointForNode:(SKNode * )node;
+-(CGPoint) topLeft;
 
 @property BlongPaddle *leftPaddle;
 @property BlongPaddle *rightPaddle;

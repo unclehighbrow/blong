@@ -31,7 +31,7 @@
     blockSlotNum = [slot intValue];
 
     
-    CGPoint topLeft = CGPointMake(CGRectGetMidX(scene.frame) - ((((float)scene.cols)/2.0)*brick.frame.size.width) + brick.frame.size.width/2.0, scene.frame.size.height - brick.frame.size.height/2.0);
+    CGPoint topLeft = [scene topLeft];
     int col = blockSlotNum % scene.cols;
     int row = blockSlotNum / scene.cols;
 
@@ -73,7 +73,7 @@
 +(CGPoint) calculatePositionFromSlot:(NSString *)slot withNode:(SKNode *)node withScene:(BlongMyScene *)scene {
     int blockSlotNum = [slot intValue];
     
-    CGPoint topLeft = CGPointMake(CGRectGetMidX(scene.frame) - ((((float)scene.cols)/2.0)*scene.brickSize.width) + scene.brickSize.width/2.0, scene.frame.size.height - scene.brickSize.height/2.0);
+    CGPoint topLeft = [scene topLeft];
     int col = blockSlotNum % scene.cols;
     int row = blockSlotNum / scene.cols;
     
