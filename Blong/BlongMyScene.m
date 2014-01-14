@@ -118,6 +118,7 @@ int incTimer = 1;
 
         touchedLeft = NO;
         touchedRight = NO;
+        started = NO;
         
         [self firstLevel];
         

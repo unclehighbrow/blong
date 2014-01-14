@@ -18,7 +18,8 @@
     if ([scene.availableBlockSlots count] == 0) {
         return nil;
     }
-    BlongBrick *brick = [BlongBrick spriteNodeWithImageNamed:[NSString stringWithFormat:@"brick%d", scene.rows]];
+    BlongBrick *brick = [BlongBrick spriteNodeWithImageNamed:@"brick6"];
+    [brick setYScale:6.0/(float)scene.rows];
     scene.brickSize = brick.frame.size;
 
     brick.userData = [NSMutableDictionary dictionaryWithCapacity:10];
