@@ -26,6 +26,13 @@ bool started;
 bool touchedLeft;
 bool touchedRight;
 
+// sounds for preloading
+SKAction *makeNoise;
+SKAction *bip;
+SKAction *bop;
+SKAction *explosion;
+SKAction *gameOver;
+
 // leveling
 // bigger
 int minRows = 5;
@@ -114,7 +121,13 @@ int incTimer = 1;
         _wait = [SKAction waitForDuration:.3];
         _shrinkAway = [SKAction scaleTo:0 duration:.3];
         _fadeOut = [SKAction fadeOutWithDuration:2];
-
+        
+        // sounds
+        bip = [SKAction playSoundFileNamed:@"bip.wav" waitForCompletion:NO];
+        bop = [SKAction playSoundFileNamed:@"bop.wav" waitForCompletion:NO];
+        makeNoise = [SKAction playSoundFileNamed:@"level_start.wav" waitForCompletion:NO];
+        explosion = [SKAction playSoundFileNamed:@"game_over2.wav" waitForCompletion:NO];
+        gameOver = [SKAction playSoundFileNamed:@"game_over.wav" waitForCompletion:NO];
 
         touchedLeft = NO;
         touchedRight = NO;
@@ -187,7 +200,6 @@ int incTimer = 1;
     }];
     [blong setAlpha:0];
     SKAction *fadeIn = [SKAction fadeAlphaTo:.2 duration:0];
-    SKAction *makeNoise = [SKAction playSoundFileNamed:@"level_start.wav" waitForCompletion:NO];
 
     [blong runAction:[SKAction sequence:@[_wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, startPhysics, makeNoise, fadeIn, _fadeOut]]];
     blong.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
@@ -252,7 +264,7 @@ int incTimer = 1;
             }
             ball.velocity = velocity;
         }
-        [self runAction:[SKAction playSoundFileNamed:@"bip.wav" waitForCompletion:NO]];
+        [self runAction:bip];
     }
     
     // this is a check to see if it's moving too slowly horizontally, and give it a little push
@@ -271,7 +283,7 @@ int incTimer = 1;
     
     if (secondBody.categoryBitMask & brickCat) {
         [self removeBrick:(BlongBrick *)secondBody.node];
-        [self runAction:[SKAction playSoundFileNamed:@"bop.wav" waitForCompletion:NO]];
+        [self runAction:bop];
     }
 }
 
@@ -385,7 +397,7 @@ int incTimer = 1;
             [self makeParticleAt:ball.position];
             [ball removeFromParent];
             [self updateScore:10];
-            [self runAction:[SKAction playSoundFileNamed:@"game_over2.wav" waitForCompletion:NO]];
+            [self runAction:explosion];
         }]];
     }
     [self runAction:[SKAction sequence:ballSequence]];
@@ -430,7 +442,7 @@ int incTimer = 1;
     [self reportScore];
     SKScene *gameOverScene = [[BlongGameOverScene alloc] initWithSize:self.size];
     SKTransition *transition = [SKTransition fadeWithDuration:2];
-    [self runAction:[SKAction playSoundFileNamed:@"game_over.wav" waitForCompletion:NO]];
+    [self runAction:gameOver];
     [self.view presentScene:gameOverScene transition:transition];
 }
 
