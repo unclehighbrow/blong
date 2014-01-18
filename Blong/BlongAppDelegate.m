@@ -9,13 +9,14 @@
 #import "BlongAppDelegate.h"
 #import "BlongMyScene.h"
 #import "BlongPauseMenu.h"
+#import "BlongGameCenterHelper.h"
 #import <SpriteKit/SpriteKit.h>
 #import <AVFoundation/AVFoundation.h>
 
 
 @implementation BlongAppDelegate
 
-BOOL gameCenter = NO;
+BOOL gameCenter = YES;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -23,6 +24,7 @@ BOOL gameCenter = NO;
         GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
         localPlayer.authenticateHandler = ^(UIViewController *loginVC, NSError *error) {
             if ([GKLocalPlayer localPlayer].authenticated) { // logged in
+                [BlongGameCenterHelper retrieveScores];
             } else if (loginVC) { // logging in
                 [self.window.rootViewController presentViewController:loginVC animated:YES completion:nil];
             } else { // logged out

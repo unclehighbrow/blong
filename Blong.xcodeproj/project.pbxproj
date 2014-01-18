@@ -54,6 +54,11 @@
 		BEABEC6517FB10740008B394 /* BlongMainMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = BEABEC6417FB10740008B394 /* BlongMainMenu.m */; };
 		BEABEC6817FB16A70008B394 /* BlongPauseButton.m in Sources */ = {isa = PBXBuildFile; fileRef = BEABEC6717FB16A70008B394 /* BlongPauseButton.m */; };
 		BEABEC6B17FB205C0008B394 /* BlongPauseMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = BEABEC6A17FB205C0008B394 /* BlongPauseMenu.m */; };
+		BED2CBE8188AD01000826C06 /* BlongGameCenterButton.m in Sources */ = {isa = PBXBuildFile; fileRef = BED2CBE7188AD01000826C06 /* BlongGameCenterButton.m */; };
+		BED2CBEC188AD47400826C06 /* game_center_button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BED2CBEB188AD47400826C06 /* game_center_button@2x.png */; };
+		BED2CBEF188ADCA900826C06 /* BlongGameCenterHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = BED2CBEE188ADCA900826C06 /* BlongGameCenterHelper.m */; };
+		BED2CBF2188B133000826C06 /* 11.wav in Resources */ = {isa = PBXBuildFile; fileRef = BED2CBF0188B133000826C06 /* 11.wav */; };
+		BED2CBF3188B133000826C06 /* 29.wav in Resources */ = {isa = PBXBuildFile; fileRef = BED2CBF1188B133000826C06 /* 29.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -129,6 +134,13 @@
 		BEABEC6717FB16A70008B394 /* BlongPauseButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlongPauseButton.m; sourceTree = "<group>"; };
 		BEABEC6917FB205C0008B394 /* BlongPauseMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlongPauseMenu.h; sourceTree = "<group>"; };
 		BEABEC6A17FB205C0008B394 /* BlongPauseMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlongPauseMenu.m; sourceTree = "<group>"; };
+		BED2CBE6188AD01000826C06 /* BlongGameCenterButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlongGameCenterButton.h; sourceTree = "<group>"; };
+		BED2CBE7188AD01000826C06 /* BlongGameCenterButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlongGameCenterButton.m; sourceTree = "<group>"; };
+		BED2CBEB188AD47400826C06 /* game_center_button@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "game_center_button@2x.png"; sourceTree = "<group>"; };
+		BED2CBED188ADCA900826C06 /* BlongGameCenterHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlongGameCenterHelper.h; sourceTree = "<group>"; };
+		BED2CBEE188ADCA900826C06 /* BlongGameCenterHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlongGameCenterHelper.m; sourceTree = "<group>"; };
+		BED2CBF0188B133000826C06 /* 11.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = 11.wav; sourceTree = "<group>"; };
+		BED2CBF1188B133000826C06 /* 29.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = 29.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,6 +171,8 @@
 		BE53320C187CECD1001EB40C /* snd */ = {
 			isa = PBXGroup;
 			children = (
+				BED2CBF0188B133000826C06 /* 11.wav */,
+				BED2CBF1188B133000826C06 /* 29.wav */,
 				BE53320D187CED77001EB40C /* bip.wav */,
 				BE53320E187CED77001EB40C /* bop.wav */,
 				BE53320F187CED77001EB40C /* game_over.wav */,
@@ -210,10 +224,14 @@
 				BE4EC50617FE1F3D0047E241 /* BlongThumbHole.m */,
 				BEABEC6617FB16A70008B394 /* BlongPauseButton.h */,
 				BEABEC6717FB16A70008B394 /* BlongPauseButton.m */,
+				BED2CBE6188AD01000826C06 /* BlongGameCenterButton.h */,
+				BED2CBE7188AD01000826C06 /* BlongGameCenterButton.m */,
 				BEABEC6917FB205C0008B394 /* BlongPauseMenu.h */,
 				BEABEC6A17FB205C0008B394 /* BlongPauseMenu.m */,
 				BE90E36E1789DCA300CB47AB /* BlongViewController.h */,
 				BE90E36F1789DCA300CB47AB /* BlongViewController.m */,
+				BED2CBED188ADCA900826C06 /* BlongGameCenterHelper.h */,
+				BED2CBEE188ADCA900826C06 /* BlongGameCenterHelper.m */,
 				BEABEC6317FB10740008B394 /* BlongMainMenu.h */,
 				BEABEC6417FB10740008B394 /* BlongMainMenu.m */,
 				BE90E3711789DCA300CB47AB /* BlongMyScene.h */,
@@ -269,6 +287,7 @@
 		BEDAD1131819E14D009D4563 /* img */ = {
 			isa = PBXGroup;
 			children = (
+				BED2CBEB188AD47400826C06 /* game_center_button@2x.png */,
 				BE533208187C47CA001EB40C /* left_paddle.png */,
 				BE533209187C47CA001EB40C /* right_paddle.png */,
 				BE50C00D1813066900F43777 /* continue.png */,
@@ -370,15 +389,18 @@
 			files = (
 				BE50C01A18130BB600F43777 /* pause_button@2x.png in Resources */,
 				BE50C0081813027E00F43777 /* brick6@2x.png in Resources */,
+				BED2CBF2188B133000826C06 /* 11.wav in Resources */,
 				BE533215187CED78001EB40C /* game_over.wav in Resources */,
 				BE533216187CED78001EB40C /* game_over2.wav in Resources */,
 				BE50C0101813066900F43777 /* continue.png in Resources */,
 				BE533214187CED78001EB40C /* bop.wav in Resources */,
 				BE90E3641789DCA300CB47AB /* InfoPlist.strings in Resources */,
+				BED2CBEC188AD47400826C06 /* game_center_button@2x.png in Resources */,
 				BE533218187CED78001EB40C /* new_level.wav in Resources */,
 				BE50C00C1813027E00F43777 /* brick10@2x.png in Resources */,
 				BE53320B187C47CA001EB40C /* right_paddle.png in Resources */,
 				BE50C0091813027E00F43777 /* brick7@2x.png in Resources */,
+				BED2CBF3188B133000826C06 /* 29.wav in Resources */,
 				BE90E3771789DCA300CB47AB /* Images.xcassets in Resources */,
 				BE90E3751789DCA300CB47AB /* Spaceship.png in Resources */,
 				BE90E36D1789DCA300CB47AB /* Main.storyboard in Resources */,
@@ -419,7 +441,9 @@
 				BEABEC6817FB16A70008B394 /* BlongPauseButton.m in Sources */,
 				BE90E3661789DCA300CB47AB /* main.m in Sources */,
 				BE90E36A1789DCA300CB47AB /* BlongAppDelegate.m in Sources */,
+				BED2CBEF188ADCA900826C06 /* BlongGameCenterHelper.m in Sources */,
 				BE168BB317FDDECF000A90D8 /* BlongGameOverScene.m in Sources */,
+				BED2CBE8188AD01000826C06 /* BlongGameCenterButton.m in Sources */,
 				BEABEC6517FB10740008B394 /* BlongMainMenu.m in Sources */,
 				BE4EC50717FE1F3D0047E241 /* BlongThumbHole.m in Sources */,
 				BEABEC6B17FB205C0008B394 /* BlongPauseMenu.m in Sources */,

@@ -7,6 +7,7 @@
 //
 
 #import "BlongMyScene.h"
+#import "BlongGameCenterHelper.h"
 
 
 @implementation BlongMyScene
@@ -32,6 +33,8 @@ SKAction *bip;
 SKAction *bop;
 SKAction *explosion;
 SKAction *gameOver;
+SKAction *sound11;
+SKAction *sound29;
 
 // leveling
 // bigger
@@ -128,10 +131,13 @@ int incTimer = 1;
         makeNoise = [SKAction playSoundFileNamed:@"level_start.wav" waitForCompletion:NO];
         explosion = [SKAction playSoundFileNamed:@"game_over2.wav" waitForCompletion:NO];
         gameOver = [SKAction playSoundFileNamed:@"game_over.wav" waitForCompletion:NO];
+        sound11 = [SKAction playSoundFileNamed:@"11.wav" waitForCompletion:NO];
+        sound29 = [SKAction playSoundFileNamed:@"29.wav" waitForCompletion:NO];
 
         touchedLeft = NO;
         touchedRight = NO;
         started = NO;
+        self.paused = NO;
         
         [self firstLevel];
         
@@ -172,7 +178,7 @@ int incTimer = 1;
     // balls
     [self runAction:[SKAction sequence:@[_wait,_wait,_wait, [SKAction runBlock:^{
                                                                         [BlongBall ballOnLeft:YES withScene:self];
-                                                                        [BlongBall ballOnLeft:NO withScene:self];}]]]];
+                                                                        [BlongBall ballOnLeft:NO withScene:self];}], sound11]]];
     
     
     // steady
@@ -191,7 +197,7 @@ int incTimer = 1;
             }
         }
     }];
-    [self runAction:[SKAction sequence:@[_wait, _wait, _wait, _wait, _wait, _wait, _wait, moveInBricks]]];
+    [self runAction:[SKAction sequence:@[_wait, _wait, _wait, _wait, _wait, _wait, _wait, moveInBricks, sound29]]];
 
     // blong
     SKSpriteNode *blong = [SKSpriteNode spriteNodeWithImageNamed:@"blong_background"];
@@ -272,10 +278,8 @@ int incTimer = 1;
         if (fabsf(ball.velocity.dx) < 30) {
             if (ball.velocity.dx < 0) {
                 [ball applyImpulse:CGVectorMake(-1, 0)];
-                NSLog(@"going left, pushing left");
             } else {
                 [ball applyImpulse:CGVectorMake(1, 0)];
-                NSLog(@"going right, pushing right");
             }
         }
         
@@ -424,22 +428,8 @@ int incTimer = 1;
     [_rightPaddle shrink:.9];
 }
 
--(void)reportScore {
-    if ([GKLocalPlayer localPlayer]) { // logged in
-        GKScore *scoreReporter = [[GKScore alloc] initWithLeaderboardIdentifier:@"default2014"];
-        scoreReporter.value = _score;
-        scoreReporter.context = 0;
-        
-        [GKScore reportScores:@[scoreReporter] withCompletionHandler:^(NSError *error) {
-            if (error) {
-                NSLog(@"that went poorly: %@", error);
-            }
-        }];
-    }
-}
-
 -(void)gameOver {
-    [self reportScore];
+    [BlongGameCenterHelper reportScore:_score];
     SKScene *gameOverScene = [[BlongGameOverScene alloc] initWithSize:self.size];
     SKTransition *transition = [SKTransition fadeWithDuration:2];
     [self runAction:gameOver];
@@ -494,14 +484,12 @@ int incTimer = 1;
 -(void) updateCountdown:(NSTimer *)timer {
     if (!self.paused) {
         _secondsLeft -= .01;
+        _countdownClock.text = [NSString stringWithFormat:@"%.02f", _secondsLeft];
         if (_secondsLeft <= 0.0) {
-            _countdownClock.text = @"0.00";
-            if (_countdownTimer.isValid)
-                NSLog(@"still valid");
+            self.paused = YES;
             [_countdownTimer invalidate];
+            _countdownClock.text = @"0.00";
             [self gameOver];
-        } else {
-            _countdownClock.text = [NSString stringWithFormat:@"%.02f", _secondsLeft];
         }
     }
 }
