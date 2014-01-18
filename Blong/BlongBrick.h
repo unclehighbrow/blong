@@ -11,8 +11,7 @@
 
 
 @interface BlongBrick : SKSpriteNode
-+(BlongBrick *)brickWithScene:(BlongMyScene * )scene fromRandom:(BOOL)random;
-+(BlongBrick *)brickWithScene:(BlongMyScene * )scene fromRandom:(BOOL)random atSlot:(NSString *) slot;
++(BlongBrick *)brickWithScene:(BlongMyScene * )scene fromRandom:(BOOL)random withMotion:(BOOL) motion;
 +(CGPoint) calculatePositionFromSlot:(NSString *)slot withNode:(SKNode *)node withScene:(BlongMyScene *)scene;
 
 

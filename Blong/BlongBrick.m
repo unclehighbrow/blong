@@ -10,11 +10,7 @@
 #import "BlongMyScene.h"
 
 @implementation BlongBrick
-+(BlongBrick *)brickWithScene:(BlongMyScene *) scene fromRandom:(BOOL)random {
-    return [BlongBrick brickWithScene: scene fromRandom:random atSlot:nil];
-}
-
-+(BlongBrick *)brickWithScene:(BlongMyScene *) scene fromRandom:(BOOL)random atSlot:(NSString *) slot {
++(BlongBrick *)brickWithScene:(BlongMyScene *) scene fromRandom:(BOOL)random withMotion:(BOOL)motion {
     if ([scene.availableBlockSlots count] == 0) {
         return nil;
     }
@@ -25,9 +21,7 @@
     brick.userData = [NSMutableDictionary dictionaryWithCapacity:10];
     [scene.bricks addObject:brick];
     int blockSlotNum;
-    if (!slot) {
-        slot = [scene.availableBlockSlots objectAtIndex:(arc4random() % [scene.availableBlockSlots count])];
-    }
+    NSString *slot = [scene.availableBlockSlots objectAtIndex:(arc4random() % [scene.availableBlockSlots count])];
     [scene.availableBlockSlots removeObject:slot];
     blockSlotNum = [slot intValue];
 
@@ -37,36 +31,40 @@
     int row = blockSlotNum / scene.cols;
 
     CGPoint endPoint = [BlongBrick calculatePositionFromSlot:slot withNode:brick withScene:scene];
-    float startX, startY;
-    NSMutableArray *moveInSequence = [NSMutableArray array];
-    SKAction *moveIn = [SKAction moveTo:endPoint duration:.3];
-    moveIn.timingMode = SKActionTimingEaseIn;
+    if (motion) {
+        float startX, startY;
+        NSMutableArray *moveInSequence = [NSMutableArray array];
+        SKAction *moveIn = [SKAction moveTo:endPoint duration:.3];
+        moveIn.timingMode = SKActionTimingEaseIn;
 
-    if (random) {
-        startX = arc4random() % (int)scene.frame.size.width;
-        // brick.zRotation = ((float) (arc4random() % ((unsigned)M_PI + 1)) / M_PI) * M_PI;
-        // SKAction *rotateIn = [SKAction rotateToAngle:0 duration:.3];
-        // rotateIn.timingMode = SKActionTimingEaseIn;
-        [moveInSequence addObject:[SKAction group:@[moveIn]]]; //]]]]]rotateIn]]];
-        [moveInSequence addObject:[SKAction runBlock:^{ // don't let initial bricks interact with anything on the way in
+        if (random) {
+            startX = arc4random() % (int)scene.frame.size.width;
+            brick.zRotation = ((float) (arc4random() % ((unsigned)M_PI + 1)) / M_PI) * M_PI;
+            SKAction *rotateIn = [SKAction rotateToAngle:0 duration:.3];
+            rotateIn.timingMode = SKActionTimingEaseIn;
+            [moveInSequence addObject:[SKAction group:@[moveIn,rotateIn]]];
+            [moveInSequence addObject:[SKAction runBlock:^{ // don't let initial bricks interact with anything on the way in
+                [brick getPhysical];
+            }]];
+        } else {
+            startX = topLeft.x + (col * brick.frame.size.width);
+            [moveInSequence addObject:moveIn];
             [brick getPhysical];
-        }]];
+        }
+        if (row + 1 > scene.rows/2) {
+            startY = -brick.frame.size.height/2;
+        } else {
+            startY = scene.frame.size.height + brick.frame.size.height/2;
+        }
+        brick.position = (CGPointMake(startX, startY));
+        [scene addChild:brick];
+        [brick runAction:[SKAction sequence:moveInSequence]];
     } else {
-        startX = topLeft.x + (col * brick.frame.size.width);
-        [moveInSequence addObject:moveIn];
-        [brick getPhysical];
+        brick.position = endPoint;
+        [scene addChild:brick];
     }
-    if (row + 1 > scene.rows/2) {
-        startY = -brick.frame.size.height/2;
-    } else {
-        startY = scene.frame.size.height + brick.frame.size.height/2;
-    }
-    brick.position = (CGPointMake(startX, startY));
     [brick.userData setObject:slot forKey:@"blockSlot"];
-    
-    [scene addChild:brick];
-    
-    [brick runAction:[SKAction sequence:moveInSequence]];
+
     
     return brick;
 }

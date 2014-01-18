@@ -39,7 +39,6 @@
 @property NSTimer *countdownTimer;
 @property NSTimer *cockblockTimer;
 @property SKAction *topToMiddle;
-@property SKAction *wait;
 @property SKAction *shrinkAway;
 @property SKAction *fadeOut;
 @property float secondsLeft;

@@ -121,7 +121,6 @@ int incTimer = 1;
         CGPoint textStart = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height);
         CGPoint textEnd = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
         _topToMiddle = [BlongEasing easeOutElasticFrom:textStart to:textEnd for:.5];
-        _wait = [SKAction waitForDuration:.3];
         _shrinkAway = [SKAction scaleTo:0 duration:.3];
         _fadeOut = [SKAction fadeOutWithDuration:2];
         
@@ -165,7 +164,7 @@ int incTimer = 1;
     }
     for (int i = 0; i<_rows; i++) {
         for (int j = 0; j<_cols; j++) {
-            [BlongBrick brickWithScene:self fromRandom:YES];
+            [BlongBrick brickWithScene:self fromRandom:NO withMotion:NO];
         }
     }
 }
@@ -184,12 +183,14 @@ int incTimer = 1;
     ready.text = @"READY";
     ready.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     [self addChild:ready];
-    [ready runAction:[SKAction sequence:@[_wait, _wait, _topToMiddle, _wait, _wait, _shrinkAway]]];
+    [ready runAction:[SKAction sequence:@[[SKAction waitForDuration:1], _topToMiddle, [SKAction waitForDuration:.5], _shrinkAway]]];
     
     // balls
-    [self runAction:[SKAction sequence:@[_wait,_wait,_wait, [SKAction runBlock:^{
+    [self runAction:[SKAction sequence:@[[SKAction waitForDuration:1.5],
+                                         [SKAction runBlock:^{
                                                                         [BlongBall ballOnLeft:YES withScene:self];
-                                                                        [BlongBall ballOnLeft:NO withScene:self];}], sound11]]];
+                                                                        [BlongBall ballOnLeft:NO withScene:self];}],
+                                         [SKAction waitForDuration:.3], bip]]];
     
     
     // steady
@@ -198,17 +199,17 @@ int incTimer = 1;
     steady.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     steady.zPosition = 1;
     [self addChild:steady];
-    [steady runAction:[SKAction sequence:@[_wait, _wait, _wait, _wait, _wait, _wait, _topToMiddle, _shrinkAway]]];
+    [steady runAction:[SKAction sequence:@[[SKAction waitForDuration:2], _topToMiddle, _shrinkAway]]];
     
     // bricks
     SKAction *moveInBricks = [SKAction runBlock:^{
         for (int i = 0; i<_rows; i++) {
             for (int j = 0; j<_cols; j++) {
-                [BlongBrick brickWithScene:self fromRandom:YES];
+                [BlongBrick brickWithScene:self fromRandom:YES withMotion:YES];
             }
         }
     }];
-    [self runAction:[SKAction sequence:@[_wait, _wait, _wait, _wait, _wait, _wait, _wait, moveInBricks, sound29]]];
+    [self runAction:[SKAction sequence:@[[SKAction waitForDuration:2.5], moveInBricks, [SKAction waitForDuration:.3], sound29]]];
 
     // blong
     SKSpriteNode *blong = [SKSpriteNode spriteNodeWithImageNamed:@"blong_background"];
@@ -218,7 +219,7 @@ int incTimer = 1;
     [blong setAlpha:0];
     SKAction *fadeIn = [SKAction fadeAlphaTo:.2 duration:0];
 
-    [blong runAction:[SKAction sequence:@[_wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, _wait, startPhysics, makeNoise, fadeIn, _fadeOut]]];
+    [blong runAction:[SKAction sequence:@[[SKAction waitForDuration:4], startPhysics, makeNoise, fadeIn, _fadeOut]]];
     blong.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     [self addChild:blong];
     
@@ -234,7 +235,7 @@ int incTimer = 1;
         _nextCockblock++;
         if (_nextCockblock >= 10) {
             _nextCockblock = 0;
-            [BlongBrick brickWithScene:self fromRandom:NO];
+            [BlongBrick brickWithScene:self fromRandom:NO withMotion:YES];
         }
     }
 }
@@ -334,7 +335,7 @@ int incTimer = 1;
                 breakthrough.fontColor = [SKColor blueColor];
                 breakthrough.zPosition = 1;
                 [self addChild:breakthrough];
-                [breakthrough runAction:[SKAction sequence:@[_wait, _wait, _shrinkAway]]];
+                [breakthrough runAction:[SKAction sequence:@[[SKAction waitForDuration:.6], _shrinkAway]]];
                 CGPoint lastBrickPoint = [BlongBrick calculatePositionFromSlot:_lastBlockCleared withNode:[_balls objectAtIndex:0] withScene:self];
                 [BlongBall ballWithX:lastBrickPoint.x withY:lastBrickPoint.y withScene:self];
                 [self makeParticleAt:lastBrickPoint];
@@ -407,7 +408,7 @@ int incTimer = 1;
     [self stopCountdown];
     NSMutableArray *ballSequence = [NSMutableArray array];
     for (BlongBall *ball in _balls) {
-        [ballSequence addObject:_wait];
+        [ballSequence addObject:[SKAction waitForDuration:.3]];
         [ballSequence addObject:[SKAction runBlock:^{
             [self makeParticleAt:ball.position];
             [ball removeFromParent];
@@ -512,7 +513,7 @@ int incTimer = 1;
     SKAction *stop = [SKAction runBlock:^{
         particle.particleBirthRate = 0;
     }];
-    [particle runAction:[SKAction sequence:@[_wait, stop, [SKAction waitForDuration:2], [SKAction removeFromParent]]]];
+    [particle runAction:[SKAction sequence:@[[SKAction waitForDuration:.3], stop, [SKAction waitForDuration:2], [SKAction removeFromParent]]]];
     [self addChild:particle];
 }
 
