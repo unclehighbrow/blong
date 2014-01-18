@@ -133,17 +133,28 @@ int incTimer = 1;
         gameOver = [SKAction playSoundFileNamed:@"game_over.wav" waitForCompletion:NO];
         sound11 = [SKAction playSoundFileNamed:@"11.wav" waitForCompletion:NO];
         sound29 = [SKAction playSoundFileNamed:@"29.wav" waitForCompletion:NO];
+        
+        self.paused = NO;
+    }
+    return self;
+}
 
+-(void) didMoveToView:(SKView *)view {
+    if (_skipTutorial) {
+        touchedLeft = YES;
+        touchedRight = YES;
+        started = YES;
+        self.physicsWorld.speed = 0;
+        [self startLevel];
+    } else {
         touchedLeft = NO;
         touchedRight = NO;
         started = NO;
         self.paused = NO;
-        
         [self firstLevel];
-        
     }
-    return self;
 }
+
 
 -(void)firstLevel {
     _brokenThrough = NO;

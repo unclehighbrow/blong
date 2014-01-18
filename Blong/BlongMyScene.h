@@ -21,6 +21,8 @@
 -(CGPoint) getRandomOffScreenPointForNode:(SKNode * )node;
 -(CGPoint) topLeft;
 
+@property BOOL skipTutorial;
+
 @property BlongPaddle *leftPaddle;
 @property BlongPaddle *rightPaddle;
 @property NSMutableArray *balls;

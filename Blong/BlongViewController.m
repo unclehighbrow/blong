@@ -17,13 +17,22 @@
     [super viewDidLoad];
     
     // Configure the view.
-    SKView * skView = (SKView *)self.view;
+    SKView *skView = (SKView *)self.view;
     skView.showsFPS = NO;
     skView.showsNodeCount = NO;
     
     // Create and configure the scene.
     CGSize boundsSize = self.view.bounds.size;
-    SKScene *scene = [BlongMainMenu sceneWithSize:CGSizeMake(boundsSize.height, boundsSize.width)];
+    
+    SKScene *scene;
+
+    BOOL skipMenu = YES;
+    if (skipMenu) {
+        scene = [BlongMyScene sceneWithSize:CGSizeMake(boundsSize.height, boundsSize.width)];
+        ((BlongMyScene * )scene).skipTutorial = YES;
+    } else {
+        scene = [BlongMainMenu sceneWithSize:CGSizeMake(boundsSize.height, boundsSize.width)];
+    }
     
     scene.scaleMode = SKSceneScaleModeAspectFill;
     
