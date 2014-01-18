@@ -36,6 +36,10 @@ SKAction *gameOver;
 SKAction *sound11;
 SKAction *sound29;
 
+SKAction *addOne;
+
+int scoreToAdd;
+
 // leveling
 // bigger
 int minRows = 5;
@@ -71,10 +75,11 @@ int incTimer = 1;
         // score
         _score = 0;
         _scoreLabel = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
-        [self updateScore:0];
+        _scoreLabel.text = @"00000";
         _scoreLabel.fontColor = [SKColor whiteColor];
         _scoreLabel.position = CGPointMake(_scoreLabel.frame.size.width/2, 0);
         [self addChild:_scoreLabel];
+        scoreToAdd = 0;
 
         _availableBlockSlots = [NSMutableArray array];
 
@@ -123,6 +128,9 @@ int incTimer = 1;
         _topToMiddle = [BlongEasing easeOutElasticFrom:textStart to:textEnd for:.5];
         _shrinkAway = [SKAction scaleTo:0 duration:.3];
         _fadeOut = [SKAction fadeOutWithDuration:2];
+        addOne = [SKAction sequence:@[[SKAction runBlock:^{
+            _scoreLabel.text = [NSString stringWithFormat:@"%05d", _score];
+        }], [SKAction waitForDuration:.01]]];
         
         // sounds
         bip = [SKAction playSoundFileNamed:@"bip.wav" waitForCompletion:NO];
@@ -132,6 +140,8 @@ int incTimer = 1;
         gameOver = [SKAction playSoundFileNamed:@"game_over.wav" waitForCompletion:NO];
         sound11 = [SKAction playSoundFileNamed:@"11.wav" waitForCompletion:NO];
         sound29 = [SKAction playSoundFileNamed:@"29.wav" waitForCompletion:NO];
+        
+
         
         self.paused = NO;
     }
@@ -241,8 +251,7 @@ int incTimer = 1;
 }
 
 -(void)updateScore:(int) pointsAdded {
-    _score = _score + pointsAdded;
-    _scoreLabel.text = [NSString stringWithFormat:@"%06d", _score];
+    scoreToAdd += pointsAdded;
 }
 
 -(void)didBeginContact:(SKPhysicsContact *)contact {
@@ -441,6 +450,10 @@ int incTimer = 1;
 }
 
 -(void)gameOver {
+    if (scoreToAdd > 0) {
+        _score+= scoreToAdd;
+        _scoreLabel.text = [NSString stringWithFormat:@"%05d", _score];
+    }
     [BlongGameCenterHelper reportScore:_score];
     SKScene *gameOverScene = [[BlongGameOverScene alloc] initWithSize:self.size];
     SKTransition *transition = [SKTransition fadeWithDuration:2];
@@ -449,6 +462,15 @@ int incTimer = 1;
 }
 
 -(void)update:(NSTimeInterval)currentTime {
+    
+    if (scoreToAdd > 0) {
+        if (![self actionForKey:@"scoreAdd"]) {
+            _score++;
+            scoreToAdd--;
+            [self runAction:addOne withKey:@"scoreAdd"];
+        }
+    }
+    
     if (self.physicsWorld.speed > 0 && !self.paused && started) {
         if (_balls.count == 0) {
             self.physicsWorld.speed = 0;
