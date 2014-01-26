@@ -23,10 +23,10 @@ BlongGameCenterButton *gameCenterButton;
         title.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
         [self addChild:title];
         
-        go = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
+        go = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
         go.color = [SKColor whiteColor];
-        go.text = @"Let's do this.";
-        go.fontSize = 20;
+        go.text = @"LET'S DO THIS.";
+        go.fontSize = 40;
         go.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height/6);
         SKAction *fadeIn = [SKAction fadeInWithDuration:1];
         [go runAction:fadeIn];

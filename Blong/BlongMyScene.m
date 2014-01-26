@@ -74,8 +74,9 @@ int incTimer = 1;
         
         // score
         _score = 0;
-        _scoreLabel = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
+        _scoreLabel = [SKLabelNode labelNodeWithFontNamed:@"MICR Encoding"]; // 
         _scoreLabel.text = @"00000";
+        _scoreLabel.fontSize = 50;
         _scoreLabel.fontColor = [SKColor whiteColor];
         _scoreLabel.position = CGPointMake(_scoreLabel.frame.size.width/2, 0);
         [self addChild:_scoreLabel];
@@ -189,7 +190,7 @@ int incTimer = 1;
     }
 
     // ready
-    SKLabelNode *ready = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
+    SKLabelNode *ready = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
     ready.text = @"READY";
     ready.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     [self addChild:ready];
@@ -204,7 +205,7 @@ int incTimer = 1;
     
     
     // steady
-    SKLabelNode *steady = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
+    SKLabelNode *steady = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
     steady.text = @"STEADY";
     steady.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     steady.zPosition = 1;
@@ -323,6 +324,14 @@ int incTimer = 1;
     }];
     SKAction *removeFromParent = [SKAction removeFromParent];
     
+    // also explode it
+    SKSpriteNode *explodeBrick = [SKSpriteNode spriteNodeWithImageNamed:@"brick6"];
+    explodeBrick.yScale = brick.yScale;
+    explodeBrick.position = brick.position;
+    [self addChild:explodeBrick];
+    SKAction *explode = [SKAction sequence:@[[SKAction group:@[[SKAction scaleTo:1.5 duration:.2], [SKAction fadeAlphaTo:0 duration:.2]]], removeFromParent]];
+    [explodeBrick runAction:explode];
+    
     [brick runAction: [SKAction sequence: @[shrink, removeFromBricks, removeFromParent]]];
     
 }
@@ -338,7 +347,7 @@ int incTimer = 1;
                 }
             }
             if (justBrokeThrough) {
-                SKLabelNode *breakthrough = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
+                SKLabelNode *breakthrough = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
                 breakthrough.text = @"BREAKTHROUGH";
                 breakthrough.position = CGPointMake(CGRectGetMidX(self.frame), 0);
                 breakthrough.fontColor = [SKColor blueColor];
@@ -505,7 +514,7 @@ int incTimer = 1;
     if (!_countdownTimer || !_countdownTimer.isValid) {
         _countdownTimer = [NSTimer scheduledTimerWithTimeInterval:.01f target:self selector:@selector(updateCountdown:) userInfo:nil repeats:YES];
         _secondsLeft = countdown;
-        _countdownClock = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
+        _countdownClock = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
         _countdownClock.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
         _countdownClock.text = [NSString stringWithFormat:@"%.02f", _secondsLeft];
         _countdownClock.fontColor = [SKColor redColor];
@@ -526,6 +535,10 @@ int incTimer = 1;
             [self gameOver];
         }
     }
+}
+
+-(void)bonusLevel {
+    
 }
 
 -(void)makeParticleAt:(CGPoint) point {

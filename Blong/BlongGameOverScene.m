@@ -13,16 +13,17 @@
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
         self.backgroundColor = [SKColor blackColor];
-        SKLabelNode *gameOverText = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
+        SKLabelNode *gameOverText = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
         gameOverText.text = @"GAME OVER";
         gameOverText.color = [SKColor whiteColor];
+        gameOverText.fontSize = 50;
         gameOverText.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
         [self addChild:gameOverText];
         
-        SKLabelNode *go = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
+        SKLabelNode *go = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
         go.color = [SKColor whiteColor];
-        go.text = @"But whatever, let's do it again.";
-        go.fontSize = 20;
+        go.text = @"BUT WHATEVER, LET'S DO IT AGAIN";
+        go.fontSize = 25;
         go.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height/6);
         SKAction *fadeIn = [SKAction fadeInWithDuration:1];
         [go runAction:fadeIn];

@@ -61,6 +61,7 @@
         [brick runAction:[SKAction sequence:moveInSequence]];
     } else {
         brick.position = endPoint;
+        [brick getPhysical];
         [scene addChild:brick];
     }
     [brick.userData setObject:slot forKey:@"blockSlot"];
