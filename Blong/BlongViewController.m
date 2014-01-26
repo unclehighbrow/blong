@@ -26,7 +26,7 @@
     
     SKScene *scene;
 
-    BOOL skipMenu = YES;
+    BOOL skipMenu = NO;
     if (skipMenu) {
         scene = [BlongMyScene sceneWithSize:CGSizeMake(boundsSize.height, boundsSize.width)];
         ((BlongMyScene * )scene).skipTutorial = YES;
