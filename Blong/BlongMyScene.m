@@ -208,7 +208,7 @@ int incTimer = 1;
     SKLabelNode *steady = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
     steady.text = @"STEADY";
     steady.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
-    steady.zPosition = 1;
+    steady.zPosition = -1;
     [self addChild:steady];
     [steady runAction:[SKAction sequence:@[[SKAction waitForDuration:2], _topToMiddle, _shrinkAway]]];
     
@@ -220,7 +220,7 @@ int incTimer = 1;
             }
         }
     }];
-    [self runAction:[SKAction sequence:@[[SKAction waitForDuration:2.5], moveInBricks, [SKAction waitForDuration:.3], sound29]]];
+    [self runAction:[SKAction sequence:@[[SKAction waitForDuration:2.3], moveInBricks, [SKAction waitForDuration:.5], sound29]]];
 
     // blong
     SKSpriteNode *blong = [SKSpriteNode spriteNodeWithImageNamed:@"blong_background"];
@@ -230,7 +230,7 @@ int incTimer = 1;
     [blong setAlpha:0];
     SKAction *fadeIn = [SKAction fadeAlphaTo:.2 duration:0];
 
-    [blong runAction:[SKAction sequence:@[[SKAction waitForDuration:4], startPhysics, makeNoise, fadeIn, _fadeOut]]];
+    [blong runAction:[SKAction sequence:@[[SKAction waitForDuration:3.1], startPhysics, makeNoise, fadeIn, _fadeOut]]];
     blong.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     [self addChild:blong];
     
