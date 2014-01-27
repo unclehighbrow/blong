@@ -21,11 +21,13 @@ float maxVelocity = 300;
 float maxYVelocity;
 
 int countdown = 30;
+int bonusCountdown = 10;
 
 // for starting
 bool started;
 bool touchedLeft;
 bool touchedRight;
+bool isBonusLevel = NO;
 
 // sounds for preloading
 SKAction *makeNoise;
@@ -33,7 +35,7 @@ SKAction *bip;
 SKAction *bop;
 SKAction *explosion;
 SKAction *gameOver;
-SKAction *sound11;
+SKAction *ballsComingIn;
 SKAction *sound29;
 
 SKAction *addOne;
@@ -139,10 +141,8 @@ int incTimer = 1;
         makeNoise = [SKAction playSoundFileNamed:@"level_start.wav" waitForCompletion:NO];
         explosion = [SKAction playSoundFileNamed:@"game_over2.wav" waitForCompletion:NO];
         gameOver = [SKAction playSoundFileNamed:@"game_over.wav" waitForCompletion:NO];
-        sound11 = [SKAction playSoundFileNamed:@"11.wav" waitForCompletion:NO];
+        ballsComingIn = [SKAction playSoundFileNamed:@"balls_coming_in.aif" waitForCompletion:NO];
         sound29 = [SKAction playSoundFileNamed:@"29.wav" waitForCompletion:NO];
-        
-
         
         self.paused = NO;
     }
@@ -155,6 +155,7 @@ int incTimer = 1;
         touchedRight = YES;
         started = YES;
         self.physicsWorld.speed = 0;
+        //[self bonusLevel];
         [self startLevel];
     } else {
         touchedLeft = NO;
@@ -201,7 +202,7 @@ int incTimer = 1;
                                          [SKAction runBlock:^{
                                                                         [BlongBall ballOnLeft:YES withScene:self];
                                                                         [BlongBall ballOnLeft:NO withScene:self];}],
-                                         [SKAction waitForDuration:.3], bip]]];
+                                         ballsComingIn]]];
     
     
     // steady
@@ -213,31 +214,47 @@ int incTimer = 1;
     [steady runAction:[SKAction sequence:@[[SKAction waitForDuration:2], _topToMiddle, _shrinkAway]]];
     
     // bricks
-    SKAction *moveInBricks = [SKAction runBlock:^{
-        for (int i = 0; i<_rows; i++) {
-            for (int j = 0; j<_cols; j++) {
-                [BlongBrick brickWithScene:self fromRandom:YES withMotion:YES];
+    SKAction *moveInBricks;
+    if (isBonusLevel) {
+        moveInBricks = [SKAction runBlock:^{
+            for (int i = 0; i < 20; i++) {
+                [BlongBall ballToRandomPointWithScene:self];
             }
-        }
-    }];
-    [self runAction:[SKAction sequence:@[[SKAction waitForDuration:2.3], moveInBricks, [SKAction waitForDuration:.5], sound29]]];
+        }];
+    } else {
+        moveInBricks = [SKAction runBlock:^{
+            for (int i = 0; i<_rows; i++) {
+                for (int j = 0; j<_cols; j++) {
+                    [BlongBrick brickWithScene:self fromRandom:YES withMotion:YES];
+                }
+            }
+        }];
+    }
+    
+    
+    [self runAction:[SKAction sequence:@[[SKAction waitForDuration:2.3], moveInBricks, [SKAction waitForDuration:.3], sound29]]];
 
     // blong
     SKSpriteNode *blong = [SKSpriteNode spriteNodeWithImageNamed:@"blong_background"];
     SKAction *startPhysics = [SKAction runBlock:^{
         self.physicsWorld.speed = 1;
+        if (isBonusLevel) {
+            [self startCountdown];
+        }
     }];
     [blong setAlpha:0];
     SKAction *fadeIn = [SKAction fadeAlphaTo:.2 duration:0];
 
-    [blong runAction:[SKAction sequence:@[[SKAction waitForDuration:3.1], startPhysics, makeNoise, fadeIn, _fadeOut]]];
+    [blong runAction:[SKAction sequence:@[[SKAction waitForDuration:3.5], startPhysics, makeNoise, fadeIn, _fadeOut]]];
     blong.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     [self addChild:blong];
     
     if (_cockblockTimer.isValid) {
         [_cockblockTimer invalidate];
     }
-    _cockblockTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(incrementCockblock:) userInfo:nil repeats:YES];
+    if (!isBonusLevel) {
+        _cockblockTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(incrementCockblock:) userInfo:nil repeats:YES];
+    }
 
 }
 
@@ -256,60 +273,62 @@ int incTimer = 1;
 }
 
 -(void)didBeginContact:(SKPhysicsContact *)contact {
-    SKPhysicsBody *ball, *secondBody;
-    if (contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask) {
-        ball = contact.bodyA;
-        secondBody = contact.bodyB;
-    } else {
-        ball = contact.bodyB;
-        secondBody = contact.bodyA;
-    }
-    
-    // TODO: make this less shitty
-    if (secondBody.categoryBitMask & paddleCat) {
-        float relativeIntersectY = ball.node.position.y - secondBody.node.position.y;
-
-        
-//        this should be cooler and preserve momentum, but doesn't and ends up with nans
-//        NSLog(@"relative intersect: %f", relativeIntersectY);
-//        float newY = 200 * relativeIntersectY/secondBody.node.frame.size.height;
-//        float totalVelocity = sqrtf((ball.velocity.dx * ball.velocity.dx) + (ball.velocity.dy * ball.velocity.dy));
-//        NSLog(@"old total: %f, x,y: %f,%f", totalVelocity, ball.velocity.dx, ball.velocity.dy);
-//        float newX = sqrtf((totalVelocity * totalVelocity) - (newY * newY));
-//        if (ball.velocity.dx > 0) {
-//            newX = -newX;
-//        }
-//        ball.velocity = CGVectorMake(newX, newY);
-//        float newTotalVelocity = sqrtf((ball.velocity.dx * ball.velocity.dx) + (ball.velocity.dy * ball.velocity.dy));
-//        NSLog(@"new total: %f, x,y: %f,%f", newTotalVelocity, newX, newY);
-
-        if (fabsf(ball.velocity.dy) < 500) {
-            float yVelocity = maxVelocity * relativeIntersectY/secondBody.node.frame.size.height * 2;
-            CGVector velocity = [self calculateVelocityFromY:yVelocity];
-            BOOL right = ball.node.position.x > CGRectGetMidX(self.frame);
-            if (right) {
-                velocity.dx = -velocity.dx;
-            }
-            ball.velocity = velocity;
-        }
-        [self runAction:bip];
-    }
-    
-    // this is a check to see if it's moving too slowly horizontally, and give it a little push
-    if (secondBody.categoryBitMask & wallCat) {
-        if (fabsf(ball.velocity.dx) < 30) {
-            if (ball.velocity.dx < 0) {
-                [ball applyImpulse:CGVectorMake(-1, 0)];
-            } else {
-                [ball applyImpulse:CGVectorMake(1, 0)];
-            }
+    if (self.physicsWorld.speed > 0) {
+        SKPhysicsBody *ball, *secondBody;
+        if (contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask) {
+            ball = contact.bodyA;
+            secondBody = contact.bodyB;
+        } else {
+            ball = contact.bodyB;
+            secondBody = contact.bodyA;
         }
         
-    }
-    
-    if (secondBody.categoryBitMask & brickCat) {
-        [self removeBrick:(BlongBrick *)secondBody.node];
-        [self runAction:bop];
+        // TODO: make this less shitty
+        if (secondBody.categoryBitMask & paddleCat) {
+            float relativeIntersectY = ball.node.position.y - secondBody.node.position.y;
+
+            
+    //        this should be cooler and preserve momentum, but doesn't and ends up with nans
+    //        NSLog(@"relative intersect: %f", relativeIntersectY);
+    //        float newY = 200 * relativeIntersectY/secondBody.node.frame.size.height;
+    //        float totalVelocity = sqrtf((ball.velocity.dx * ball.velocity.dx) + (ball.velocity.dy * ball.velocity.dy));
+    //        NSLog(@"old total: %f, x,y: %f,%f", totalVelocity, ball.velocity.dx, ball.velocity.dy);
+    //        float newX = sqrtf((totalVelocity * totalVelocity) - (newY * newY));
+    //        if (ball.velocity.dx > 0) {
+    //            newX = -newX;
+    //        }
+    //        ball.velocity = CGVectorMake(newX, newY);
+    //        float newTotalVelocity = sqrtf((ball.velocity.dx * ball.velocity.dx) + (ball.velocity.dy * ball.velocity.dy));
+    //        NSLog(@"new total: %f, x,y: %f,%f", newTotalVelocity, newX, newY);
+
+            if (fabsf(ball.velocity.dy) < 500) {
+                float yVelocity = maxVelocity * relativeIntersectY/secondBody.node.frame.size.height * 2;
+                CGVector velocity = [self calculateVelocityFromY:yVelocity];
+                BOOL right = ball.node.position.x > CGRectGetMidX(self.frame);
+                if (right) {
+                    velocity.dx = -velocity.dx;
+                }
+                ball.velocity = velocity;
+            }
+            [self runAction:bip];
+        }
+        
+        // this is a check to see if it's moving too slowly horizontally, and give it a little push
+        if (secondBody.categoryBitMask & wallCat) {
+            if (fabsf(ball.velocity.dx) < 30) {
+                if (ball.velocity.dx < 0) {
+                    [ball applyImpulse:CGVectorMake(-1, 0)];
+                } else {
+                    [ball applyImpulse:CGVectorMake(1, 0)];
+                }
+            }
+            
+        }
+        
+        if (secondBody.categoryBitMask & brickCat) {
+            [self removeBrick:(BlongBrick *)secondBody.node];
+            [self runAction:bop];
+        }
     }
 }
 
@@ -421,7 +440,16 @@ int incTimer = 1;
 }
 
 -(void)newLevel {
-    _level++;
+    if (isBonusLevel) {
+        isBonusLevel = NO;
+        _level++;
+    } else {
+        if (_level % 5 == 0) {
+            isBonusLevel = YES;
+        } else {
+            _level++;
+        }
+    }
     self.physicsWorld.speed = 0;
     [self stopCountdown];
     NSMutableArray *ballSequence = [NSMutableArray array];
@@ -430,7 +458,11 @@ int incTimer = 1;
         [ballSequence addObject:[SKAction runBlock:^{
             [self makeParticleAt:ball.position];
             [ball removeFromParent];
-            [self updateScore:10];
+            if (isBonusLevel) {
+                [self updateScore:100];
+            } else {
+                [self updateScore:10];
+            }
             [self runAction:explosion];
         }]];
     }
@@ -439,8 +471,9 @@ int incTimer = 1;
 
     _balls = [NSMutableArray array];
     
-    SKLabelNode *levelText = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Heavy"];
-    levelText.text = [NSString stringWithFormat:@"Level %d", _level];
+    SKLabelNode *levelText = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+    NSString *levelTextText = (isBonusLevel? @"BONUS LEVEL" : [NSString stringWithFormat:@"LEVEL %d", _level]);
+    levelText.text = levelTextText;
     levelText.position = CGPointMake(CGRectGetMidX(self.frame), levelText.frame.size.height * 2);
     [levelText setAlpha:0];
     [self addChild:levelText];
@@ -461,6 +494,7 @@ int incTimer = 1;
 -(void)gameOver {
     if (scoreToAdd > 0) {
         _score+= scoreToAdd;
+        scoreToAdd = 0;
         _scoreLabel.text = [NSString stringWithFormat:@"%05d", _score];
     }
     [BlongGameCenterHelper reportScore:_score];
@@ -481,13 +515,23 @@ int incTimer = 1;
     }
     
     if (self.physicsWorld.speed > 0 && !self.paused && started) {
-        if (_balls.count == 0) {
-            self.physicsWorld.speed = 0;
-            [self gameOver];
-        } else if (_balls.count == 1 && _level != 1) {
-            [self startCountdown];
-        } else if (_balls.count > 1 && _countdownTimer.isValid) {
-            [self stopCountdown];
+        if (isBonusLevel) {
+            if (_balls.count == 0) {
+                [self newLevel];
+            }
+        } else {
+            if (_balls.count == 0) {
+                self.physicsWorld.speed = 0;
+                [self gameOver];
+            } else if (_balls.count == 1 && _level != 1) {
+                [self startCountdown];
+            } else if (_balls.count > 1 && _countdownTimer.isValid) {
+                [self stopCountdown];
+            }
+            
+            if (_bricks.count == 0) {
+                [self newLevel];
+            }
         }
         
         // sometimes balls stick around forever and i don't know why
@@ -497,10 +541,6 @@ int incTimer = 1;
                 [self removeBall:ball];
                 break;
             }
-        }
-        
-        if (_bricks.count == 0) {
-            [self newLevel];
         }
     }
 }
@@ -513,11 +553,16 @@ int incTimer = 1;
 -(void)startCountdown {
     if (!_countdownTimer || !_countdownTimer.isValid) {
         _countdownTimer = [NSTimer scheduledTimerWithTimeInterval:.01f target:self selector:@selector(updateCountdown:) userInfo:nil repeats:YES];
-        _secondsLeft = countdown;
         _countdownClock = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+        if (isBonusLevel) {
+            _secondsLeft = bonusCountdown;
+            _countdownClock.fontColor = [SKColor blueColor];
+        } else {
+            _secondsLeft = countdown;
+            _countdownClock.fontColor = [SKColor redColor];
+        }
         _countdownClock.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
         _countdownClock.text = [NSString stringWithFormat:@"%.02f", _secondsLeft];
-        _countdownClock.fontColor = [SKColor redColor];
         _countdownClock.position = CGPointMake(CGRectGetMidX(self.frame) - _countdownClock.frame.size.width/2, 0);
         _countdownClock.zPosition = 1;
         [self addChild:_countdownClock];
@@ -529,16 +574,21 @@ int incTimer = 1;
         _secondsLeft -= .01;
         _countdownClock.text = [NSString stringWithFormat:@"%.02f", _secondsLeft];
         if (_secondsLeft <= 0.0) {
-            self.paused = YES;
             [_countdownTimer invalidate];
             _countdownClock.text = @"0.00";
-            [self gameOver];
+            if (isBonusLevel) {
+                [self newLevel];
+            } else {
+                self.paused = YES;
+                [self gameOver];
+            }
         }
     }
 }
 
 -(void)bonusLevel {
-    
+    isBonusLevel = YES;
+    [self startLevel];
 }
 
 -(void)makeParticleAt:(CGPoint) point {

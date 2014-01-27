@@ -30,16 +30,47 @@
     }
     
     ball.position = CGPointMake(startX, startY);
-    [ball prepareWithScene:scene withVelocity:CGVectorMake(150, 150)];
+    [ball prepareWithScene:scene withVelocity:CGVectorMake(150, 150)]; // TODO: change direction depending on left?
     SKAction *moveIn = [BlongEasing easeOutElasticFrom:ball.position to:CGPointMake(endX, endY) for:.3];
     [ball runAction:moveIn];
+    return ball;
+}
+
++(BlongBall *) ballToRandomPointWithScene:(BlongMyScene *) scene {
+    BlongBall *ball = [BlongBall spriteNodeWithImageNamed:@"ball"];
+    BOOL startTop = arc4random() % 2;
+    int endX,endY,startX,startY;
+    if (startTop) {
+        startY = scene.frame.size.height + (ball.frame.size.height/2);
+    } else {
+        startY = 0 - (ball.frame.size.height/2);
+    }
+    startX = arc4random() % (int)floor(scene.frame.size.width);
+    
+    int minX = scene.leftPaddle.frame.origin.x + scene.leftPaddle.frame.size.width*2;
+    int maxX = scene.rightPaddle.frame.origin.x - scene.rightPaddle.frame.size.width*2;
+    int minY = (ball.frame.size.height/2);
+    int maxY = scene.frame.size.height - (ball.frame.size.height/2);
+    
+    endX = minX + arc4random() % (maxX - minX);
+    endY = minY + arc4random() % (maxY - minY);
+    
+    int xVelocity = 150;
+    if (endX < scene.frame.size.width/2) {
+        xVelocity *= -1;
+    }
+    
+    ball.position = CGPointMake(startX, startY);
+    [ball prepareWithScene:scene withVelocity:CGVectorMake(xVelocity, 150)];
+    SKAction *moveIn = [BlongEasing easeOutElasticFrom:ball.position to:CGPointMake(endX, endY) for:.3];
+    [ball runAction:moveIn];    
     return ball;
 }
 
 +(BlongBall *) ballWithX:(int)x withY:(int)y withScene:(BlongMyScene *) scene {
     BlongBall *ball = [BlongBall spriteNodeWithImageNamed:@"ball"];
     ball.position = CGPointMake(x, y);
-    [ball prepareWithScene:scene withVelocity:CGVectorMake(150, 150)];
+    [ball prepareWithScene:scene withVelocity:CGVectorMake(150, 150)]; // TODO: somehow make this go the other way?
     return ball;
 }
 

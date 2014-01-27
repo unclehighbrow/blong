@@ -62,6 +62,7 @@
 		BEE5A74C18945C4A0096818D /* bitwise.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BEE5A74B18945C4A0096818D /* bitwise.ttf */; };
 		BEE5A74E1894662A0096818D /* CHECKBK0.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BEE5A74D1894662A0096818D /* CHECKBK0.ttf */; };
 		BEE5A7501894B7220096818D /* blong_background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BEE5A74F1894B7220096818D /* blong_background@2x.png */; };
+		BEE5A75218956CF70096818D /* balls_coming_in.aif in Resources */ = {isa = PBXBuildFile; fileRef = BEE5A75118956CF70096818D /* balls_coming_in.aif */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -147,6 +148,7 @@
 		BEE5A74B18945C4A0096818D /* bitwise.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = bitwise.ttf; sourceTree = "<group>"; };
 		BEE5A74D1894662A0096818D /* CHECKBK0.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = CHECKBK0.ttf; sourceTree = "<group>"; };
 		BEE5A74F1894B7220096818D /* blong_background@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blong_background@2x.png"; sourceTree = "<group>"; };
+		BEE5A75118956CF70096818D /* balls_coming_in.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = balls_coming_in.aif; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -177,6 +179,7 @@
 		BE53320C187CECD1001EB40C /* snd */ = {
 			isa = PBXGroup;
 			children = (
+				BEE5A75118956CF70096818D /* balls_coming_in.aif */,
 				BED2CBF0188B133000826C06 /* 11.wav */,
 				BED2CBF1188B133000826C06 /* 29.wav */,
 				BE53320D187CED77001EB40C /* bip.wav */,
@@ -421,6 +424,7 @@
 				BE53320B187C47CA001EB40C /* right_paddle.png in Resources */,
 				BE50C0091813027E00F43777 /* brick7@2x.png in Resources */,
 				BED2CBF3188B133000826C06 /* 29.wav in Resources */,
+				BEE5A75218956CF70096818D /* balls_coming_in.aif in Resources */,
 				BE90E3771789DCA300CB47AB /* Images.xcassets in Resources */,
 				BE90E3751789DCA300CB47AB /* Spaceship.png in Resources */,
 				BE90E36D1789DCA300CB47AB /* Main.storyboard in Resources */,

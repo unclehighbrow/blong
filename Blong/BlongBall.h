@@ -13,5 +13,6 @@
 @interface BlongBall : SKSpriteNode 
 +(BlongBall *) ballOnLeft:(BOOL) left withScene:(BlongMyScene *) scene;
 +(BlongBall *) ballWithX:(int)X withY:(int)y withScene:(BlongMyScene *) scene;
++(BlongBall *) ballToRandomPointWithScene:(BlongMyScene *) scene;
 +(void) shootBallAtPoint:(CGPoint)point withScene:(BlongMyScene *)scene;
 @end
