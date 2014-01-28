@@ -440,11 +440,24 @@ int incTimer = 1;
 }
 
 -(void)newLevel {
+    NSMutableArray *ballSequence = [NSMutableArray array];
+    int scorePer = isBonusLevel ? 100 : 10;
+    for (BlongBall *ball in _balls) {
+        [ballSequence addObject:[SKAction waitForDuration:.3]];
+        [ballSequence addObject:[SKAction runBlock:^{
+            [self makeParticleAt:ball.position];
+            [ball removeFromParent];
+            [self updateScore:scorePer];
+            [self runAction:explosion];
+        }]];
+    }
+    [self runAction:[SKAction sequence:ballSequence]];
+    
     if (isBonusLevel) {
         isBonusLevel = NO;
         _level++;
     } else {
-        if (_level % 5 == 0) {
+        if (_level % 2 == 0) {
             isBonusLevel = YES;
         } else {
             _level++;
@@ -452,21 +465,7 @@ int incTimer = 1;
     }
     self.physicsWorld.speed = 0;
     [self stopCountdown];
-    NSMutableArray *ballSequence = [NSMutableArray array];
-    for (BlongBall *ball in _balls) {
-        [ballSequence addObject:[SKAction waitForDuration:.3]];
-        [ballSequence addObject:[SKAction runBlock:^{
-            [self makeParticleAt:ball.position];
-            [ball removeFromParent];
-            if (isBonusLevel) {
-                [self updateScore:100];
-            } else {
-                [self updateScore:10];
-            }
-            [self runAction:explosion];
-        }]];
-    }
-    [self runAction:[SKAction sequence:ballSequence]];
+
     _nextCockblock = 0;
 
     _balls = [NSMutableArray array];
