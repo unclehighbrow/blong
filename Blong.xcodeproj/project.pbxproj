@@ -32,6 +32,7 @@
 		BE533216187CED78001EB40C /* game_over2.wav in Resources */ = {isa = PBXBuildFile; fileRef = BE533210187CED78001EB40C /* game_over2.wav */; };
 		BE533217187CED78001EB40C /* level_start.wav in Resources */ = {isa = PBXBuildFile; fileRef = BE533211187CED78001EB40C /* level_start.wav */; };
 		BE533218187CED78001EB40C /* new_level.wav in Resources */ = {isa = PBXBuildFile; fileRef = BE533212187CED78001EB40C /* new_level.wav */; };
+		BE84E7F118D9015900F7D72A /* intro.m4a in Resources */ = {isa = PBXBuildFile; fileRef = BE84E7F018D9015900F7D72A /* intro.m4a */; };
 		BE90E3581789DCA300CB47AB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE90E3571789DCA300CB47AB /* Foundation.framework */; };
 		BE90E35A1789DCA300CB47AB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE90E3591789DCA300CB47AB /* CoreGraphics.framework */; };
 		BE90E35C1789DCA300CB47AB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE90E35B1789DCA300CB47AB /* UIKit.framework */; };
@@ -108,6 +109,7 @@
 		BE533210187CED78001EB40C /* game_over2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = game_over2.wav; sourceTree = "<group>"; };
 		BE533211187CED78001EB40C /* level_start.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = level_start.wav; sourceTree = "<group>"; };
 		BE533212187CED78001EB40C /* new_level.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = new_level.wav; sourceTree = "<group>"; };
+		BE84E7F018D9015900F7D72A /* intro.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = intro.m4a; sourceTree = "<group>"; };
 		BE90E3541789DCA300CB47AB /* Blong.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Blong.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE90E3571789DCA300CB47AB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		BE90E3591789DCA300CB47AB /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -182,6 +184,7 @@
 		BE53320C187CECD1001EB40C /* snd */ = {
 			isa = PBXGroup;
 			children = (
+				BE84E7F018D9015900F7D72A /* intro.m4a */,
 				BEE5A75118956CF70096818D /* balls_coming_in.aif */,
 				BED2CBF0188B133000826C06 /* 11.wav */,
 				BED2CBF1188B133000826C06 /* 29.wav */,
@@ -423,6 +426,7 @@
 				BE90E3641789DCA300CB47AB /* InfoPlist.strings in Resources */,
 				BEE5A74E1894662A0096818D /* CHECKBK0.ttf in Resources */,
 				BED2CBEC188AD47400826C06 /* game_center_button@2x.png in Resources */,
+				BE84E7F118D9015900F7D72A /* intro.m4a in Resources */,
 				BE533218187CED78001EB40C /* new_level.wav in Resources */,
 				BEE5A74C18945C4A0096818D /* bitwise.ttf in Resources */,
 				BE50C00C1813027E00F43777 /* brick10@2x.png in Resources */,
