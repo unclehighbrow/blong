@@ -172,7 +172,7 @@ int incTimer = 1;
     _rows = 6;
     _cols = 3;
     for (int i = 0; i < _rows*_cols; i++) {
-        [_availableBlockSlots addObject:[NSString stringWithFormat:@"%d", i]];
+        [_availableBlockSlots addObject:[NSNumber numberWithInt:i]];
     }
     for (int i = 0; i<_rows; i++) {
         for (int j = 0; j<_cols; j++) {
@@ -187,7 +187,7 @@ int incTimer = 1;
     _rows = 5 + _level;
     _cols = 3;
     for (int i = 0; i < _rows*_cols; i++) {
-        [_availableBlockSlots addObject:[NSString stringWithFormat:@"%d", i]];
+        [_availableBlockSlots addObject:[NSNumber numberWithInt:i]];
     }
 
     // ready
@@ -326,8 +326,13 @@ int incTimer = 1;
         }
         
         if (secondBody.categoryBitMask & brickCat) {
-            [self removeBrick:(BlongBrick *)secondBody.node];
-            [self runAction:bop];
+            BlongBrick *brick = (BlongBrick *)secondBody.node;
+            if (brick.tappable) {
+                // TODO: different sound
+            } else {
+                [self removeBrick:brick];
+                [self runAction:bop];
+            }
         }
     }
 }
@@ -336,7 +341,7 @@ int incTimer = 1;
     [self updateScore:1];
     SKAction *shrink = [SKAction scaleTo:0 duration:.2];
     SKAction *removeFromBricks = [SKAction runBlock:^{
-        _lastBlockCleared = [brick.userData objectForKey:@"blockSlot"];
+        _lastBlockCleared = brick.blockSlot;
         [_availableBlockSlots addObject:_lastBlockCleared];
         [_bricks removeObject:brick];
         [self checkBreakthrough];
@@ -360,7 +365,7 @@ int incTimer = 1;
         for (int i = 0; i < _rows; i++) {
             bool justBrokeThrough = YES;
             for (int j = 0; j < _cols; j++) {
-                if (![_availableBlockSlots containsObject:[NSString stringWithFormat:@"%d", i*_cols + j]]) {
+                if (![_availableBlockSlots containsObject:[NSNumber numberWithInt:i*_cols + j]]) {
                     justBrokeThrough = NO;
                     break;
                 }

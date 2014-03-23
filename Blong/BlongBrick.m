@@ -15,13 +15,19 @@
         return nil;
     }
     BlongBrick *brick = [BlongBrick spriteNodeWithImageNamed:@"brick6"];
+    if (arc4random() % 7 == 1) {
+        brick.color = [SKColor colorWithRed:255 green:215 blue:0 alpha:1];
+        brick.colorBlendFactor = 1.0;
+        brick.userInteractionEnabled = YES;
+        brick.tappable = YES;
+    }
+    
     [brick setYScale:6.0/(float)scene.rows];
     scene.brickSize = brick.frame.size;
 
-    brick.userData = [NSMutableDictionary dictionaryWithCapacity:10];
     [scene.bricks addObject:brick];
     int blockSlotNum;
-    NSString *slot = [scene.availableBlockSlots objectAtIndex:(arc4random() % [scene.availableBlockSlots count])];
+    NSNumber *slot = [scene.availableBlockSlots objectAtIndex:(arc4random() % [scene.availableBlockSlots count])];
     [scene.availableBlockSlots removeObject:slot];
     blockSlotNum = [slot intValue];
 
@@ -64,13 +70,19 @@
         [brick getPhysical];
         [scene addChild:brick];
     }
-    [brick.userData setObject:slot forKey:@"blockSlot"];
+    brick.blockSlot = slot;
+    brick.col = col;
+    brick.row = row;
 
     
     return brick;
 }
 
-+(CGPoint) calculatePositionFromSlot:(NSString *)slot withNode:(SKNode *)node withScene:(BlongMyScene *)scene {
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    [(BlongMyScene *)self.scene removeBrick:self];
+}
+
++(CGPoint) calculatePositionFromSlot:(NSNumber *)slot withNode:(SKNode *)node withScene:(BlongMyScene *)scene {
     int blockSlotNum = [slot intValue];
     
     CGPoint topLeft = [scene topLeft];

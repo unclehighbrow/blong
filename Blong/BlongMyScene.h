@@ -20,6 +20,8 @@
 
 -(CGPoint) getRandomOffScreenPointForNode:(SKNode * )node;
 -(CGPoint) topLeft;
+-(void)removeBrick:(BlongBrick *)brick;
+
 
 @property BOOL skipTutorial;
 
@@ -29,7 +31,7 @@
 @property NSMutableArray *bricks;
 @property SKLabelNode *scoreLabel;
 @property NSMutableArray *availableBlockSlots;
-@property NSString *lastBlockCleared;
+@property NSNumber *lastBlockCleared;
 @property BOOL brokenThrough;
 @property int score;
 @property int rows;

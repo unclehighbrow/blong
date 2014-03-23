@@ -11,8 +11,13 @@
 
 
 @interface BlongBrick : SKSpriteNode
+@property BOOL tappable;
+@property NSNumber *blockSlot;
+@property int col;
+@property int row;
+
 +(BlongBrick *)brickWithScene:(BlongMyScene * )scene fromRandom:(BOOL)random withMotion:(BOOL) motion;
-+(CGPoint) calculatePositionFromSlot:(NSString *)slot withNode:(SKNode *)node withScene:(BlongMyScene *)scene;
++(CGPoint) calculatePositionFromSlot:(NSNumber *)slot withNode:(SKNode *)node withScene:(BlongMyScene *)scene;
 
 
 @end
