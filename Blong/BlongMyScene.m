@@ -175,6 +175,13 @@ int incTimer = 1;
     for (int i = 0; i < _rows*_cols; i++) {
         [_availableBlockSlots addObject:[NSNumber numberWithInt:i]];
     }
+    for (int i = 0; i < _cols; i++) {
+        NSMutableArray *col = [NSMutableArray arrayWithCapacity:_rows];
+        for (int i = 0; i < _rows; i++) {
+            [col addObject:[NSNull null]];
+        }
+        [_bricks addObject:col];
+    }
     
     if (_level == 1) {
         for (int i = 0; i<_rows; i++) {
@@ -338,7 +345,7 @@ int incTimer = 1;
     SKAction *removeFromBricks = [SKAction runBlock:^{
         _lastBlockCleared = brick.blockSlot;
         [_availableBlockSlots addObject:_lastBlockCleared];
-        [_bricks removeObject:brick];
+        [[_bricks objectAtIndex:brick.col] removeObjectAtIndex:brick.row];
         [self checkBreakthrough];
     }];
     SKAction *removeFromParent = [SKAction removeFromParent];
@@ -528,7 +535,7 @@ int incTimer = 1;
                 [self stopCountdown];
             }
             
-            if (_bricks.count == 0) {
+            if (_availableBlockSlots.count == _rows*_cols) { // bricks gone
                 [self newLevel];
             }
         }

@@ -25,16 +25,18 @@
     [brick setYScale:6.0/(float)scene.rows];
     scene.brickSize = brick.frame.size;
 
-    [scene.bricks addObject:brick];
     int blockSlotNum;
     NSNumber *slot = [scene.availableBlockSlots objectAtIndex:(arc4random() % [scene.availableBlockSlots count])];
     [scene.availableBlockSlots removeObject:slot];
     blockSlotNum = [slot intValue];
-
     
     CGPoint topLeft = [scene topLeft];
     int col = blockSlotNum % scene.cols;
     int row = blockSlotNum / scene.cols;
+    
+    NSMutableArray *rowArray = [scene.bricks objectAtIndex:col];
+    [rowArray insertObject:brick atIndex:row];
+
 
     CGPoint endPoint = [BlongBrick calculatePositionFromSlot:slot withNode:brick withScene:scene];
     if (motion) {
