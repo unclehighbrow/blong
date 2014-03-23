@@ -15,6 +15,7 @@
 
 SKLabelNode *go;
 BlongGameCenterButton *gameCenterButton;
+AVAudioPlayer *backgroundAudioPlayer;
 
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
@@ -22,9 +23,11 @@ BlongGameCenterButton *gameCenterButton;
         SKSpriteNode *title = [SKSpriteNode spriteNodeWithImageNamed:@"title"];
         title.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
         [self addChild:title];
+        [self startBackgroundMusic];
+        
         
         go = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
-        go.color = [SKColor whiteColor];
+        go.fontColor = [SKColor whiteColor];
         go.text = @"LET'S DO THIS.";
         go.fontSize = 40;
         go.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height/6);
@@ -40,8 +43,24 @@ BlongGameCenterButton *gameCenterButton;
     return self;
 }
 
+- (void)startBackgroundMusic {
+    NSError *err;
+    NSURL *file = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"intro.m4a" ofType:nil]];
+    backgroundAudioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:file error:&err];
+    if (err) {
+        NSLog(@"error in audio play %@",[err userInfo]);
+        return;
+    }
+    [backgroundAudioPlayer prepareToPlay];
+    backgroundAudioPlayer.numberOfLoops = 1;
+    [backgroundAudioPlayer setVolume:1.0];
+    [backgroundAudioPlayer play];
+}
+
+
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    go.color = [SKColor blackColor];
+    [backgroundAudioPlayer stop];
+    go.fontColor = [SKColor blackColor];
     SKScene *gameScene = [[BlongMyScene alloc] initWithSize:self.size];
     SKTransition *transition = [SKTransition flipHorizontalWithDuration:1];
     transition.pausesIncomingScene = NO;
