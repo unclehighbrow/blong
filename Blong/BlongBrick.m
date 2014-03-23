@@ -15,7 +15,7 @@
         return nil;
     }
     BlongBrick *brick = [BlongBrick spriteNodeWithImageNamed:@"brick6"];
-    if (arc4random() % 7 == 1) {
+    if (arc4random() % 7 == 1 && scene.level != 1) {
         brick.color = [SKColor colorWithRed:255 green:215 blue:0 alpha:1];
         brick.colorBlendFactor = 1.0;
         brick.userInteractionEnabled = YES;

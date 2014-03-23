@@ -156,28 +156,14 @@ int incTimer = 1;
         started = YES;
         self.physicsWorld.speed = 0;
         //[self bonusLevel];
+        _level = 2;
         [self startLevel];
     } else {
         touchedLeft = NO;
         touchedRight = NO;
         started = NO;
         self.paused = NO;
-        [self firstLevel];
-    }
-}
-
-
--(void)firstLevel {
-    _brokenThrough = NO;
-    _rows = 6;
-    _cols = 3;
-    for (int i = 0; i < _rows*_cols; i++) {
-        [_availableBlockSlots addObject:[NSNumber numberWithInt:i]];
-    }
-    for (int i = 0; i<_rows; i++) {
-        for (int j = 0; j<_cols; j++) {
-            [BlongBrick brickWithScene:self fromRandom:NO withMotion:NO];
-        }
+        [self startLevel];
     }
 }
 
@@ -188,6 +174,15 @@ int incTimer = 1;
     _cols = 3;
     for (int i = 0; i < _rows*_cols; i++) {
         [_availableBlockSlots addObject:[NSNumber numberWithInt:i]];
+    }
+    
+    if (_level == 1) {
+        for (int i = 0; i<_rows; i++) {
+            for (int j = 0; j<_cols; j++) {
+                [BlongBrick brickWithScene:self fromRandom:NO withMotion:NO];
+            }
+        }
+        return;
     }
 
     // ready
