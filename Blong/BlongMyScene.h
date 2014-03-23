@@ -27,6 +27,8 @@
 
 @property BlongPaddle *leftPaddle;
 @property BlongPaddle *rightPaddle;
+@property SKNode *topWall;
+@property SKNode *bottomWall;
 @property NSMutableArray *balls;
 @property NSMutableArray *bricks;
 @property SKLabelNode *scoreLabel;

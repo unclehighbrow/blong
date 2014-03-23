@@ -90,10 +90,10 @@ int incTimer = 1;
         
         // paddles
         _leftPaddle = [BlongPaddle paddle:@"left_paddle"];
-        _leftPaddle.position = CGPointMake(3.5 * _leftPaddle.frame.size.width, CGRectGetMidY(self.frame));
+        _leftPaddle.position = CGPointMake(3.5 * _leftPaddle.frame.size.width, self.frame.size.height); // CGRectGetMidY(self.frame)
         [self addChild:_leftPaddle];
         _rightPaddle = [BlongPaddle paddle:@"right_paddle"];
-        _rightPaddle.position = CGPointMake(self.frame.size.width - 3.5*_rightPaddle.frame.size.width, CGRectGetMidY(self.frame));
+        _rightPaddle.position = CGPointMake(self.frame.size.width - 3.5*_rightPaddle.frame.size.width, 1);
         [self addChild:_rightPaddle];
         
         // bricks and balls holders
@@ -101,23 +101,24 @@ int incTimer = 1;
         _balls = [NSMutableArray array];
         _level = 1;
         
-        // physics and walls
-        SKNode *topWall = [SKNode node];
-        topWall.physicsBody = [SKPhysicsBody bodyWithEdgeFromPoint:CGPointMake(0,0) toPoint:CGPointMake(self.frame.size.width,0)];
-        topWall.physicsBody.restitution = 1;
-        topWall.physicsBody.categoryBitMask = wallCat;
-        topWall.physicsBody.friction = 0;
-        topWall.position = CGPointMake(0, self.frame.size.height);
-        [self addChild:topWall];
 
-        SKNode *bottomWall = [SKNode node];
-        bottomWall.physicsBody = [SKPhysicsBody bodyWithEdgeFromPoint:CGPointMake(0,0) toPoint:CGPointMake(self.frame.size.width,0)];
-        bottomWall.physicsBody.restitution = 1;
-        bottomWall.physicsBody.categoryBitMask = wallCat;
-        bottomWall.physicsBody.friction = NO;
-        bottomWall.position = CGPointMake(0,0);
-        [self addChild:bottomWall];
-                          
+        // physics and walls
+        _topWall = [SKNode node];
+        _topWall.physicsBody = [SKPhysicsBody bodyWithEdgeFromPoint:CGPointMake(0,0) toPoint:CGPointMake(self.frame.size.width,0)];
+        _topWall.physicsBody.restitution = .5;
+        _topWall.physicsBody.categoryBitMask = wallCat;
+        _topWall.physicsBody.friction = 0;
+        _topWall.position = CGPointMake(0, self.frame.size.height);
+        [self addChild:_topWall];
+        
+        _bottomWall = [SKNode node];
+        _bottomWall.physicsBody = [SKPhysicsBody bodyWithEdgeFromPoint:CGPointMake(0,0) toPoint:CGPointMake(self.frame.size.width,0)];
+        _bottomWall.physicsBody.restitution = .5;
+        _bottomWall.physicsBody.categoryBitMask = wallCat;
+        _bottomWall.physicsBody.friction = NO;
+        _bottomWall.position = CGPointMake(0,0);
+        [self addChild:_bottomWall];
+        
         self.physicsWorld.gravity = CGVectorMake(0, 0);
         self.physicsWorld.contactDelegate = self;
         self.physicsWorld.speed = 1;
@@ -157,14 +158,27 @@ int incTimer = 1;
         self.physicsWorld.speed = 0;
         //[self bonusLevel];
         _level = 2;
-        [self startLevel];
     } else {
         touchedLeft = NO;
         touchedRight = NO;
         started = NO;
         self.paused = NO;
-        [self startLevel];
     }
+    [self throwInPaddles];
+    [self startLevel];
+
+}
+
+-(void)throwInPaddles {
+    [self runAction:[SKAction sequence:@[
+                                         [SKAction waitForDuration:1],
+                                         [SKAction runBlock:^{
+                                            CGVector leftVector = CGVectorMake(0, -5000);
+                                            [[_leftPaddle physicsBody] applyForce:leftVector];
+                                            CGVector rightVector = CGVectorMake(0, 5000);
+                                            [[_rightPaddle physicsBody] applyForce:rightVector];
+                                            }]
+                                         ]]];
 }
 
 -(void)startLevel {
@@ -432,6 +446,7 @@ int incTimer = 1;
         if (!touchedLeft) {
             touchedLeft = YES;
             [BlongBall shootBallAtPoint:point withScene:self];
+            [_leftPaddle getPhysical];
         }
     } else {
         CGPoint point = CGPointMake(_rightPaddle.position.x, location.y);
@@ -439,10 +454,13 @@ int incTimer = 1;
         if (!touchedRight) {
             touchedRight = YES;
             [BlongBall shootBallAtPoint:point withScene:self];
+            [_rightPaddle getPhysical];
         }
     }
     if (touchedLeft && touchedRight) {
         started = YES;
+        _topWall.physicsBody.restitution = 1;
+        _bottomWall.physicsBody.restitution = 1;
     }
 }
 

@@ -12,23 +12,33 @@
 
 +(BlongPaddle *) paddle:(NSString *)image {
     BlongPaddle *paddle = [BlongPaddle spriteNodeWithImageNamed:image];
-    [paddle makePhysicsBody];
+    [paddle makePhysicsBodyWithDynamic:YES];
     paddle.name = image;
     paddle.centerRect = CGRectMake(.5, .25, 0, .5);
     return paddle;
 }
 
--(void)makePhysicsBody {
+-(void)makePhysicsBodyWithDynamic:(BOOL)dynamic {
     self.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:self.size];
-    self.physicsBody.dynamic = NO;
-    self.physicsBody.restitution = 1;
-    self.physicsBody.friction = 0;
+    self.physicsBody.dynamic = YES;
+    self.physicsBody.allowsRotation = NO;
+    self.physicsBody.restitution = .5;
+    self.physicsBody.friction = 1;
     self.physicsBody.categoryBitMask = paddleCat;
+    
+    if (!dynamic) {
+        [self getPhysical];
+    }
 }
 
 -(void)shrink:(float)shrinkage {
     SKAction *shrink = [SKAction scaleXBy:1 y:shrinkage duration:1];
-    SKAction *remakeBody = [SKAction runBlock:^{[self makePhysicsBody];}];
+    SKAction *remakeBody = [SKAction runBlock:^{[self makePhysicsBodyWithDynamic:NO];}];
     [self runAction:[SKAction sequence:@[shrink, remakeBody]]];
+}
+
+-(void) getPhysical {
+    self.physicsBody.dynamic = NO;
+    self.physicsBody.restitution = 1;
 }
 @end
