@@ -157,7 +157,7 @@ int incTimer = 1;
         started = YES;
         self.physicsWorld.speed = 0;
         //[self bonusLevel];
-        _level = 2;
+        _level = 3;
     } else {
         touchedLeft = NO;
         touchedRight = NO;
@@ -183,12 +183,18 @@ int incTimer = 1;
 
 -(void)startLevel {
     _brokenThrough = NO;
+    if (_level == 2) {
+        _rows = 1;
+        _cols = 1;
+    } else {
+        _rows = 5 + _level;
+        _cols = 3;
+    }
     
-    _rows = 5 + _level;
-    _cols = 3;
     for (int i = 0; i < _rows*_cols; i++) {
         [_availableBlockSlots addObject:[NSNumber numberWithInt:i]];
     }
+    _bricks = [NSMutableArray array]; // this is to stop weirdness coming out of level 2. shouldn't be necessary
     for (int i = 0; i < _cols; i++) {
         NSMutableArray *col = [NSMutableArray arrayWithCapacity:_rows];
         for (int i = 0; i < _rows; i++) {
@@ -203,6 +209,11 @@ int incTimer = 1;
                 [BlongBrick brickWithScene:self fromRandom:NO withMotion:NO];
             }
         }
+        return;
+    }
+    if (_level == 2) {
+        [BlongBrick centeredTappableBrickWithScene:self];
+        _brokenThrough = YES; // the breakthrough thing accesses uninitialized arrays
         return;
     }
 
@@ -354,6 +365,7 @@ int incTimer = 1;
 }
 
 -(void)removeBrick:(BlongBrick *)brick {
+
     [self updateScore:1];
     SKAction *shrink = [SKAction scaleTo:0 duration:.2];
     SKAction *removeFromBricks = [SKAction runBlock:^{
@@ -377,6 +389,9 @@ int incTimer = 1;
 }
 
 -(void)checkBreakthrough {
+    if (_level == 2) {
+        [self newLevel];
+    }
     if (!_brokenThrough) {
         for (int i = 0; i < _rows; i++) {
             bool justBrokeThrough = YES;
@@ -482,7 +497,7 @@ int incTimer = 1;
         isBonusLevel = NO;
         _level++;
     } else {
-        if (_level % 2 == 0) {
+        if (_level % 4 == 0) {
             isBonusLevel = YES;
         } else {
             _level++;
@@ -547,7 +562,7 @@ int incTimer = 1;
             if (_balls.count == 0) {
                 self.physicsWorld.speed = 0;
                 [self gameOver];
-            } else if (_balls.count == 1 && _level != 1) {
+            } else if (_balls.count == 1 && _level > 2) {
                 [self startCountdown];
             } else if (_balls.count > 1 && _countdownTimer.isValid) {
                 [self stopCountdown];
