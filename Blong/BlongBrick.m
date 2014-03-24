@@ -19,6 +19,7 @@
     brick.position = CGPointMake(CGRectGetMidX(scene.frame), CGRectGetMidY(scene.frame));
     brick.blockSlot = [NSNumber numberWithInt:0];
     [[scene bricks] insertObject:[NSMutableArray arrayWithObject:brick] atIndex:0];
+    [brick getPhysical];
     [scene addChild:brick];
     return brick;
 }
@@ -28,7 +29,6 @@
         return nil;
     }
     BlongBrick *brick = [BlongBrick spriteNodeWithImageNamed:@"brick6"];
-    brick.userInteractionEnabled = YES;
 
     if (arc4random() % 7 == 1 && scene.level != 1) {
         brick.color = [SKColor colorWithRed:255 green:215 blue:0 alpha:1];
@@ -94,46 +94,6 @@
     return brick;
 }
 
--(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    BlongMyScene *blongScene = (BlongMyScene *)self.scene;
-    if (self.tappable) {
-        [blongScene removeBrick:self];
-    } else {
-        NSLog(@"else");
-        if (self.col > 0) {
-            BlongBrick *left = [[blongScene.bricks objectAtIndex:(self.col - 1)] objectAtIndex:self.row];
-            if (left != (id)[NSNull null] && left.tappable) {
-                [blongScene removeBrick:left];
-                return;
-            }
-            NSLog(@"found left");
-        }
-        if (self.col < blongScene.cols + 1) {
-            BlongBrick *right = [[blongScene.bricks objectAtIndex:(self.col + 1)] objectAtIndex:self.row];
-            if (right != (id)[NSNull null] && right.tappable) {
-                [blongScene removeBrick:right];
-                return;
-            }
-            NSLog(@"found right");
-        }
-        if (self.row > 0) {
-            BlongBrick *down = [[blongScene.bricks objectAtIndex:self.col] objectAtIndex:(self.row - 1)];
-            if (down != (id)[NSNull null] && down.tappable) {
-                [blongScene removeBrick:down];
-                return;
-            }
-            NSLog(@"found down");
-        }
-        if (self.row < blongScene.rows + 1) {
-            BlongBrick *up = [[blongScene.bricks objectAtIndex:self.col ] objectAtIndex:(self.row + 1)];
-            if (up != (id)[NSNull null] && up.tappable) {
-                [blongScene removeBrick:up];
-                return;
-            }
-            NSLog(@"found right");
-        }
-    }
-}
 
 +(CGPoint) calculatePositionFromSlot:(NSNumber *)slot withNode:(SKNode *)node withScene:(BlongMyScene *)scene {
     int blockSlotNum = [slot intValue];

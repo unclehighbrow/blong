@@ -449,6 +449,29 @@ int incTimer = 1;
     }
 }
 
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    for (UITouch *touch in touches) {
+        float width = self.frame.size.width/13;
+        float height = self.frame.size.height/8;
+        CGPoint touchPoint = [touch locationInNode:self];
+        CGRect touchRect = CGRectMake(touchPoint.x - width/2, touchPoint.y - height/2, width, height);
+//        if (true) { // the actual rect seems bigger than this looks, i'm not sure why
+//            SKSpriteNode *touchRectNode = [SKSpriteNode spriteNodeWithColor:[SKColor redColor] size:touchRect.size];
+//            touchRectNode.position = touchPoint;
+//            [touchRectNode runAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:1], [SKAction removeFromParent]]]];
+//            [self addChild:touchRectNode];
+//        }
+        [self.physicsWorld enumerateBodiesInRect:touchRect usingBlock:^(SKPhysicsBody *body, BOOL *stop) {
+            if (body.categoryBitMask & brickCat) {
+                BlongBrick *brick = (BlongBrick *)body.node;
+                if (brick.tappable) {
+                    [self removeBrick:brick];
+                }
+            }
+        }];
+    }
+}
+
 -(void)processTouch:(UITouch *)touch {
     if (self.paused) {
         return;
