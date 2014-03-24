@@ -12,4 +12,10 @@
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
     [(BlongViewController *)self.scene.view.window.rootViewController showGameCenter];
 }
++(SKSpriteNode *)spriteNodeWithImageNamed:(NSString *)name {
+    if (self = [super name]) {
+        
+    }
+    return self;
+}
 @end

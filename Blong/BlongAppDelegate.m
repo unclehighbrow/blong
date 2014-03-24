@@ -16,7 +16,7 @@
 
 @implementation BlongAppDelegate
 
-BOOL gameCenter = NO;
+BOOL gameCenter = YES;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {

@@ -171,7 +171,7 @@ int incTimer = 1;
 
 -(void)throwInPaddles {
     [self runAction:[SKAction sequence:@[
-                                         [SKAction waitForDuration:1],
+                                         [SKAction waitForDuration:.5],
                                          [SKAction runBlock:^{
                                             CGVector leftVector = CGVectorMake(0, -5000);
                                             [[_leftPaddle physicsBody] applyForce:leftVector];
