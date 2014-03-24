@@ -26,7 +26,11 @@ BOOL gameCenter = YES;
             if ([GKLocalPlayer localPlayer].authenticated) { // logged in
                 [BlongGameCenterHelper retrieveScores];
             } else if (loginVC) { // logging in
-                [self.window.rootViewController presentViewController:loginVC animated:YES completion:nil];
+                [self.window.rootViewController presentViewController:loginVC animated:YES completion:^{
+                    if ([GKLocalPlayer localPlayer].authenticated) {
+                        [BlongGameCenterHelper retrieveScores];
+                    }
+                }];
             } else { // logged out
             }
         };

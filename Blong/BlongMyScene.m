@@ -76,11 +76,12 @@ int incTimer = 1;
         
         // score
         _score = 0;
-        _scoreLabel = [SKLabelNode labelNodeWithFontNamed:@"MICR Encoding"]; // 
+        _scoreLabel = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"]; // "MICR Encoding"
         _scoreLabel.text = @"00000";
-        _scoreLabel.fontSize = 50;
+        _scoreLabel.fontSize = 25;
         _scoreLabel.fontColor = [SKColor whiteColor];
         _scoreLabel.position = CGPointMake(_scoreLabel.frame.size.width/2, 0);
+        _scoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
         [self addChild:_scoreLabel];
         scoreToAdd = 0;
 
@@ -402,6 +403,10 @@ int incTimer = 1;
                 }
             }
             if (justBrokeThrough) {
+                // if they haven't touched the other paddle yet, we need to make them static
+                [_leftPaddle getPhysical];
+                [_rightPaddle getPhysical];
+                
                 SKLabelNode *breakthrough = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
                 breakthrough.text = @"BREAKTHROUGH";
                 breakthrough.position = CGPointMake(CGRectGetMidX(self.frame), 0);
@@ -560,7 +565,7 @@ int incTimer = 1;
         _scoreLabel.text = [NSString stringWithFormat:@"%05d", _score];
     }
     [BlongGameCenterHelper reportScore:_score];
-    SKScene *gameOverScene = [[BlongGameOverScene alloc] initWithSize:self.size];
+    BlongGameOverScene *gameOverScene = [[BlongGameOverScene alloc] initWithSize:self.size andScore:_score];
     SKTransition *transition = [SKTransition fadeWithDuration:2];
     [self runAction:gameOver];
     [self.view presentScene:gameOverScene transition:transition];

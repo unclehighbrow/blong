@@ -35,10 +35,7 @@ AVAudioPlayer *backgroundAudioPlayer;
         [go runAction:fadeIn];
         [self addChild:go];
         
-        gameCenterButton = [BlongGameCenterButton spriteNodeWithImageNamed:@"game_center_button"];
-        gameCenterButton.position = CGPointMake(gameCenterButton.frame.size.width/2, gameCenterButton.frame.size.height/2);
-        gameCenterButton.userInteractionEnabled = YES;
-        [self addChild:gameCenterButton];
+        [BlongGameCenterButton gameCenterButtonWithScene:self];
     }
     return self;
 }

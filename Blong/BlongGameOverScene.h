@@ -7,7 +7,9 @@
 //
 
 #import <SpriteKit/SpriteKit.h>
+@class BlongGameCenterHelper;
 
 @interface BlongGameOverScene : SKScene
-
+-(id)initWithSize:(CGSize)size andScore:(int) score;
+@property int score;
 @end

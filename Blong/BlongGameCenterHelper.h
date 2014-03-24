@@ -10,6 +10,8 @@
 #import <GameKit/GameKit.h>
 
 @interface BlongGameCenterHelper : NSObject
-+ (void) retrieveScores;
-+ (void) reportScore:(int) score;
++(void) retrieveScores;
++(void) reportScore:(int) score;
++(NSString *) highScore;
+
 @end

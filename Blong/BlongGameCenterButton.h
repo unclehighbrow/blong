@@ -10,5 +10,5 @@
 #import "BlongViewController.h"
 
 @interface BlongGameCenterButton : SKSpriteNode
-
++(BlongGameCenterButton *)gameCenterButtonWithScene:(SKScene *)scene;
 @end

@@ -10,21 +10,28 @@
 
 @implementation BlongGameCenterHelper
 
-+ (void) retrieveScores {
+static NSString *_highScore;
+static NSString *scoreBoardName = @"default2014";
+
++(NSString *) highScore {
+    return _highScore;
+}
+
++(void)retrieveScores {
     GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
     if (localPlayer.authenticated) {
         GKLeaderboard *leaderboardRequest = [[GKLeaderboard alloc] initWithPlayerIDs: @[localPlayer.playerID]];
         if (leaderboardRequest != nil) {
             leaderboardRequest.playerScope = GKLeaderboardPlayerScopeFriendsOnly;
             leaderboardRequest.timeScope = GKLeaderboardTimeScopeAllTime;
-            leaderboardRequest.identifier = @"default2014";
+            leaderboardRequest.identifier = scoreBoardName;
             leaderboardRequest.range = NSMakeRange(1,1);
             [leaderboardRequest loadScoresWithCompletionHandler: ^(NSArray *scores, NSError *error) {
                 if (error != nil) {
-                    NSLog(@"coulnd't get high score");
+                    NSLog(@"couldn't get high score");
                 }
                 if (scores != nil) {
-                    NSLog(@"got score %@", ((GKScore *)scores[0]).formattedValue);
+                    _highScore = [NSString stringWithFormat:@"%lld", ((GKScore *)scores[0]).value];
                 }
             }];
         }
@@ -34,9 +41,12 @@
 
 +(void)reportScore:(int) score {
     if ([GKLocalPlayer localPlayer].authenticated) { // logged in
-        GKScore *scoreReporter = [[GKScore alloc] initWithLeaderboardIdentifier:@"default2014"];
+        GKScore *scoreReporter = [[GKScore alloc] initWithLeaderboardIdentifier:scoreBoardName];
         scoreReporter.value = score;
         scoreReporter.context = 0;
+        if (!_highScore || [_highScore intValue] < score) {
+            _highScore = [NSString stringWithFormat:@"%d", score];
+        }
         
         [GKScore reportScores:@[scoreReporter] withCompletionHandler:^(NSError *error) {
             if (error) {
