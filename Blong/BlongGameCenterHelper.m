@@ -10,7 +10,7 @@
 
 @implementation BlongGameCenterHelper
 
-static NSString *_highScore;
+static NSString *_highScore = 0;
 static NSString *scoreBoardName = @"default2014";
 
 +(NSString *) highScore {
