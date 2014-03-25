@@ -71,7 +71,7 @@ int minCountdown = 10;
         _scoreLabel.text = @"00000";
         _scoreLabel.fontSize = 25;
         _scoreLabel.fontColor = [SKColor whiteColor];
-        _scoreLabel.position = CGPointMake(_scoreLabel.frame.size.width/2, 0);
+        _scoreLabel.position = CGPointMake(0, 0);
         _scoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
         [self addChild:_scoreLabel];
         scoreToAdd = 0;
