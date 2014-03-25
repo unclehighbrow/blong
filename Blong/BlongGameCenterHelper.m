@@ -44,15 +44,15 @@ static NSString *scoreBoardName = @"default2014";
         GKScore *scoreReporter = [[GKScore alloc] initWithLeaderboardIdentifier:scoreBoardName];
         scoreReporter.value = score;
         scoreReporter.context = 0;
-        if (!_highScore || [_highScore intValue] < score) {
-            _highScore = [NSString stringWithFormat:@"%d", score];
-        }
         
         [GKScore reportScores:@[scoreReporter] withCompletionHandler:^(NSError *error) {
             if (error) {
                 NSLog(@"that went poorly: %@", error);
             }
         }];
+    }
+    if (!_highScore || [_highScore intValue] < score) {
+        _highScore = [NSString stringWithFormat:@"%d", score];
     }
 }
 @end
