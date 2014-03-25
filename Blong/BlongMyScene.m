@@ -60,6 +60,10 @@ int incCockBlock = 4;
 int baseCountdown = 30;
 int minCountdown = 10;
 
+int bonusLevelEvery = 3;
+
+CGPoint textEnd;
+
 
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
@@ -119,9 +123,9 @@ int minCountdown = 10;
         [BlongPauseButton pauseButtonWithScene:self];
         
         // SKActions
-        CGPoint textStart = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height);
-        CGPoint textEnd = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
-        _topToMiddle = [BlongEasing easeOutElasticFrom:textStart to:textEnd for:.5];
+        CGPoint topStart = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height);
+        textEnd = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
+        _topToMiddle = [BlongEasing easeOutElasticFrom:topStart to:textEnd for:.5];
         _shrinkAway = [SKAction scaleTo:0 duration:.3];
         _fadeOut = [SKAction fadeOutWithDuration:2];
         addOne = [SKAction sequence:@[[SKAction runBlock:^{
@@ -189,7 +193,7 @@ int minCountdown = 10;
     _bricks = [NSMutableArray array]; // this is to stop weirdness coming out of level 2. shouldn't be necessary
     for (int i = 0; i < _cols; i++) {
         NSMutableArray *col = [NSMutableArray arrayWithCapacity:_rows];
-        for (int i = 0; i < _rows; i++) {
+        for (int j = 0; j < _rows; j++) {
             [col addObject:[NSNull null]];
         }
         [_bricks addObject:col];
@@ -498,30 +502,62 @@ int minCountdown = 10;
     }
 }
 
--(void)newLevel {
-    NSMutableArray *ballSequence = [NSMutableArray array];
-    int scorePer = isBonusLevel ? 100 : 10;
+-(void)tabulateBonus {
+    long ballsSaved = _balls.count;
+    [self runAction:explosion];
     for (BlongBall *ball in _balls) {
-        [ballSequence addObject:[SKAction waitForDuration:.3]];
-        [ballSequence addObject:[SKAction runBlock:^{
-            [self makeParticleAt:ball.position];
-            [ball removeFromParent];
-            [self updateScore:scorePer];
-            [self runAction:explosion];
-        }]];
+        [self makeParticleAt:ball.position];
+        [ball removeFromParent];
     }
-    [self runAction:[SKAction sequence:ballSequence]];
+    SKLabelNode *ballsSavedLabel = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+    ballsSavedLabel.text = [NSString stringWithFormat:@"%ld BALLS", ballsSaved];
+    ballsSavedLabel.position = CGPointMake(0-ballsSavedLabel.frame.size.width/2, CGRectGetMidY(self.frame));
+    [self addChild:ballsSavedLabel];
     
+    [ballsSavedLabel runAction:[SKAction sequence:@[[SKAction waitForDuration:1],
+                                                    [BlongEasing easeOutElasticFrom:ballsSavedLabel.position to:textEnd for:.5],
+                                                    _shrinkAway]]];
+    
+    NSString *powerUpString;
+    if (ballsSaved == 0l) {
+        powerUpString = @"NO BONUS";
+    }
+    
+    SKLabelNode *bonusLabel = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+    bonusLabel.text = @"DICKS";
+    bonusLabel.position = CGPointMake(self.frame.size.width + bonusLabel.frame.size.width/2, CGRectGetMidY(self.frame));
+    [self addChild:bonusLabel];
+    [bonusLabel runAction:[SKAction sequence:@[[SKAction waitForDuration:2],
+                                               [BlongEasing easeOutElasticFrom:bonusLabel.position to:textEnd for:.5],
+                                               _shrinkAway]]];
+    
+}
+
+-(void)newLevel {
     if (isBonusLevel) {
+        [self tabulateBonus];
         isBonusLevel = NO;
         _level++;
     } else {
-        if (_level % 4 == 0) {
+        NSMutableArray *ballSequence = [NSMutableArray array];
+        int scorePer = 10;
+        for (BlongBall *ball in _balls) {
+            [ballSequence addObject:[SKAction waitForDuration:.3]];
+            [ballSequence addObject:[SKAction runBlock:^{
+                [self makeParticleAt:ball.position];
+                [ball removeFromParent];
+                [self updateScore:scorePer];
+                [self runAction:explosion];
+            }]];
+        }
+        [self runAction:[SKAction sequence:ballSequence]];
+        if (_level % bonusLevelEvery == 0) {
             isBonusLevel = YES;
         } else {
             _level++;
         }
     }
+
     self.physicsWorld.speed = 0;
     [self stopCountdown];
 
@@ -536,7 +572,7 @@ int minCountdown = 10;
     [levelText setAlpha:0];
     [self addChild:levelText];
     SKAction *waitFadeIn_fadeOutStartLevel = [SKAction sequence:@[
-          [SKAction waitForDuration:.5],
+          [SKAction waitForDuration:(_level % bonusLevelEvery == 1 ? 2.5 :.5)], // after bonus level
           [SKAction fadeInWithDuration:1],
           [SKAction waitForDuration:.5],
           [SKAction fadeOutWithDuration:1],
