@@ -12,6 +12,6 @@
 
 }
 +(BlongPaddle *) paddle:(NSString *)image;
--(void) shrink:(float)shrinkage;
+-(void) shrink;
 -(void) getPhysical;
 @end

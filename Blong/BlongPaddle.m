@@ -10,6 +10,11 @@
 #import "BlongMyScene.h"
 @implementation BlongPaddle
 
+float scale = 1;
+
+static float shrinkage = .9;
+static float maxShrinkage = .35;
+
 +(BlongPaddle *) paddle:(NSString *)image {
     BlongPaddle *paddle = [BlongPaddle spriteNodeWithImageNamed:image];
     [paddle makePhysicsBodyWithDynamic:YES];
@@ -31,7 +36,11 @@
     }
 }
 
--(void)shrink:(float)shrinkage {
+-(void)shrink {
+    if (scale < maxShrinkage) {
+        return;
+    }
+    scale *= shrinkage;
     SKAction *shrink = [SKAction scaleXBy:1 y:shrinkage duration:1];
     SKAction *remakeBody = [SKAction runBlock:^{[self makePhysicsBodyWithDynamic:NO];}];
     [self runAction:[SKAction sequence:@[shrink, remakeBody]]];

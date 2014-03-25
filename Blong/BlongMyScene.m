@@ -17,10 +17,11 @@ const uint32_t paddleCat = 0x1 << 2;
 const uint32_t wallCat = 0x1 << 3;
 const uint32_t brickCat = 0x1 << 4;
 
-float maxVelocity = 300;
+float baseMaxVelocity = 285;
+float maxMaxVelocity = 800;
+float incMaxVelocity = 15;
 float maxYVelocity;
 
-int countdown = 30;
 int bonusCountdown = 10;
 
 // for starting
@@ -44,35 +45,25 @@ int scoreToAdd;
 
 // leveling
 // bigger
-int minRows = 5;
+int baseRows = 5;
 int maxRows = 10;
-int incRows = 3;
 
-int minCols = 3;
-int maxCols = 3;
-int incCols = 0;
-
-int minBalls = 2;
-int maxBalls = 4;
-int incBalls = 10;
+int baseCols = 3;
+int maxCols = 5;
+int incCols = 5;
 
 // smaller
-int minCockBlock = 10;
-int maxCockBlock = 5;
+int baseCockBlock = 10;
+int minCockBlock = 5;
 int incCockBlock = 4;
 
-int minScale = 1;
-int maxScale = .1;
-int incScale = 2;
-
-int minTimer = 30;
-int maxTimer = 10;
-int incTimer = 1;
+int baseCountdown = 30;
+int minCountdown = 10;
 
 
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
-        maxYVelocity = maxVelocity*.7;
+        maxYVelocity = [self levelVelocity] *.7;
         
         // score
         _score = 0;
@@ -188,8 +179,8 @@ int incTimer = 1;
         _rows = 1;
         _cols = 1;
     } else {
-        _rows = 5 + _level;
-        _cols = 3;
+        _rows = MIN(baseRows + _level, maxRows);
+        _cols = MIN(baseCols + floor(_level / incCols), maxCols);
     }
     
     for (int i = 0; i < _rows*_cols; i++) {
@@ -289,7 +280,7 @@ int incTimer = 1;
 -(void)incrementCockblock:(NSTimer *)timer {
     if (!self.paused) {
         _nextCockblock++;
-        if (_nextCockblock >= 10) {
+        if (_nextCockblock >= MAX(baseCockBlock + floor(_level / incCockBlock), minCockBlock)) {
             _nextCockblock = 0;
             [BlongBrick brickWithScene:self fromRandom:NO withMotion:YES];
         }
@@ -330,7 +321,7 @@ int incTimer = 1;
     //        NSLog(@"new total: %f, x,y: %f,%f", newTotalVelocity, newX, newY);
 
             if (fabsf(ball.velocity.dy) < 500) {
-                float yVelocity = maxVelocity * relativeIntersectY/secondBody.node.frame.size.height * 2;
+                float yVelocity = [self levelVelocity] * relativeIntersectY/secondBody.node.frame.size.height * 2;
                 CGVector velocity = [self calculateVelocityFromY:yVelocity];
                 BOOL right = ball.node.position.x > CGRectGetMidX(self.frame);
                 if (right) {
@@ -436,7 +427,7 @@ int incTimer = 1;
     if (yVelocity <= -maxYVelocity) {
         yVelocity = -maxYVelocity;
     }
-    float xVelocity = sqrtf(powf(maxVelocity, 2) - powf(yVelocity, 2));
+    float xVelocity = sqrtf(powf([self levelVelocity], 2) - powf(yVelocity, 2));
     return CGVectorMake(xVelocity, yVelocity);
 }
 
@@ -554,8 +545,8 @@ int incTimer = 1;
 
     [levelText runAction:waitFadeIn_fadeOutStartLevel];
     
-    [_leftPaddle shrink:.9];
-    [_rightPaddle shrink:.9];
+    [_leftPaddle shrink];
+    [_rightPaddle shrink];
 }
 
 -(void)gameOver {
@@ -625,7 +616,7 @@ int incTimer = 1;
             _secondsLeft = bonusCountdown;
             _countdownClock.fontColor = [SKColor blueColor];
         } else {
-            _secondsLeft = countdown;
+            _secondsLeft = MAX((baseCountdown - _level), minCountdown);
             _countdownClock.fontColor = [SKColor redColor];
         }
         _countdownClock.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
@@ -684,6 +675,10 @@ int incTimer = 1;
 
 -(CGPoint) topLeft {
     return CGPointMake(CGRectGetMidX(self.frame) - ((((float)self.cols)/2.0)*self.brickSize.width) + self.brickSize.width/2.0, self.frame.size.height - self.brickSize.height/2.0);
+}
+
+-(float)levelVelocity {
+    return MIN(maxMaxVelocity, baseMaxVelocity + (_level * incMaxVelocity));
 }
 
 -(void)didSimulatePhysics {
