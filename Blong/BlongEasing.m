@@ -24,6 +24,17 @@
     }];
 }
 
++(SKAction *) rotateElasticFrom:(CGFloat)start to:(CGFloat)end for:(CGFloat)duration {
+    float delta = end - start;
+    float p = duration*.3;
+    float s = p*.25;
+    
+    return [SKAction customActionWithDuration:duration actionBlock:^(SKNode *node, CGFloat timeElapsed) {
+        float dicks = powf(2,-10*timeElapsed/duration) * sinf((timeElapsed-s)*(2*M_PI)/p);
+        node.zRotation = delta*dicks + delta + start;
+    }];
+}
+
 +(SKAction *) scaleElastic:(CGFloat)scale for:(CGFloat)duration {
     float scaleDelta = scale - 1;
     float p = duration*.3;

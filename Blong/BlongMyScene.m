@@ -223,14 +223,14 @@ int incTimer = 1;
     ready.text = @"READY";
     ready.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     [self addChild:ready];
-    [ready runAction:[SKAction sequence:@[[SKAction waitForDuration:1], _topToMiddle, [SKAction waitForDuration:.5], _shrinkAway]]];
+    [ready runAction:[SKAction sequence:@[[SKAction waitForDuration:1], _topToMiddle, _shrinkAway]]];
     
     // balls
     [self runAction:[SKAction sequence:@[[SKAction waitForDuration:1.5],
                                          [SKAction runBlock:^{
                                                                         [BlongBall ballOnLeft:YES withScene:self];
-                                                                        [BlongBall ballOnLeft:NO withScene:self];}],
-                                         ballsComingIn]]];
+                                                                        [BlongBall ballOnLeft:NO withScene:self];}]
+                                         ]]];
     
     
     // steady
@@ -239,7 +239,7 @@ int incTimer = 1;
     steady.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     steady.zPosition = -1;
     [self addChild:steady];
-    [steady runAction:[SKAction sequence:@[[SKAction waitForDuration:2], _topToMiddle, _shrinkAway]]];
+    [steady runAction:[SKAction sequence:@[[SKAction waitForDuration:2.3], _topToMiddle, _shrinkAway]]];
     
     // bricks
     SKAction *moveInBricks;
@@ -260,7 +260,7 @@ int incTimer = 1;
     }
     
     
-    [self runAction:[SKAction sequence:@[[SKAction waitForDuration:2.3], moveInBricks, [SKAction waitForDuration:.3], sound29]]];
+    [self runAction:[SKAction sequence:@[[SKAction waitForDuration:2.9], moveInBricks, [SKAction waitForDuration:.3]]]];
 
     // blong
     SKSpriteNode *blong = [SKSpriteNode spriteNodeWithImageNamed:@"blong_background"];
@@ -273,7 +273,7 @@ int incTimer = 1;
     [blong setAlpha:0];
     SKAction *fadeIn = [SKAction fadeAlphaTo:.2 duration:0];
 
-    [blong runAction:[SKAction sequence:@[[SKAction waitForDuration:3.5], startPhysics, makeNoise, fadeIn, _fadeOut]]];
+    [blong runAction:[SKAction sequence:@[[SKAction waitForDuration:3.7], startPhysics, makeNoise, fadeIn, _fadeOut]]];
     blong.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     [self addChild:blong];
     

@@ -13,6 +13,7 @@
 
 +(SKAction *) easeOutElasticFrom:(CGPoint)start to:(CGPoint)end for:(CGFloat)duration;
 +(SKAction *) scaleElastic:(CGFloat)scale for:(CGFloat)duration;
++(SKAction *) rotateElasticFrom:(CGFloat)start to:(CGFloat)end for:(CGFloat)duration;
 
 
 @end

@@ -59,11 +59,19 @@
         SKAction *moveIn = [SKAction moveTo:endPoint duration:.3];
         moveIn.timingMode = SKActionTimingEaseIn;
 
+        if (row + 1 > scene.rows/2) {
+            startY = -brick.frame.size.height/2;
+        } else {
+            startY = scene.frame.size.height + brick.frame.size.height/2;
+        }
+        
         if (random) {
             startX = arc4random() % (int)scene.frame.size.width;
             brick.zRotation = ((float) (arc4random() % ((unsigned)M_PI + 1)) / M_PI) * M_PI;
-            SKAction *rotateIn = [SKAction rotateToAngle:0 duration:.3];
+            SKAction *rotateIn = [BlongEasing rotateElasticFrom:brick.zRotation to:0 for:.5];
+//            [SKAction rotateToAngle:0 duration:.3];
             rotateIn.timingMode = SKActionTimingEaseIn;
+            moveIn = [BlongEasing easeOutElasticFrom:CGPointMake(startX, startY) to:endPoint for:.5];
             [moveInSequence addObject:[SKAction group:@[moveIn,rotateIn]]];
             [moveInSequence addObject:[SKAction runBlock:^{ // don't let initial bricks interact with anything on the way in
                 [brick getPhysical];
@@ -73,11 +81,7 @@
             [moveInSequence addObject:moveIn];
             [brick getPhysical];
         }
-        if (row + 1 > scene.rows/2) {
-            startY = -brick.frame.size.height/2;
-        } else {
-            startY = scene.frame.size.height + brick.frame.size.height/2;
-        }
+
         brick.position = (CGPointMake(startX, startY));
         [scene addChild:brick];
         [brick runAction:[SKAction sequence:moveInSequence]];

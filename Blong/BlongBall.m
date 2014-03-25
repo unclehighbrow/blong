@@ -31,7 +31,7 @@
     
     ball.position = CGPointMake(startX, startY);
     [ball prepareWithScene:scene withVelocity:CGVectorMake(150, 150)]; // TODO: change direction depending on left?
-    SKAction *moveIn = [BlongEasing easeOutElasticFrom:ball.position to:CGPointMake(endX, endY) for:.3];
+    SKAction *moveIn = [BlongEasing easeOutElasticFrom:ball.position to:CGPointMake(endX, endY) for:.5];
     [ball runAction:moveIn];
     return ball;
 }
@@ -62,7 +62,7 @@
     
     ball.position = CGPointMake(startX, startY);
     [ball prepareWithScene:scene withVelocity:CGVectorMake(xVelocity, 150)];
-    SKAction *moveIn = [BlongEasing easeOutElasticFrom:ball.position to:CGPointMake(endX, endY) for:.3];
+    SKAction *moveIn = [BlongEasing easeOutElasticFrom:ball.position to:CGPointMake(endX, endY) for:.5];
     [ball runAction:moveIn];    
     return ball;
 }
