@@ -86,7 +86,6 @@ static int minTappableRandomMod = 10;
             brick.colorBlendFactor = 1.0;
             [moveInSequence addObject:moveIn];
             [brick getPhysical];
-            NSLog(@"adding cockblock: %d, %d, %d", col, row, blockSlotNum);
         }
 
         brick.position = (CGPointMake(startX, startY));

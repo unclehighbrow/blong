@@ -223,8 +223,6 @@ CGPoint textEnd;
         [_bricks addObject:col];
     }
     
-    NSLog(@"new level: %d, %d, %lu", _cols, _rows, (unsigned long)_availableBlockSlots.count);
-    
     if (_level == 1) {
         for (int i = 0; i<_rows; i++) {
             for (int j = 0; j<_cols; j++) {
