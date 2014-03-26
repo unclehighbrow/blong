@@ -333,6 +333,16 @@ CGPoint textEnd;
         // TODO: make this less shitty
         if (secondBody.categoryBitMask & paddleCat) {
             float relativeIntersectY = ball.node.position.y - secondBody.node.position.y;
+            
+            if ([secondBody.node.name isEqual:@"left_paddle"]) { // hitting the back doesn't count
+                if (contact.contactPoint.x < secondBody.node.frame.origin.x) {
+                    return;
+                }
+            } else {
+                if (contact.contactPoint.x > secondBody.node.frame.origin.x) {
+                    return;
+                }
+            }
 
             
     //        this should be cooler and preserve momentum, but doesn't and ends up with nans
