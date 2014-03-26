@@ -48,6 +48,7 @@
 @property float secondsLeft;
 @property int nextCockblock;
 @property SKLabelNode *countdownClock;
+@property int introduceTappable;
 
 extern const uint32_t ballCat;
 extern const uint32_t paddleCat;

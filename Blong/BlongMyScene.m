@@ -68,6 +68,8 @@ CGPoint textEnd;
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
         maxYVelocity = [self levelVelocity] *.7;
+        _introduceTappable = 7;
+
         
         // score
         _score = 0;
@@ -179,18 +181,20 @@ CGPoint textEnd;
 
 -(void)startLevel {
     _brokenThrough = NO;
-    if (_level == 2) {
+    if (_level == _introduceTappable) {
         _rows = 1;
         _cols = 1;
     } else {
         _rows = MIN(baseRows + _level, maxRows);
         _cols = MIN(baseCols + floor(_level / incCols), maxCols);
     }
+
+    _bricks = [NSMutableArray array]; // this is to stop weirdness coming out of level 2. shouldn't be necessary
+    _availableBlockSlots = [NSMutableArray array];
     
     for (int i = 0; i < _rows*_cols; i++) {
         [_availableBlockSlots addObject:[NSNumber numberWithInt:i]];
     }
-    _bricks = [NSMutableArray array]; // this is to stop weirdness coming out of level 2. shouldn't be necessary
     for (int i = 0; i < _cols; i++) {
         NSMutableArray *col = [NSMutableArray arrayWithCapacity:_rows];
         for (int j = 0; j < _rows; j++) {
@@ -198,6 +202,8 @@ CGPoint textEnd;
         }
         [_bricks addObject:col];
     }
+    
+    NSLog(@"new level: %d, %d, %lu", _cols, _rows, (unsigned long)_availableBlockSlots.count);
     
     if (_level == 1) {
         for (int i = 0; i<_rows; i++) {
@@ -207,7 +213,7 @@ CGPoint textEnd;
         }
         return;
     }
-    if (_level == 2) {
+    if (_level == _introduceTappable) {
         [BlongBrick centeredTappableBrickWithScene:self];
         _brokenThrough = YES; // the breakthrough thing accesses uninitialized arrays
         return;
@@ -385,7 +391,7 @@ CGPoint textEnd;
 }
 
 -(void)checkBreakthrough {
-    if (_level == 2) {
+    if (_level == _introduceTappable) {
         [self newLevel];
     }
     if (!_brokenThrough) {
@@ -617,7 +623,7 @@ CGPoint textEnd;
             if (_balls.count == 0) {
                 self.physicsWorld.speed = 0;
                 [self gameOver];
-            } else if (_balls.count == 1 && _level > 2) {
+            } else if (_balls.count == 1 && _level != 1 && _level != _introduceTappable) {
                 [self startCountdown];
             } else if (_balls.count > 1 && _countdownTimer.isValid) {
                 [self stopCountdown];
