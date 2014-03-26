@@ -32,7 +32,7 @@
 @property NSMutableArray *balls;
 @property NSMutableArray *bricks;
 @property SKLabelNode *scoreLabel;
-@property NSMutableArray *availableBlockSlots;
+@property NSMutableOrderedSet *availableBlockSlots;
 @property NSNumber *lastBlockCleared;
 @property BOOL brokenThrough;
 @property int score;

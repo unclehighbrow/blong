@@ -82,7 +82,7 @@ CGPoint textEnd;
         [self addChild:_scoreLabel];
         scoreToAdd = 0;
 
-        _availableBlockSlots = [NSMutableArray array];
+        _availableBlockSlots = [NSMutableOrderedSet orderedSet];
 
         self.backgroundColor = [SKColor blackColor];
         
@@ -116,6 +116,26 @@ CGPoint textEnd;
         _bottomWall.physicsBody.friction = NO;
         _bottomWall.position = CGPointMake(0,0);
         [self addChild:_bottomWall];
+        
+        BOOL invincible = NO;
+        if (invincible) {
+            SKNode *leftWall = [SKNode node];
+            leftWall.physicsBody = [SKPhysicsBody bodyWithEdgeFromPoint:CGPointMake(0,0) toPoint:CGPointMake(0,self.frame.size.height)];
+            leftWall.physicsBody.restitution = .5;
+            leftWall.physicsBody.categoryBitMask = wallCat;
+            leftWall.physicsBody.friction = 0;
+            leftWall.position = CGPointMake(0, 0);
+            [self addChild:leftWall];
+            
+            SKNode *rightWall = [SKNode node];
+            rightWall.physicsBody = [SKPhysicsBody bodyWithEdgeFromPoint:CGPointMake(0,0) toPoint:CGPointMake(0,self.frame.size.height)];
+            rightWall.physicsBody.restitution = .5;
+            rightWall.physicsBody.categoryBitMask = wallCat;
+            rightWall.physicsBody.friction = 0;
+            rightWall.position = CGPointMake(self.frame.size.width, 0);
+            [self addChild:rightWall];
+        }
+        
         
         self.physicsWorld.gravity = CGVectorMake(0, 0);
         self.physicsWorld.contactDelegate = self;
@@ -190,7 +210,7 @@ CGPoint textEnd;
     }
 
     _bricks = [NSMutableArray array]; // this is to stop weirdness coming out of level 2. shouldn't be necessary
-    _availableBlockSlots = [NSMutableArray array];
+    _availableBlockSlots = [NSMutableOrderedSet orderedSet];
     
     for (int i = 0; i < _rows*_cols; i++) {
         [_availableBlockSlots addObject:[NSNumber numberWithInt:i]];
@@ -373,7 +393,7 @@ CGPoint textEnd;
     SKAction *removeFromBricks = [SKAction runBlock:^{
         _lastBlockCleared = brick.blockSlot;
         [_availableBlockSlots addObject:_lastBlockCleared];
-        [[_bricks objectAtIndex:brick.col] removeObjectAtIndex:brick.row];
+        [[_bricks objectAtIndex:brick.col] replaceObjectAtIndex:brick.row withObject:[NSNull null]];
         [self checkBreakthrough];
     }];
     SKAction *removeFromParent = [SKAction removeFromParent];
@@ -484,7 +504,7 @@ CGPoint textEnd;
     }
     
     CGPoint location = [touch locationInNode:self];
-    if (location.x < CGRectGetMidX(self.frame)) {
+    if (location.x < CGRectGetMidX(self.frame) - (_brickSize.width * _cols / 2)) {
         CGPoint point = CGPointMake(_leftPaddle.position.x, location.y);
         _leftPaddle.position = point;
         if (!touchedLeft) {
@@ -492,7 +512,7 @@ CGPoint textEnd;
             [BlongBall shootBallAtPoint:point withScene:self];
             [_leftPaddle getPhysical];
         }
-    } else {
+    } else if (location.x > CGRectGetMidX(self.frame) + (_brickSize.width * _cols / 2)) {
         CGPoint point = CGPointMake(_rightPaddle.position.x, location.y);
         _rightPaddle.position = point;
         if (!touchedRight) {

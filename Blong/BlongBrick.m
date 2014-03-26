@@ -52,8 +52,8 @@ static int minTappableRandomMod = 10;
     int col = blockSlotNum % scene.cols;
     int row = floor(blockSlotNum / scene.cols);
     
-    NSMutableArray *rowArray = [scene.bricks objectAtIndex:col];
-    [rowArray insertObject:brick atIndex:row];
+    NSMutableOrderedSet *rowArray = [scene.bricks objectAtIndex:col];
+    [rowArray replaceObjectAtIndex:row withObject:brick];
 
 
     CGPoint endPoint = [BlongBrick calculatePositionFromSlot:slot withNode:brick withScene:scene];
