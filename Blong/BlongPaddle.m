@@ -12,8 +12,8 @@
 
 float scale = 1;
 
-static float shrinkage = .93;
-static float maxShrinkage = .35;
+static float shrinkage = .9;
+static float maxShrinkage = .333;
 
 +(BlongPaddle *) paddle:(NSString *)image {
     BlongPaddle *paddle = [BlongPaddle spriteNodeWithImageNamed:image];
@@ -37,12 +37,10 @@ static float maxShrinkage = .35;
 }
 
 -(void)shrink {
-    if (scale < maxShrinkage) {
+    if (self.yScale < maxShrinkage) {
         return;
     }
-    scale *= shrinkage;
-    [self setYScale:shrinkage];
-    [self makePhysicsBodyWithDynamic:NO];
+    [self runAction:[SKAction scaleXBy:1 y:self.yScale*shrinkage duration:1]];
 }
 
 -(void) getPhysical {
