@@ -68,8 +68,7 @@ CGPoint textEnd;
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
         maxYVelocity = [self levelVelocity] *.7;
-        _introduceTappable = 7;
-
+        _introduceTappable = 4;
         
         // score
         _score = 0;
@@ -477,32 +476,13 @@ CGPoint textEnd;
     [self processTouches:touches withEvent:event];
 }
 
+-(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    [self processTouches:touches withEvent:event];
+}
+
 -(void)processTouches:(NSSet *)touches withEvent:(UIEvent *)event {
     for (UITouch *touch in touches) {
         [self processTouch:touch];
-    }
-}
-
--(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    for (UITouch *touch in touches) {
-        float width = self.frame.size.width/13;
-        float height = self.frame.size.height/8;
-        CGPoint touchPoint = [touch locationInNode:self];
-        CGRect touchRect = CGRectMake(touchPoint.x - width/2, touchPoint.y - height/2, width, height);
-//        if (true) { // the actual rect seems bigger than this looks, i'm not sure why
-//            SKSpriteNode *touchRectNode = [SKSpriteNode spriteNodeWithColor:[SKColor redColor] size:touchRect.size];
-//            touchRectNode.position = touchPoint;
-//            [touchRectNode runAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:1], [SKAction removeFromParent]]]];
-//            [self addChild:touchRectNode];
-//        }
-        [self.physicsWorld enumerateBodiesInRect:touchRect usingBlock:^(SKPhysicsBody *body, BOOL *stop) {
-            if (body.categoryBitMask & brickCat) {
-                BlongBrick *brick = (BlongBrick *)body.node;
-                if (brick.tappable) {
-                    [self removeBrick:brick];
-                }
-            }
-        }];
     }
 }
 
@@ -512,7 +492,7 @@ CGPoint textEnd;
     }
     
     CGPoint location = [touch locationInNode:self];
-    if (location.x < CGRectGetMidX(self.frame) - (_brickSize.width * _cols / 2)) {
+    if (location.x < CGRectGetMidX(self.frame) - (_brickSize.width * maxCols / 2)) {
         CGPoint point = CGPointMake(_leftPaddle.position.x, location.y);
         _leftPaddle.position = point;
         if (!touchedLeft) {
@@ -520,7 +500,7 @@ CGPoint textEnd;
             [BlongBall shootBallAtPoint:point withScene:self];
             [_leftPaddle getPhysical];
         }
-    } else if (location.x > CGRectGetMidX(self.frame) + (_brickSize.width * _cols / 2)) {
+    } else if (location.x > CGRectGetMidX(self.frame) + (_brickSize.width * maxCols / 2)) {
         CGPoint point = CGPointMake(_rightPaddle.position.x, location.y);
         _rightPaddle.position = point;
         if (!touchedRight) {
@@ -528,7 +508,28 @@ CGPoint textEnd;
             [BlongBall shootBallAtPoint:point withScene:self];
             [_rightPaddle getPhysical];
         }
+    } else if (_level >= _introduceTappable) {
+        float width = self.frame.size.width/10;
+        float height = self.frame.size.height/5;
+        CGPoint touchPoint = [touch locationInNode:self];
+        CGRect touchRect = CGRectMake(touchPoint.x - width/2, touchPoint.y - height/2, width, height);
+        BOOL debugTappable = NO;
+        if (debugTappable) { // the actual rect seems bigger than this looks, i'm not sure why
+            SKSpriteNode *touchRectNode = [SKSpriteNode spriteNodeWithColor:[SKColor redColor] size:touchRect.size];
+            touchRectNode.position = touchPoint;
+            [touchRectNode runAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:1], [SKAction removeFromParent]]]];
+            [self addChild:touchRectNode];
+        }
+        [self.physicsWorld enumerateBodiesInRect:touchRect usingBlock:^(SKPhysicsBody *body, BOOL *stop) {
+            if (body.categoryBitMask & brickCat) {
+                BlongBrick *brick = (BlongBrick *)body.node;
+                if (brick.tappable) {
+                    [self removeBrick:brick];
+                }
+            }
+        }];
     }
+    
     if (touchedLeft && touchedRight) {
         started = YES;
         _topWall.physicsBody.restitution = 1;

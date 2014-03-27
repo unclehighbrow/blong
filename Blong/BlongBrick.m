@@ -9,7 +9,7 @@
 #import "BlongBrick.h"
 #import "BlongMyScene.h"
 
-static int baseTappableRandomMod = 20;
+static int baseTappableRandomMod = 25;
 static int incTappableRandomMod = 2;
 static int minTappableRandomMod = 10;
 
@@ -25,6 +25,16 @@ static int minTappableRandomMod = 10;
     [[scene bricks] insertObject:[NSMutableArray arrayWithObject:brick] atIndex:0];
     [brick getPhysical];
     [scene addChild:brick];
+    
+    [brick runAction:
+     [SKAction repeatActionForever:
+      [SKAction sequence:@[
+                           [SKAction waitForDuration:2],
+                           [SKAction rotateByAngle:1 duration:0],
+                           [BlongEasing rotateElasticFrom:1 to:0 for:1]
+                           ]
+    ]]];
+    
     return brick;
 }
 
