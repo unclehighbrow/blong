@@ -84,6 +84,7 @@
     self.physicsBody.categoryBitMask = ballCat;
     self.physicsBody.contactTestBitMask = paddleCat|wallCat|brickCat;
     self.physicsBody.collisionBitMask = ballCat|paddleCat|brickCat|wallCat;
+    self.physicsBody.usesPreciseCollisionDetection = YES;
     self.physicsBody.velocity = velocity;
     
     [scene addChild:self];
