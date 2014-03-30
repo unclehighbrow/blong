@@ -44,7 +44,7 @@ static int minTappableRandomMod = 10;
     }
     BlongBrick *brick = [BlongBrick spriteNodeWithImageNamed:@"brick6"];
 
-    if (scene.level > scene.introduceTappable && arc4random() % MAX(baseTappableRandomMod - (incTappableRandomMod * scene.level), minTappableRandomMod) == 1 && scene.level != 1) {
+    if (scene.level > scene.introduceTappable && random && arc4random() % MAX(baseTappableRandomMod - (incTappableRandomMod * scene.level), minTappableRandomMod) == 1 && scene.level != 1) {
         brick.color = [SKColor colorWithRed:255 green:215 blue:0 alpha:1];
         brick.colorBlendFactor = 1.0;
         brick.tappable = YES;
@@ -92,7 +92,7 @@ static int minTappableRandomMod = 10;
             }]];
         } else {
             startX = topLeft.x + (col * brick.frame.size.width);
-            brick.color = [SKColor colorWithRed:255 green:0 blue:0 alpha:1];
+            brick.color = [SKColor redColor];
             brick.colorBlendFactor = 1.0;
             [moveInSequence addObject:moveIn];
             [brick getPhysical];
