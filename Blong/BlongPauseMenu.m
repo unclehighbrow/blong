@@ -10,20 +10,29 @@
 #import "BlongMainMenu.h"
 @class BlongMyScene;
 
+NSString *pauseMenuString = @"pause_menu";
+NSString *continueString = @"continue";
+NSString *mainMenuString = @"main_menu";
+
 @implementation BlongPauseMenu
 +(BlongPauseMenu *) pauseMenuWithScene:(BlongMyScene *)scene {
+    if ([scene childNodeWithName:pauseMenuString] != nil) {
+        scene.paused = YES;
+        return nil;
+    }
     if (!scene.paused) {
         BlongPauseMenu *pauseMenu = [BlongPauseMenu new];
+        pauseMenu.name = pauseMenuString;
         pauseMenu.userInteractionEnabled = YES;
         [scene addChild:pauseMenu];
         
-        SKSpriteNode *continueButton = [SKSpriteNode spriteNodeWithImageNamed:@"continue"];
-        continueButton.name = @"continue";
+        SKSpriteNode *continueButton = [SKSpriteNode spriteNodeWithImageNamed:continueString];
+        continueButton.name = continueString;
         continueButton.position = CGPointMake(CGRectGetMidX(scene.frame), CGRectGetMidY(scene.frame) + continueButton.size.height);
         [pauseMenu addChild:continueButton];
         
-        SKSpriteNode *mainMenuButton = [SKSpriteNode spriteNodeWithImageNamed:@"main_menu"];
-        mainMenuButton.name = @"main_menu";
+        SKSpriteNode *mainMenuButton = [SKSpriteNode spriteNodeWithImageNamed:mainMenuString];
+        mainMenuButton.name = mainMenuString;
         mainMenuButton.position = CGPointMake(CGRectGetMidX(scene.frame), CGRectGetMidY(scene.frame) - mainMenuButton.size.height);
         [pauseMenu addChild:mainMenuButton];
         scene.paused = YES;
@@ -37,10 +46,10 @@
     UITouch *touch = (UITouch *) [touches anyObject];
     NSString *action =  [self nodeAtPoint:[touch locationInNode:self]].name;
     if (action != nil) {
-        if ([action isEqualToString:@"continue"]) {
+        if ([action isEqualToString:continueString]) {
             self.scene.paused = NO;
             [self removeFromParent];
-        } else if ([action isEqualToString:@"main_menu"]) {
+        } else if ([action isEqualToString:mainMenuString]) {
             SKScene *menuScene = [[BlongMainMenu alloc] initWithSize:self.scene.size];
             SKTransition *transition = [SKTransition flipHorizontalWithDuration:1];
             [self.scene.view presentScene:menuScene transition:transition];

@@ -18,8 +18,8 @@ const uint32_t wallCat = 0x1 << 3;
 const uint32_t brickCat = 0x1 << 4;
 
 float baseMaxVelocity = 285;
-float maxMaxVelocity = 800;
-float incMaxVelocity = 15;
+float maxMaxVelocity = 600;
+float incMaxVelocity = 7;
 float maxYVelocity;
 
 int bonusCountdown = 10;
@@ -57,8 +57,9 @@ int baseCockBlock = 10;
 int minCockBlock = 5;
 int incCockBlock = 4;
 
-int baseCountdown = 30;
+int baseCountdown = 60;
 int minCountdown = 10;
+int incCountdown = 2;
 
 int bonusLevelEvery = 3;
 
@@ -469,14 +470,17 @@ CGPoint textEnd;
 }
 
 -(void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+    //NSLog(@"touches moved %d", touches.count);
     [self processTouches:touches withEvent:event];
 }
 
--(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {    
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    //NSLog(@"touches began %d", touches.count);
     [self processTouches:touches withEvent:event];
 }
 
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    //NSLog(@"touches ended %d", touches.count);
     [self processTouches:touches withEvent:event];
 }
 
@@ -687,7 +691,7 @@ CGPoint textEnd;
             _secondsLeft = bonusCountdown;
             _countdownClock.fontColor = [SKColor blueColor];
         } else {
-            _secondsLeft = MAX((baseCountdown - _level), minCountdown);
+            _secondsLeft = MAX((baseCountdown - floor(_level/incCountdown)), minCountdown);
             _countdownClock.fontColor = [SKColor redColor];
         }
         _countdownClock.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
