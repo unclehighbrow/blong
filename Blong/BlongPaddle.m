@@ -12,7 +12,7 @@
 
 float scale = 1;
 
-static float shrinkage = .007;
+static float shrinkage = .03;
 static float maxShrinkage = .4;
 
 +(BlongPaddle *) paddle:(NSString *)image {
@@ -24,7 +24,7 @@ static float maxShrinkage = .4;
 }
 
 -(void)makePhysicsBodyWithDynamic:(BOOL)dynamic {
-    self.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:self.size];
+    self.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:self.calculateAccumulatedFrame.size];
     self.physicsBody.dynamic = YES;
     self.physicsBody.allowsRotation = NO;
     self.physicsBody.restitution = .5;
@@ -37,11 +37,17 @@ static float maxShrinkage = .4;
 }
 
 -(void)shrink {
-    NSLog(@"y scale: %f", self.yScale);
     if (self.yScale < maxShrinkage) {
         return;
     }
-    [self runAction:[SKAction scaleXBy:1 y:self.yScale-shrinkage duration:1]];
+    
+    float osVersion = [[[UIDevice currentDevice] systemVersion] floatValue]; // 7.0 doesn't shrink the physics body
+    if (osVersion < 7.1) {
+        self.yScale = self.yScale - shrinkage;
+        [self makePhysicsBodyWithDynamic:NO];
+    } else {
+        [self runAction:[SKAction scaleXTo:1 y:(self.yScale - shrinkage) duration:0]];
+    }
 }
 
 -(void) getPhysical {
