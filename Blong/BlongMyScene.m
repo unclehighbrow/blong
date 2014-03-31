@@ -234,7 +234,27 @@ CGPoint textEnd;
     if (_level == _introduceTappable) {
         [BlongBrick centeredTappableBrickWithScene:self];
         _brokenThrough = YES; // the breakthrough thing accesses uninitialized arrays
+        SKAction *fadeIn = [SKAction fadeInWithDuration:2];
+        
+        SKLabelNode *introducing = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+        introducing.text = @"Introducing the gold brick";
+        introducing.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + introducing.frame.size.height*2);
+        introducing.name = @"introducing";
+        introducing.color = [SKColor whiteColor];
+        introducing.alpha = 0;
+        [introducing runAction:fadeIn];
+        [self addChild:introducing];
+        
+        SKLabelNode *tapIt = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+        tapIt.alpha = 0;
+        tapIt.text = @"Tap it. Or don't. I've got all day.";
+        tapIt.fontSize = 25;
+        tapIt.name = @"tap_it";
+        tapIt.position = CGPointMake(CGRectGetMidX(self.frame), tapIt.frame.size.height*2);
+        [tapIt runAction:fadeIn];
+        [self addChild:tapIt];
         return;
+        
     }
 
     // ready
@@ -420,6 +440,8 @@ CGPoint textEnd;
 
 -(void)checkBreakthrough {
     if (_level == _introduceTappable) {
+        [[self childNodeWithName:@"introducing"] runAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:1], [SKAction removeFromParent]]]];
+        [[self childNodeWithName:@"tap_it"] runAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:1], [SKAction removeFromParent]]]];
         [self newLevel];
     }
     if (!_brokenThrough) {

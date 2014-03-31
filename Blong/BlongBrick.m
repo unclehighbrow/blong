@@ -16,7 +16,6 @@ static int minTappableRandomMod = 10;
 @implementation BlongBrick
 +(BlongBrick *)centeredTappableBrickWithScene:(BlongMyScene *)scene {
     BlongBrick *brick = [BlongBrick spriteNodeWithImageNamed:@"brick6"];
-    brick.userInteractionEnabled = YES;
     brick.color = [SKColor colorWithRed:255 green:215 blue:0 alpha:1];
     brick.colorBlendFactor = 1.0;
     brick.tappable = YES;
