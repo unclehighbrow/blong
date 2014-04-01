@@ -11,6 +11,8 @@
 #import "BlongGameCenterButton.h"
 #import "BlongGameCenterHelper.h"
 
+static int quipsSeen = 0;
+
 @implementation BlongGameOverScene
 -(id)initWithSize:(CGSize)size andScore:(int) score {
     if (self = [super initWithSize:size]) {
@@ -36,16 +38,34 @@
         highScoreText.position = CGPointMake(highScoreText.frame.size.width/2, self.frame.size.height - highScoreText.frame.size.height);
         [self addChild:highScoreText];
         
+        NSArray *quips = @[@"BUT WHATEVER, LET'S DO IT AGAIN.",
+                           @"ARE YOU PLAYING THIS ON THE TOILET? GROSS.",
+                           @"ARE YOU ENJOYING THIS? I AM.",
+                           @"DO YOU LIKE LIMP BIZKIT?",
+                           @"SHARE THIS ON TWITTER. BUT YOU HAVE TO DO IT YOURSELF.",
+                           @"WE'RE REALLY LETTING THE DOGS OUT.",
+                           @"I GET IT. YOU LIKE BLONG.",
+                           @"YOU EVER SEE THAT MOVIE TAKEN? IT'S PRETTY GOOD.",
+                           @"WHAT'S WITH SNAPCHAT? I REALLY DON'T GET IT.",
+                           @"ARE VIDEO GAMES ART? IS ART EVEN ART?",
+                           @"WHERE ARE THE DIAMONDS!?!",
+                           @"DO YOU LIKE INTERNET JOKES? I DO.",
+                           @"I THINK I'M FALLING IN LOVE WITH YOU.",
+                           @"THIS IS A REAL BLONG.",
+                           @"YOU'RE CUTE. BUT WHAT DO I KNOW, I'M JUST A PHONE."
+                           ];
+        
         SKLabelNode *go = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
         go.color = [SKColor whiteColor];
         go.alpha = 0;
-        go.text = @"BUT WHATEVER, LET'S DO IT AGAIN";
-        go.fontSize = 20;
-        go.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height/6);
+        go.text = quipsSeen > 2 ? [quips objectAtIndex:(arc4random() % quips.count)] : [quips objectAtIndex:0];
+        go.fontSize = 15;
+        go.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height/5);
         SKAction *fadeIn = [SKAction fadeInWithDuration:1];
         [self addChild:go];
         [go runAction:fadeIn];
         
+        quipsSeen++;
         [BlongGameCenterButton gameCenterButtonWithScene:self];
 
     }
