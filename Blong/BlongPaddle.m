@@ -14,6 +14,8 @@ float scale = 1;
 
 static float shrinkage = .03;
 static float maxShrinkage = .4;
+static float maxGrowage = 1.5;
+static float growage = .1;
 
 +(BlongPaddle *) paddle:(NSString *)image {
     BlongPaddle *paddle = [BlongPaddle spriteNodeWithImageNamed:image];
@@ -36,6 +38,20 @@ static float maxShrinkage = .4;
     }
 }
 
+-(void)grow {
+    if (self.yScale > maxGrowage) {
+        return;
+    }
+    
+    float osVersion = [[[UIDevice currentDevice] systemVersion] floatValue]; // 7.0 doesn't shrink the physics body
+    if (osVersion < 7.1) {
+        self.yScale = self.yScale + growage;
+        [self makePhysicsBodyWithDynamic:NO];
+    } else {
+        [self runAction:[SKAction scaleXTo:1 y:(self.yScale + growage) duration:1]];
+    }
+}
+
 -(void)shrink {
     if (self.yScale < maxShrinkage) {
         return;
@@ -46,7 +62,7 @@ static float maxShrinkage = .4;
         self.yScale = self.yScale - shrinkage;
         [self makePhysicsBodyWithDynamic:NO];
     } else {
-        [self runAction:[SKAction scaleXTo:1 y:(self.yScale - shrinkage) duration:0]];
+        [self runAction:[SKAction scaleXTo:1 y:(self.yScale - shrinkage) duration:1]];
     }
 }
 

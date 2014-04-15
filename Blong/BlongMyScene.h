@@ -50,6 +50,12 @@
 @property SKLabelNode *countdownClock;
 @property int introduceTappable;
 
+// powerups
+@property float slowDown;
+@property BOOL doubleBreakthrough;
+@property BOOL wreckingBall;
+@property BOOL goldBricksMakeBalls;
+
 extern const uint32_t ballCat;
 extern const uint32_t paddleCat;
 extern const uint32_t wallCat;

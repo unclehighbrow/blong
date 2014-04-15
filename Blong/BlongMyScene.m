@@ -63,6 +63,8 @@ int incCountdown = 2;
 
 int bonusLevelEvery = 3;
 
+int streak = 0;
+
 CGPoint textEnd;
 
 
@@ -70,6 +72,10 @@ CGPoint textEnd;
     if (self = [super initWithSize:size]) {
         maxYVelocity = [self levelVelocity] *.7;
         _introduceTappable = 4;
+        _slowDown = 0;
+        _doubleBreakthrough = NO;
+        _wreckingBall = NO;
+        _goldBricksMakeBalls = NO;
         
         // score
         _score = 0;
@@ -565,46 +571,12 @@ CGPoint textEnd;
     }
 }
 
--(void)tabulateBonus {
-    long ballsSaved = _balls.count;
-    [self runAction:explosion];
-    for (BlongBall *ball in _balls) {
-        [self makeParticleAt:ball.position];
-        [ball removeFromParent];
-    }
-    SKLabelNode *ballsSavedLabel = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
-    ballsSavedLabel.text = [NSString stringWithFormat:@"%ld BALLS", ballsSaved];
-    ballsSavedLabel.position = CGPointMake(0-ballsSavedLabel.frame.size.width/2, CGRectGetMidY(self.frame));
-    [self addChild:ballsSavedLabel];
-    
-    [ballsSavedLabel runAction:[SKAction sequence:@[[SKAction waitForDuration:1],
-                                                    [BlongEasing easeOutElasticFrom:ballsSavedLabel.position to:textEnd for:.5],
-                                                    _shrinkAway]]];
-    
-    NSString *powerUpString;
-    if (ballsSaved == 0l) {
-        powerUpString = @"NO BONUS";
-    }
-    
-    SKLabelNode *bonusLabel = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
-    bonusLabel.text = @"DICKS";
-    bonusLabel.position = CGPointMake(self.frame.size.width + bonusLabel.frame.size.width/2, CGRectGetMidY(self.frame));
-    [self addChild:bonusLabel];
-    [bonusLabel runAction:[SKAction sequence:@[[SKAction waitForDuration:2],
-                                               [BlongEasing easeOutElasticFrom:bonusLabel.position to:textEnd for:.5],
-                                               _shrinkAway]]];
-    
-}
-
 -(void)newLevel {
-    if (isBonusLevel) {
-        [self tabulateBonus];
-        isBonusLevel = NO;
-        _level++;
-    } else {
-        NSMutableArray *ballSequence = [NSMutableArray array];
-        int scorePer = 10;
-        for (BlongBall *ball in _balls) {
+    NSMutableArray *ballSequence = [NSMutableArray array];
+    int scorePer = 10;
+    long ballsSaved = _balls.count;
+    for (BlongBall *ball in _balls) {
+        if (!isBonusLevel) {
             [ballSequence addObject:[SKAction waitForDuration:.3]];
             [ballSequence addObject:[SKAction runBlock:^{
                 [self makeParticleAt:ball.position];
@@ -612,15 +584,85 @@ CGPoint textEnd;
                 [self updateScore:scorePer];
                 [self runAction:explosion];
             }]];
-        }
-        [self runAction:[SKAction sequence:ballSequence]];
-        if (_level % bonusLevelEvery == 0) {
-            isBonusLevel = YES;
         } else {
-            _level++;
+            [ballSequence addObject:[SKAction runBlock:^{
+                [self makeParticleAt:ball.position];
+                [ball removeFromParent];
+                [self updateScore:scorePer];
+            }]];
+        }
+
+    }
+    [self runAction:[SKAction sequence:ballSequence]];
+    if (isBonusLevel) {
+        [self runAction:explosion];
+    }
+    
+    if (!isBonusLevel) {
+        if (ballsSaved >= 3) {
+            streak++;
+            SKLabelNode *ballsSavedLabel = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+            if (streak == 1) {
+                ballsSavedLabel.text = [NSString stringWithFormat:@"%ld BALLS", ballsSaved];
+            } else {
+                ballsSavedLabel.text = [NSString stringWithFormat:@"%ld BALLS X%d STREAK", ballsSaved, streak];
+            }
+            ballsSavedLabel.position = CGPointMake(0-ballsSavedLabel.frame.size.width/2, CGRectGetMidY(self.frame));
+            [self addChild:ballsSavedLabel];
+            
+            [ballsSavedLabel runAction:[SKAction sequence:@[[SKAction waitForDuration:1],
+                                                            [BlongEasing easeOutElasticFrom:ballsSavedLabel.position to:textEnd for:.5],
+                                                            _shrinkAway]]];
+            
+            NSString *powerUpString;
+            switch (streak) {
+                case 1:
+                    powerUpString = @"BIGGER PADDLES";
+                    [_leftPaddle grow];
+                    [_rightPaddle grow];
+                    break;
+                case 2:
+                    powerUpString = @"SLOW DOWN";
+                    _slowDown += 30;
+                    break;
+                case 3:
+                    powerUpString = @"DOUBLE BREAKTHROUGH";
+                    _doubleBreakthrough = YES;
+                    break;
+                case 4:
+                    powerUpString = @"WRECKING BALLS";
+                    _wreckingBall = YES;
+                    break;
+                case 5:
+                    powerUpString = @"GOLD BRICKS MAKE BALLS";
+                    _goldBricksMakeBalls = YES;
+                    break;
+                default:
+                    powerUpString = @"YOU ARE A COOL PERSON";
+            }
+
+            
+            SKLabelNode *bonusLabel = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+            bonusLabel.text = powerUpString;
+            bonusLabel.position = CGPointMake(self.frame.size.width + bonusLabel.frame.size.width/2, CGRectGetMidY(self.frame));
+            [self addChild:bonusLabel];
+            [bonusLabel runAction:[SKAction sequence:@[[SKAction waitForDuration:2],
+                                                       [BlongEasing easeOutElasticFrom:bonusLabel.position to:textEnd for:.5],
+                                                       _shrinkAway]]];
+        } else {
+            streak = 0;
         }
     }
-
+    
+    if (isBonusLevel) {
+        isBonusLevel = NO;
+        _level++;
+    } else if (_level % bonusLevelEvery == 0) {
+        isBonusLevel = YES;
+    } else {
+        _level++;
+    }
+    
     self.physicsWorld.speed = 0;
     [self stopCountdown];
 
@@ -693,6 +735,9 @@ CGPoint textEnd;
         
         // sometimes balls stick around forever and i don't know why
         for (BlongBall *ball in _balls) {
+            if (ball.physicsBody.isResting) {
+                [ball.physicsBody applyImpulse:CGVectorMake(1, 0)];
+            }
             if (ball.position.x < 0 || ball.position.x > self.frame.size.width ||
                 ball.position.y < 0 || ball.position.y > self.frame.size.height) {
                 [self removeBall:ball];
@@ -777,7 +822,7 @@ CGPoint textEnd;
 }
 
 -(float)levelVelocity {
-    return MIN(maxMaxVelocity, baseMaxVelocity + (_level * incMaxVelocity));
+    return MIN(maxMaxVelocity, baseMaxVelocity + (_level * incMaxVelocity)) - _slowDown;
 }
 
 -(void)didSimulatePhysics {

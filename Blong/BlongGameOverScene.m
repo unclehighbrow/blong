@@ -12,6 +12,7 @@
 #import "BlongGameCenterHelper.h"
 
 static int quipsSeen = 0;
+SKLabelNode *go;
 
 @implementation BlongGameOverScene
 -(id)initWithSize:(CGSize)size andScore:(int) score {
@@ -38,7 +39,9 @@ static int quipsSeen = 0;
         highScoreText.position = CGPointMake(highScoreText.frame.size.width/2, self.frame.size.height - highScoreText.frame.size.height);
         [self addChild:highScoreText];
         
-        NSArray *quips = @[@"BUT WHATEVER, LET'S DO IT AGAIN.",
+        
+        NSArray *quips = @[
+                           @"BUT WHATEVER, LET'S DO IT AGAIN.",
                            @"ARE YOU PLAYING THIS ON THE TOILET? GROSS.",
                            @"ARE YOU ENJOYING THIS? I AM.",
                            @"DO YOU LIKE LIMP BIZKIT?",
@@ -52,26 +55,31 @@ static int quipsSeen = 0;
                            @"DO YOU LIKE INTERNET JOKES? I DO.",
                            @"I THINK I'M FALLING IN LOVE WITH YOU.",
                            @"THIS IS A REAL BLONG.",
-                           @"YOU'RE CUTE. BUT WHAT DO I KNOW, I'M JUST A PHONE."
+                           @"YOU'RE CUTE. BUT WHAT DO I KNOW, I'M JUST A PHONE.",
+                           @"BREAD IS WEIRD. IT'S COOKED BUT YOU COOK IT MORE AND IT'S TOAST."
                            ];
         
-        SKLabelNode *go = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+        go = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
         go.color = [SKColor whiteColor];
         go.alpha = 0;
-        go.text = quipsSeen > 2 ? [quips objectAtIndex:(arc4random() % quips.count)] : [quips objectAtIndex:0];
+        if ([highScoreText.text isEqualToString:scoreText.text]) {
+            go.text = @"HEY THAT'S A HIGH SCORE. LET'S DO IT AGAIN.";
+        } else {
+            go.text = quipsSeen > 2 ? [quips objectAtIndex:(arc4random() % quips.count)] : [quips objectAtIndex:0];
+            quipsSeen++;
+        }
         go.fontSize = 15;
         go.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height/5);
         SKAction *fadeIn = [SKAction fadeInWithDuration:1];
         [self addChild:go];
         [go runAction:fadeIn];
-        
-        quipsSeen++;
         [BlongGameCenterButton gameCenterButtonWithScene:self];
 
     }
     return self;
 }
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    go.color = [SKColor grayColor];
     SKScene *gameScene = [[BlongMyScene alloc] initWithSize:self.size];
     SKTransition *transition = [SKTransition flipHorizontalWithDuration:1];
     transition.pausesIncomingScene = NO;

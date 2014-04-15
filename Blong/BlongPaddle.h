@@ -13,5 +13,6 @@
 }
 +(BlongPaddle *) paddle:(NSString *)image;
 -(void) shrink;
+-(void) grow;
 -(void) getPhysical;
 @end
