@@ -46,6 +46,7 @@
     }];}
 
 
+
 //public static function easeOut (t:Number, b:Number, c:Number, d:Number):Number {
 //    if ((t/=d) < (1/2.75)) {
 //        return c*(7.5625*t*t) + b;

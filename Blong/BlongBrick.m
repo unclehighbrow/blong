@@ -91,8 +91,8 @@ static int minTappableRandomMod = 10;
             }]];
         } else {
             startX = topLeft.x + (col * brick.frame.size.width);
-            brick.color = [SKColor redColor];
-            brick.colorBlendFactor = 1.0;
+            //brick.color = [SKColor redColor];
+            //brick.colorBlendFactor = 1.0;
             [moveInSequence addObject:moveIn];
             [brick getPhysical];
         }

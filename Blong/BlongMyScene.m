@@ -31,13 +31,14 @@ bool touchedRight;
 bool isBonusLevel = NO;
 
 // sounds for preloading
-SKAction *makeNoise;
-SKAction *bip;
-SKAction *bop;
 SKAction *explosion;
-SKAction *gameOver;
-SKAction *ballsComingIn;
-SKAction *sound29;
+SKAction *breakthrough;
+SKAction *readySound;
+SKAction *steadySound;
+SKAction *blongSound;
+SKAction *ballsSound;
+SKAction *bricksSound;
+
 
 SKAction *addOne;
 
@@ -63,7 +64,8 @@ int incCountdown = 2;
 
 int bonusLevelEvery = 3;
 
-int streak = 0;
+NSArray *bips;
+NSArray *bops;
 
 CGPoint textEnd;
 
@@ -161,24 +163,50 @@ CGPoint textEnd;
         }], [SKAction waitForDuration:.01]]];
         
         // sounds
-        bip = [SKAction playSoundFileNamed:@"bip.wav" waitForCompletion:NO];
-        bop = [SKAction playSoundFileNamed:@"bop.wav" waitForCompletion:NO];
-        makeNoise = [SKAction playSoundFileNamed:@"level_start.wav" waitForCompletion:NO];
-        explosion = [SKAction playSoundFileNamed:@"game_over2.wav" waitForCompletion:NO];
-        gameOver = [SKAction playSoundFileNamed:@"game_over.wav" waitForCompletion:NO];
-        ballsComingIn = [SKAction playSoundFileNamed:@"balls_coming_in.aif" waitForCompletion:NO];
-        sound29 = [SKAction playSoundFileNamed:@"29.wav" waitForCompletion:NO];
+        bips = @[
+                          [SKAction playSoundFileNamed:@"bip1.wav" waitForCompletion:NO],
+                          [SKAction playSoundFileNamed:@"bip2.wav" waitForCompletion:NO],
+                          [SKAction playSoundFileNamed:@"bip3.wav" waitForCompletion:NO],
+                          [SKAction playSoundFileNamed:@"bip4.wav" waitForCompletion:NO],
+                          [SKAction playSoundFileNamed:@"bip5.wav" waitForCompletion:NO]
+                          ];
+        bops = @[
+                         [SKAction playSoundFileNamed:@"bop1.wav" waitForCompletion:NO],
+                         [SKAction playSoundFileNamed:@"bop2.wav" waitForCompletion:NO],
+                         [SKAction playSoundFileNamed:@"bop3.wav" waitForCompletion:NO],
+                         [SKAction playSoundFileNamed:@"bop4.wav" waitForCompletion:NO],
+                         [SKAction playSoundFileNamed:@"bop5.wav" waitForCompletion:NO]
+                 ];
+        explosion = [SKAction playSoundFileNamed:@"explode.wav" waitForCompletion:NO];
+        breakthrough = [SKAction playSoundFileNamed:@"breakthrough.wav" waitForCompletion:NO];
+        readySound = [SKAction playSoundFileNamed:@"ready.wav" waitForCompletion:NO];
+        steadySound = [SKAction playSoundFileNamed:@"steady.wav" waitForCompletion:NO];
+        blongSound = [SKAction playSoundFileNamed:@"blong.wav" waitForCompletion:NO];
+        ballsSound = [SKAction playSoundFileNamed:@"balls.wav" waitForCompletion:NO];
+        bricksSound = [SKAction playSoundFileNamed:@"bricks.wav" waitForCompletion:NO];
         
         self.paused = NO;
     }
     return self;
 }
 
+-(void) bip {
+    [self runAction:[bips objectAtIndex:(arc4random() % [bips count])]];
+}
+
+-(void) bop {
+    [self runAction:[bops objectAtIndex:(arc4random() % [bops count])]];
+}
+
+
 -(void) didMoveToView:(SKView *)view {
-    if (_skipTutorial) {
+    BOOL skipTutorial = NO;
+    if (skipTutorial) {
         touchedLeft = YES;
         touchedRight = YES;
         started = YES;
+        [_leftPaddle getPhysical];
+        [_rightPaddle getPhysical];
         self.physicsWorld.speed = 0;
         //[self bonusLevel];
         _level = 3;
@@ -239,28 +267,7 @@ CGPoint textEnd;
     }
     if (_level == _introduceTappable) {
         [BlongBrick centeredTappableBrickWithScene:self];
-        _brokenThrough = YES; // the breakthrough thing accesses uninitialized arrays
-        
-//        SKAction *fadeIn = [SKAction fadeInWithDuration:2];
-//        
-//        SKLabelNode *introducing = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
-//        introducing.text = @"Introducing the gold brick";
-//        introducing.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + introducing.frame.size.height*2);
-//        introducing.name = @"introducing";
-//        introducing.color = [SKColor whiteColor];
-//        introducing.alpha = 0;
-//        [introducing runAction:fadeIn];
-//        [self addChild:introducing];
-//        
-//        SKLabelNode *tapIt = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
-//        tapIt.alpha = 0;
-//        tapIt.text = @"Tap it. Or don't. I've got all day.";
-//        tapIt.fontSize = 25;
-//        tapIt.name = @"tap_it";
-//        tapIt.position = CGPointMake(CGRectGetMidX(self.frame), tapIt.frame.size.height*2);
-//        [tapIt runAction:fadeIn];
-//        [self addChild:tapIt];
-        
+        _brokenThrough = YES; // the breakthrough thing accesses uninitialized arrays        
         return;
         
     }
@@ -271,6 +278,7 @@ CGPoint textEnd;
     ready.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     [self addChild:ready];
     [ready runAction:[SKAction sequence:@[[SKAction waitForDuration:1], _topToMiddle, _shrinkAway]]];
+    [self runAction:[SKAction sequence:@[[SKAction waitForDuration:1.1], readySound]]];
     
     // balls
     [self runAction:[SKAction sequence:@[[SKAction waitForDuration:1.5],
@@ -278,6 +286,7 @@ CGPoint textEnd;
                                                                         [BlongBall ballOnLeft:YES withScene:self];
                                                                         [BlongBall ballOnLeft:NO withScene:self];}]
                                          ]]];
+    [self runAction:[SKAction sequence:@[[SKAction waitForDuration:1.6], ballsSound]]];
     
     
     // steady
@@ -286,7 +295,9 @@ CGPoint textEnd;
     steady.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     steady.zPosition = -1;
     [self addChild:steady];
-    [steady runAction:[SKAction sequence:@[[SKAction waitForDuration:2.3], _topToMiddle, _shrinkAway]]];
+    [steady runAction:[SKAction sequence:@[[SKAction waitForDuration:2.1], _topToMiddle, _shrinkAway]]];
+    [self runAction:[SKAction sequence:@[[SKAction waitForDuration:2.2], steadySound]]];
+
     
     // bricks
     SKAction *moveInBricks;
@@ -307,7 +318,9 @@ CGPoint textEnd;
     }
     
     
-    [self runAction:[SKAction sequence:@[[SKAction waitForDuration:2.9], moveInBricks, [SKAction waitForDuration:.3]]]];
+    [self runAction:[SKAction sequence:@[[SKAction waitForDuration:2.6], moveInBricks, [SKAction waitForDuration:.3]]]];
+    [self runAction:[SKAction sequence:@[[SKAction waitForDuration:2.7], bricksSound]]];
+
 
     // blong
     SKSpriteNode *blong = [SKSpriteNode spriteNodeWithImageNamed:@"blong_background"];
@@ -320,7 +333,7 @@ CGPoint textEnd;
     [blong setAlpha:0];
     SKAction *fadeIn = [SKAction fadeAlphaTo:.2 duration:0];
 
-    [blong runAction:[SKAction sequence:@[[SKAction waitForDuration:3.7], startPhysics, makeNoise, fadeIn, _fadeOut]]];
+    [blong runAction:[SKAction sequence:@[[SKAction waitForDuration:3.3], startPhysics, blongSound, fadeIn, _fadeOut]]];
     blong.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     [self addChild:blong];
     
@@ -395,7 +408,7 @@ CGPoint textEnd;
                 }
                 ball.velocity = velocity;
             }
-            [self runAction:bip];
+            [self bip];
         }
         
         // this is a check to see if it's moving too slowly horizontally, and give it a little push
@@ -416,7 +429,7 @@ CGPoint textEnd;
                 // TODO: different sound
             } else {
                 [self removeBrick:brick];
-                [self runAction:bop];
+                [self bop];
             }
         }
     }
@@ -438,6 +451,7 @@ CGPoint textEnd;
     SKSpriteNode *explodeBrick = [SKSpriteNode spriteNodeWithImageNamed:@"brick6"];
     explodeBrick.yScale = brick.yScale;
     explodeBrick.position = brick.position;
+    explodeBrick.color = [brick color];
     [self addChild:explodeBrick];
     SKAction *explode = [SKAction sequence:@[[SKAction group:@[[SKAction scaleTo:1.5 duration:.2], [SKAction fadeAlphaTo:0 duration:.2]]], removeFromParent]];
     [explodeBrick runAction:explode];
@@ -466,13 +480,14 @@ CGPoint textEnd;
                 [_leftPaddle getPhysical];
                 [_rightPaddle getPhysical];
                 
-                SKLabelNode *breakthrough = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
-                breakthrough.text = @"BREAKTHROUGH";
-                breakthrough.position = CGPointMake(CGRectGetMidX(self.frame), 0);
-                breakthrough.fontColor = [SKColor blueColor];
-                breakthrough.zPosition = 1;
-                [self addChild:breakthrough];
-                [breakthrough runAction:[SKAction sequence:@[[SKAction waitForDuration:.6], _shrinkAway]]];
+                SKLabelNode *breakthroughLabel = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+                breakthroughLabel.text = @"BREAKTHROUGH";
+                breakthroughLabel.position = CGPointMake(CGRectGetMidX(self.frame), 0);
+                breakthroughLabel.fontColor = [SKColor blueColor];
+                breakthroughLabel.zPosition = 1;
+                [self addChild:breakthroughLabel];
+                [breakthroughLabel runAction:[SKAction sequence:@[[SKAction waitForDuration:.6], _shrinkAway]]];
+                [self runAction:breakthrough];
                 CGPoint lastBrickPoint = [BlongBrick calculatePositionFromSlot:_lastBlockCleared withNode:[_balls objectAtIndex:0] withScene:self];
                 [BlongBall ballWithX:lastBrickPoint.x withY:lastBrickPoint.y withScene:self];
                 [self makeParticleAt:lastBrickPoint];
@@ -599,58 +614,66 @@ CGPoint textEnd;
     }
     
     if (!isBonusLevel) {
-        if (ballsSaved >= 3) {
-            streak++;
+        if (ballsSaved >= 2) {
             SKLabelNode *ballsSavedLabel = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
-            if (streak == 1) {
-                ballsSavedLabel.text = [NSString stringWithFormat:@"%ld BALLS", ballsSaved];
-            } else {
-                ballsSavedLabel.text = [NSString stringWithFormat:@"%ld BALLS X%d STREAK", ballsSaved, streak];
-            }
-            ballsSavedLabel.position = CGPointMake(0-ballsSavedLabel.frame.size.width/2, CGRectGetMidY(self.frame));
+            ballsSavedLabel.text = [NSString stringWithFormat:@"%ld BALLS", ballsSaved];
+            ballsSavedLabel.fontSize = 25;
+            ballsSavedLabel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + ballsSavedLabel.frame.size.height);
+            [ballsSavedLabel setAlpha:0];
             [self addChild:ballsSavedLabel];
+            NSLog(@"size: %f", ballsSavedLabel.fontSize);
+            SKAction *waitFadeIn_fadeOut = [SKAction sequence:@[
+                                                                          [SKAction waitForDuration:.5],
+                                                                          [SKAction fadeInWithDuration:1],
+                                                                          [SKAction waitForDuration:.5],
+                                                                          [SKAction fadeOutWithDuration:1],
+                                                                          ]];
             
-            [ballsSavedLabel runAction:[SKAction sequence:@[[SKAction waitForDuration:1],
-                                                            [BlongEasing easeOutElasticFrom:ballsSavedLabel.position to:textEnd for:.5],
-                                                            _shrinkAway]]];
+            [ballsSavedLabel runAction:waitFadeIn_fadeOut];
+            
             
             NSString *powerUpString;
-            switch (streak) {
-                case 1:
-                    powerUpString = @"BIGGER PADDLES";
-                    [_leftPaddle grow];
-                    [_rightPaddle grow];
-                    break;
-                case 2:
-                    powerUpString = @"SLOW DOWN";
-                    _slowDown += 30;
-                    break;
-                case 3:
-                    powerUpString = @"DOUBLE BREAKTHROUGH";
-                    _doubleBreakthrough = YES;
-                    break;
-                case 4:
-                    powerUpString = @"WRECKING BALLS";
-                    _wreckingBall = YES;
-                    break;
-                case 5:
-                    powerUpString = @"GOLD BRICKS MAKE BALLS";
-                    _goldBricksMakeBalls = YES;
-                    break;
-                default:
-                    powerUpString = @"YOU ARE A COOL PERSON";
+            if (ballsSaved == 2) {
+                int randomPowerup = arc4random() % 2;
+                switch (randomPowerup) {
+                    case 0:
+                        powerUpString = @"BIGGER PADDLES";
+                        [_leftPaddle grow];
+                        [_rightPaddle grow];
+                        break;
+                    default:
+                        powerUpString = @"SLOW DOWN";
+                        _slowDown += 30;
+                        break;
+                }
+            } else {
+                int randomPowerup = arc4random() % 4;
+                switch (randomPowerup) {
+                    case 0:
+                        powerUpString = @"DOUBLE BREAKTHROUGH";
+                        _doubleBreakthrough = YES;
+                        break;
+                    case 1:
+                        powerUpString = @"WRECKING BALLS";
+                        _wreckingBall = YES;
+                        break;
+                    case 2:
+                        powerUpString = @"GOLD BRICKS MAKE BALLS";
+                        _goldBricksMakeBalls = YES;
+                        break;
+                    default:
+                        powerUpString = @"YOU ARE A COOL PERSON";
+                }
             }
 
             
             SKLabelNode *bonusLabel = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
             bonusLabel.text = powerUpString;
-            bonusLabel.position = CGPointMake(self.frame.size.width + bonusLabel.frame.size.width/2, CGRectGetMidY(self.frame));
+            bonusLabel.fontSize = 25;
+            bonusLabel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) - bonusLabel.frame.size.height);
+            [bonusLabel setAlpha:0];
             [self addChild:bonusLabel];
-            [bonusLabel runAction:[SKAction sequence:@[[SKAction waitForDuration:2],
-                                                       [BlongEasing easeOutElasticFrom:bonusLabel.position to:textEnd for:.5],
-                                                       _shrinkAway]]];
-        } else {
-            streak = 0;
+            [bonusLabel runAction:waitFadeIn_fadeOut];
         }
     }
     
@@ -673,6 +696,7 @@ CGPoint textEnd;
     SKLabelNode *levelText = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
     NSString *levelTextText = (isBonusLevel? @"BONUS LEVEL" : [NSString stringWithFormat:@"LEVEL %d", _level]);
     levelText.text = levelTextText;
+    levelText.fontSize = 25;
     levelText.position = CGPointMake(CGRectGetMidX(self.frame), levelText.frame.size.height * 2);
     [levelText setAlpha:0];
     [self addChild:levelText];
@@ -699,7 +723,6 @@ CGPoint textEnd;
     [BlongGameCenterHelper reportScore:_score];
     BlongGameOverScene *gameOverScene = [[BlongGameOverScene alloc] initWithSize:self.size andScore:_score];
     SKTransition *transition = [SKTransition fadeWithDuration:2];
-    [self runAction:gameOver];
     [self.view presentScene:gameOverScene transition:transition];
 }
 
