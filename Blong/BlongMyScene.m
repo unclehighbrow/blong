@@ -621,7 +621,6 @@ CGPoint textEnd;
             ballsSavedLabel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + ballsSavedLabel.frame.size.height);
             [ballsSavedLabel setAlpha:0];
             [self addChild:ballsSavedLabel];
-            NSLog(@"size: %f", ballsSavedLabel.fontSize);
             SKAction *waitFadeIn_fadeOut = [SKAction sequence:@[
                                                                           [SKAction waitForDuration:.5],
                                                                           [SKAction fadeInWithDuration:1],
