@@ -641,7 +641,7 @@ CGPoint textEnd;
     }
     
     if (!isBonusLevel) {
-        if (ballsSaved >= 2) {
+        if (ballsSaved >= 2 && _level > 1) {
             SKLabelNode *ballsSavedLabel = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
             ballsSavedLabel.text = [NSString stringWithFormat:@"%ld BALLS", ballsSaved];
             ballsSavedLabel.fontSize = 25;
@@ -682,7 +682,7 @@ CGPoint textEnd;
                     powerUpString = @"WRECKING BALLS";
                     _wreckingBall = YES;
                     [threeBallPowerups removeObject:@"wrecking_ball"];
-                } else if ([powerup isEqualToString:@"gold_bricks"]) {
+                } else if ([powerup isEqualToString:@"gold_bricks"] && _level > _introduceTappable) {
                     powerUpString = @"GOLD BRICKS MAKE BALLS";
                     _goldBricksMakeBalls = YES;
                     [threeBallPowerups removeObject:@"gold_bricks"];
