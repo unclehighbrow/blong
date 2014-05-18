@@ -44,7 +44,7 @@ static float growage = .2;
     }
     
     float osVersion = [[[UIDevice currentDevice] systemVersion] floatValue]; // 7.0 doesn't shrink the physics body
-    if (osVersion < 7.1) {
+    if (osVersion < 7.09) {
         self.yScale = self.yScale + growage;
         [self makePhysicsBodyWithDynamic:NO];
     } else {
@@ -58,7 +58,7 @@ static float growage = .2;
     }
     
     float osVersion = [[[UIDevice currentDevice] systemVersion] floatValue]; // 7.0 doesn't shrink the physics body
-    if (osVersion < 7.1) {
+    if (osVersion <= 7.09) {
         self.yScale = self.yScale - shrinkage;
         [self makePhysicsBodyWithDynamic:NO];
     } else {
