@@ -668,7 +668,7 @@ CGPoint textEnd;
                         [_rightPaddle grow];
                         break;
                     case 1:
-                        powerUpString = @"HAVE SOME POINTS";
+                        powerUpString = @"HERE'S 50 POINTS";
                         [self updateScore:50];
                         break;
                     case 2:
