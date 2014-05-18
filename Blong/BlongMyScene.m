@@ -18,6 +18,9 @@ const uint32_t wallCat = 0x1 << 3;
 const uint32_t brickCat = 0x1 << 4;
 const uint32_t tappableBrickCat = 0x1 << 5;
 
+static int minTappable = 1;
+static int incTappable = 2;
+static int maxTappable = 10;
 
 float baseMaxVelocity = 285;
 float maxMaxVelocity = 600;
@@ -279,7 +282,6 @@ CGPoint textEnd;
         [BlongBrick centeredTappableBrickWithScene:self];
         _brokenThrough = YES; // the breakthrough thing accesses uninitialized arrays        
         return;
-        
     }
 
     // ready
@@ -322,6 +324,13 @@ CGPoint textEnd;
             for (int i = 0; i<_rows; i++) {
                 for (int j = 0; j<_cols; j++) {
                     [BlongBrick brickWithScene:self fromRandom:YES withMotion:YES];
+                }
+            }
+            if (_level > _introduceTappable) {
+                int tappableNum = MIN(minTappable + floor((_level - _introduceTappable) / incTappable), maxTappable);
+                for (int i = 0; i < tappableNum; i++) {
+                    BlongBrick *brick = (BlongBrick *) [[_bricks objectAtIndex:arc4random() % _cols] objectAtIndex:arc4random() % _rows];
+                    [brick makeTappable];
                 }
             }
         }];

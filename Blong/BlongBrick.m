@@ -9,9 +9,7 @@
 #import "BlongBrick.h"
 #import "BlongMyScene.h"
 
-static int baseTappableRandomMod = 25;
-static int incTappableRandomMod = 2;
-static int minTappableRandomMod = 10;
+
 
 @implementation BlongBrick
 +(BlongBrick *)centeredTappableBrickWithScene:(BlongMyScene *)scene {
@@ -37,17 +35,17 @@ static int minTappableRandomMod = 10;
     return brick;
 }
 
+-(void)makeTappable {
+    self.color = [SKColor colorWithRed:255 green:215 blue:0 alpha:1];
+    self.colorBlendFactor = 1.0;
+    self.tappable = YES;
+}
+
 +(BlongBrick *)brickWithScene:(BlongMyScene *) scene fromRandom:(BOOL)random withMotion:(BOOL)motion {
     if ([scene.availableBlockSlots count] == 0) {
         return nil;
     }
     BlongBrick *brick = [BlongBrick spriteNodeWithImageNamed:@"brick6"];
-
-    if (scene.level > scene.introduceTappable && random && arc4random() % MAX(baseTappableRandomMod - (incTappableRandomMod * scene.level), minTappableRandomMod) == 1 && scene.level != 1) {
-        brick.color = [SKColor colorWithRed:255 green:215 blue:0 alpha:1];
-        brick.colorBlendFactor = 1.0;
-        brick.tappable = YES;
-    }
     
     [brick setYScale:6.0/(float)scene.rows];
     scene.brickSize = brick.frame.size;

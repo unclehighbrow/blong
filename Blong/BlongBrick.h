@@ -20,6 +20,7 @@
 +(BlongBrick *)brickWithScene:(BlongMyScene * )scene fromRandom:(BOOL)random withMotion:(BOOL) motion;
 +(CGPoint) calculatePositionFromSlot:(NSNumber *)slot withNode:(SKNode *)node withScene:(BlongMyScene *)scene;
 +(BlongBrick *)centeredTappableBrickWithScene:(BlongMyScene *)scene;
+-(void)makeTappable;
 
 
 
