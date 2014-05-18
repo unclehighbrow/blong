@@ -12,6 +12,7 @@
 
 @interface BlongBrick : SKSpriteNode
 @property BOOL tappable;
+@property BOOL tapped;
 @property NSNumber *blockSlot;
 @property int col;
 @property int row;

@@ -16,11 +16,14 @@ const uint32_t ballCat = 0x1 << 1;
 const uint32_t paddleCat = 0x1 << 2;
 const uint32_t wallCat = 0x1 << 3;
 const uint32_t brickCat = 0x1 << 4;
+const uint32_t tappableBrickCat = 0x1 << 5;
+
 
 float baseMaxVelocity = 285;
 float maxMaxVelocity = 600;
 float incMaxVelocity = 7;
 float maxYVelocity;
+float levelVelocity;
 
 int bonusCountdown = 10;
 
@@ -66,18 +69,22 @@ int bonusLevelEvery = 3;
 
 NSArray *bips;
 NSArray *bops;
+NSMutableArray *threeBallPowerups;
 
 CGPoint textEnd;
 
 
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
-        maxYVelocity = [self levelVelocity] *.7;
+        levelVelocity = [self calcLevelVelocity];
+        maxYVelocity = levelVelocity *.7;
         _introduceTappable = 4;
         _slowDown = 0;
         _doubleBreakthrough = NO;
         _wreckingBall = NO;
         _goldBricksMakeBalls = NO;
+        _noCountdown = NO;
+        threeBallPowerups = [NSMutableArray arrayWithArray:@[@"wrecking_ball", @"double_breakthrough", @"cool_person", @"gold_bricks", @"no_countdown"]];
         
         // score
         _score = 0;
@@ -238,6 +245,9 @@ CGPoint textEnd;
     if (_level == _introduceTappable) {
         _rows = 1;
         _cols = 1;
+    } else if (_level == 1) {
+        _rows = baseRows + 1;
+        _cols = baseCols - 1;
     } else {
         _rows = MIN(baseRows + _level, maxRows);
         _cols = MIN(baseCols + floor(_level / incCols), maxCols);
@@ -400,7 +410,7 @@ CGPoint textEnd;
     //        NSLog(@"new total: %f, x,y: %f,%f", newTotalVelocity, newX, newY);
 
             if (fabsf(ball.velocity.dy) < 500) {
-                float yVelocity = [self levelVelocity] * relativeIntersectY/secondBody.node.frame.size.height * 2;
+                float yVelocity = levelVelocity * relativeIntersectY/secondBody.node.frame.size.height * 2;
                 CGVector velocity = [self calculateVelocityFromY:yVelocity];
                 BOOL right = ball.node.position.x > CGRectGetMidX(self.frame);
                 if (right) {
@@ -425,12 +435,14 @@ CGPoint textEnd;
         
         if (secondBody.categoryBitMask & brickCat) {
             BlongBrick *brick = (BlongBrick *)secondBody.node;
-            if (brick.tappable) {
-                // TODO: different sound
-            } else {
-                [self removeBrick:brick];
-                [self bop];
-            }
+            [self removeBrick:brick];
+            [self bop];
+        }
+        
+        if (secondBody.categoryBitMask & tappableBrickCat) {
+            // TODO: make cool sound and animation
+            //BlongBrick *brick = (BlongBrick *)secondBody.node;
+            
         }
     }
 }
@@ -462,8 +474,6 @@ CGPoint textEnd;
 
 -(void)checkBreakthrough {
     if (_level == _introduceTappable) {
-        [[self childNodeWithName:@"introducing"] runAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:1], [SKAction removeFromParent]]]];
-        [[self childNodeWithName:@"tap_it"] runAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:1], [SKAction removeFromParent]]]];
         [self newLevel];
     }
     if (!_brokenThrough) {
@@ -489,10 +499,13 @@ CGPoint textEnd;
                 [breakthroughLabel runAction:[SKAction sequence:@[[SKAction waitForDuration:.6], _shrinkAway]]];
                 [self runAction:breakthrough];
                 CGPoint lastBrickPoint = [BlongBrick calculatePositionFromSlot:_lastBlockCleared withNode:[_balls objectAtIndex:0] withScene:self];
-                [BlongBall ballWithX:lastBrickPoint.x withY:lastBrickPoint.y withScene:self];
+                BlongBall *newBall = [BlongBall ballWithX:lastBrickPoint.x withY:lastBrickPoint.y withScene:self];
+                if (_doubleBreakthrough) {
+                    [BlongBall ballWithX:(lastBrickPoint.x + newBall.frame.size.width) withY:lastBrickPoint.y withScene:self];
+                }
                 [self makeParticleAt:lastBrickPoint];
                 _brokenThrough = YES;
-                break; // dicks
+                break;
             }
         }
     }
@@ -510,7 +523,7 @@ CGPoint textEnd;
     if (yVelocity <= -maxYVelocity) {
         yVelocity = -maxYVelocity;
     }
-    float xVelocity = sqrtf(powf([self levelVelocity], 2) - powf(yVelocity, 2));
+    float xVelocity = sqrtf(powf(levelVelocity, 2) - powf(yVelocity, 2));
     return CGVectorMake(xVelocity, yVelocity);
 }
 
@@ -570,11 +583,14 @@ CGPoint textEnd;
             [self addChild:touchRectNode];
         }
         [self.physicsWorld enumerateBodiesInRect:touchRect usingBlock:^(SKPhysicsBody *body, BOOL *stop) {
-            if (body.categoryBitMask & brickCat) {
+            if (body.categoryBitMask & tappableBrickCat) {
                 BlongBrick *brick = (BlongBrick *)body.node;
-                if (brick.tappable) {
-                    [self removeBrick:brick];
+                CGPoint brickPoint = brick.frame.origin;
+                [self removeBrick:brick];
+                if (_level != _introduceTappable && _goldBricksMakeBalls && !brick.tapped) {
+                    [BlongBall ballWithX:brickPoint.x withY:brickPoint.y withScene:self];
                 }
+                brick.tapped = YES;
             }
         }];
     }
@@ -633,35 +649,42 @@ CGPoint textEnd;
             
             NSString *powerUpString;
             if (ballsSaved == 2) {
-                int randomPowerup = arc4random() % 2;
+                int randomPowerup = arc4random() % 3;
                 switch (randomPowerup) {
                     case 0:
                         powerUpString = @"BIGGER PADDLES";
                         [_leftPaddle grow];
                         [_rightPaddle grow];
                         break;
-                    default:
+                    case 1:
+                        powerUpString = @"HAVE SOME POINTS";
+                        [self updateScore:50];
+                        break;
+                    case 2:
                         powerUpString = @"SLOW DOWN";
-                        _slowDown += 30;
+                        _slowDown += 50;
                         break;
                 }
             } else {
-                int randomPowerup = arc4random() % 4;
-                switch (randomPowerup) {
-                    case 0:
-                        powerUpString = @"DOUBLE BREAKTHROUGH";
-                        _doubleBreakthrough = YES;
-                        break;
-                    case 1:
-                        powerUpString = @"WRECKING BALLS";
-                        _wreckingBall = YES;
-                        break;
-                    case 2:
-                        powerUpString = @"GOLD BRICKS MAKE BALLS";
-                        _goldBricksMakeBalls = YES;
-                        break;
-                    default:
-                        powerUpString = @"YOU ARE A COOL PERSON";
+                NSString *powerup = [threeBallPowerups objectAtIndex:(arc4random() % [threeBallPowerups count])];
+                if ([powerup isEqualToString:@"wrecking_ball"])  {
+                    powerUpString = @"WRECKING BALLS";
+                    _wreckingBall = YES;
+                    [threeBallPowerups removeObject:@"wrecking_ball"];
+                } else if ([powerup isEqualToString:@"gold_bricks"]) {
+                    powerUpString = @"GOLD BRICKS MAKE BALLS";
+                    _goldBricksMakeBalls = YES;
+                    [threeBallPowerups removeObject:@"gold_bricks"];
+                } else if ([powerup isEqualToString:@"no_countdown"]) {
+                    powerUpString = @"NO COUNTDOWN";
+                    _noCountdown = YES;
+                    [threeBallPowerups removeObject:@"no_countdown"];
+                } else if ([powerup isEqualToString:@"double_breakthrough"]) {
+                    powerUpString = @"DOUBLE BREAKTHROUGH";
+                    _doubleBreakthrough = YES;
+                    [threeBallPowerups removeObject:@"double_breakthrough"];
+                } else {
+                    powerUpString = @"YOU ARE A COOL PERSON";
                 }
             }
 
@@ -711,6 +734,9 @@ CGPoint textEnd;
     
     [_leftPaddle shrink];
     [_rightPaddle shrink];
+    
+    levelVelocity = [self calcLevelVelocity];
+    maxYVelocity = levelVelocity *.7;
 }
 
 -(void)gameOver {
@@ -744,7 +770,7 @@ CGPoint textEnd;
             if (_balls.count == 0) {
                 self.physicsWorld.speed = 0;
                 [self gameOver];
-            } else if (_balls.count == 1 && _level != 1 && _level != _introduceTappable) {
+            } else if (_balls.count == 1 && _level != 1 && _level != _introduceTappable && !_noCountdown) {
                 [self startCountdown];
             } else if (_balls.count > 1 && _countdownTimer.isValid) {
                 [self stopCountdown];
@@ -843,7 +869,7 @@ CGPoint textEnd;
     return CGPointMake(CGRectGetMidX(self.frame) - ((((float)self.cols)/2.0)*self.brickSize.width) + self.brickSize.width/2.0, self.frame.size.height - self.brickSize.height/2.0);
 }
 
--(float)levelVelocity {
+-(float)calcLevelVelocity {
     return MIN(maxMaxVelocity, baseMaxVelocity + (_level * incMaxVelocity)) - _slowDown;
 }
 

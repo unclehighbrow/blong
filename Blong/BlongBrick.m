@@ -126,7 +126,11 @@ static int minTappableRandomMod = 10;
 
 -(void)getPhysical {
     self.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:self.frame.size];
-    self.physicsBody.categoryBitMask = brickCat;
+    if (self.tappable) {
+        self.physicsBody.categoryBitMask = tappableBrickCat;
+    } else {
+        self.physicsBody.categoryBitMask = brickCat;
+    }
     self.physicsBody.dynamic = NO;
     self.physicsBody.restitution = 1;
     self.physicsBody.linearDamping = 0;

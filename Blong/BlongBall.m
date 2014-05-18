@@ -82,12 +82,12 @@
     self.physicsBody.linearDamping = 0;
     self.physicsBody.angularDamping = 0;
     self.physicsBody.categoryBitMask = ballCat;
+    self.physicsBody.contactTestBitMask = paddleCat|wallCat|brickCat|tappableBrickCat;
     if (scene.wreckingBall) {
-        self.physicsBody.contactTestBitMask = paddleCat|wallCat;
+        self.physicsBody.collisionBitMask = ballCat|paddleCat|wallCat|tappableBrickCat;
     } else {
-        self.physicsBody.contactTestBitMask = paddleCat|wallCat|brickCat;
+        self.physicsBody.collisionBitMask = ballCat|paddleCat|brickCat|wallCat|tappableBrickCat;
     }
-    self.physicsBody.collisionBitMask = ballCat|paddleCat|brickCat|wallCat;
     self.physicsBody.usesPreciseCollisionDetection = YES;
     self.physicsBody.velocity = velocity;
     

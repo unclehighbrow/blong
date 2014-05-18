@@ -15,7 +15,7 @@ float scale = 1;
 static float shrinkage = .03;
 static float maxShrinkage = .4;
 static float maxGrowage = 1.5;
-static float growage = .1;
+static float growage = .2;
 
 +(BlongPaddle *) paddle:(NSString *)image {
     BlongPaddle *paddle = [BlongPaddle spriteNodeWithImageNamed:image];

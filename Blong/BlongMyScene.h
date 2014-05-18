@@ -55,10 +55,12 @@
 @property BOOL doubleBreakthrough;
 @property BOOL wreckingBall;
 @property BOOL goldBricksMakeBalls;
+@property BOOL noCountdown;
 
 extern const uint32_t ballCat;
 extern const uint32_t paddleCat;
 extern const uint32_t wallCat;
 extern const uint32_t brickCat;
+extern const uint32_t tappableBrickCat;
 
 @end
