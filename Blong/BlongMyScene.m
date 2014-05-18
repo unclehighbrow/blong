@@ -332,7 +332,9 @@ CGPoint textEnd;
                     BlongBrick *brick = (BlongBrick *) [[_bricks objectAtIndex:arc4random() % _cols] objectAtIndex:arc4random() % _rows];
                     [brick makeTappable];
                 }
-            }
+            }            
+            [_leftPaddle shrink];
+            [_rightPaddle shrink];
         }];
     }
     
@@ -740,9 +742,6 @@ CGPoint textEnd;
     ]];
 
     [levelText runAction:waitFadeIn_fadeOutStartLevel];
-    
-    [_leftPaddle shrink];
-    [_rightPaddle shrink];
     
     levelVelocity = [self calcLevelVelocity];
     maxYVelocity = levelVelocity *.7;
