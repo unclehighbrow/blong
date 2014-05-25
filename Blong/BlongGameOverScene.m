@@ -17,7 +17,7 @@ SKLabelNode *go;
 @implementation BlongGameOverScene
 -(id)initWithSize:(CGSize)size andScore:(int) score {
     if (self = [super initWithSize:size]) {
-        [self runAction:[SKAction playSoundFileNamed:@"game_over.wav" waitForCompletion:NO]];
+        [self runAction:[SKAction playSoundFileNamed:@"game_over.m4a" waitForCompletion:NO]];
         
         self.backgroundColor = [SKColor blackColor];
         SKLabelNode *gameOverText = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
@@ -65,7 +65,7 @@ SKLabelNode *go;
         go = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
         go.color = [SKColor whiteColor];
         go.alpha = 0;
-        if ([highScoreString isEqualToString:scoreText.text]) {
+        if ([highScoreString isEqualToString:scoreText.text] && score > 0) {
             go.text = @"HEY THAT'S A HIGH SCORE! LET'S DO IT AGAIN.";
         } else {
             go.text = quipsSeen > 2 ? [quips objectAtIndex:(arc4random() % quips.count)] : [quips objectAtIndex:0];

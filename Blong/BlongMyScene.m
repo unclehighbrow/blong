@@ -69,12 +69,26 @@ int minCountdown = 10;
 int incCountdown = 2;
 
 int bonusLevelEvery = 3;
+int iconXOffset = 0;
 
 NSArray *bips;
 NSArray *bops;
-NSMutableArray *threeBallPowerups;
 
 CGPoint textEnd;
+
+-(BOOL)powerupActive:(NSString *)name {
+    return [[[_threeBallPowerups objectForKey:name] objectAtIndex:0] intValue] > 0;
+}
+
+-(void)makePowerup:(NSString *) name {
+    SKSpriteNode *icon = [SKSpriteNode spriteNodeWithImageNamed:@"arrow"];
+    icon.position = CGPointMake(self.frame.size.width - icon.frame.size.width/2 - iconXOffset,
+                                self.frame.size.height - icon.frame.size.height/2);
+    icon.alpha = 0;
+    [self addChild:icon];
+    iconXOffset+= icon.frame.size.width * 1.5;
+    [_threeBallPowerups setObject:[NSMutableArray arrayWithObjects: @0, icon, nil] forKey:name];
+}
 
 
 -(id)initWithSize:(CGSize)size {
@@ -83,11 +97,20 @@ CGPoint textEnd;
         maxYVelocity = levelVelocity *.7;
         _introduceTappable = 4;
         _slowDown = 0;
-        _doubleBreakthrough = NO;
-        _wreckingBall = NO;
-        _goldBricksMakeBalls = NO;
-        _noCountdown = NO;
-        threeBallPowerups = [NSMutableArray arrayWithArray:@[@"wrecking_ball", @"double_breakthrough", @"cool_person", @"gold_bricks", @"no_countdown"]];
+        
+        iconXOffset = 0;
+        _threeBallPowerups = [NSMutableDictionary dictionary];
+        _wreckingBall = @"WRECKING BALLS";
+        _doubleBreakthrough = @"DOUBLE BREAKTHROUGH";
+        _coolPerson = @"YOU ARE A COOL PERSON";
+        _goldBricks = @"GOLD BRICKS MAKE BALLS";
+        _noCountdown = @"NO COUNTDOWN";
+
+        [self makePowerup:_wreckingBall];
+        [self makePowerup:_doubleBreakthrough];
+        [self makePowerup:_coolPerson];
+        [self makePowerup:_goldBricks];
+        [self makePowerup:_noCountdown];
         
         // score
         _score = 0;
@@ -511,7 +534,7 @@ CGPoint textEnd;
                 [self runAction:breakthrough];
                 CGPoint lastBrickPoint = [BlongBrick calculatePositionFromSlot:_lastBlockCleared withNode:[_balls objectAtIndex:0] withScene:self];
                 BlongBall *newBall = [BlongBall ballWithX:lastBrickPoint.x withY:lastBrickPoint.y withScene:self];
-                if (_doubleBreakthrough) {
+                if ([self powerupActive:_doubleBreakthrough]) {
                     [BlongBall ballWithX:(lastBrickPoint.x + newBall.frame.size.width) withY:lastBrickPoint.y withScene:self];
                 }
                 [self makeParticleAt:lastBrickPoint];
@@ -598,7 +621,7 @@ CGPoint textEnd;
                 BlongBrick *brick = (BlongBrick *)body.node;
                 CGPoint brickPoint = brick.frame.origin;
                 [self removeBrick:brick];
-                if (_level != _introduceTappable && _goldBricksMakeBalls && !brick.tapped) {
+                if (_level != _introduceTappable && [self powerupActive:_goldBricks] && !brick.tapped) {
                     [BlongBall ballWithX:brickPoint.x withY:brickPoint.y withScene:self];
                 }
                 brick.tapped = YES;
@@ -657,51 +680,43 @@ CGPoint textEnd;
             
             [ballsSavedLabel runAction:waitFadeIn_fadeOut];
             
-            
-            NSString *powerUpString;
+            NSString *powerup;
             if (ballsSaved == 2) {
                 int randomPowerup = arc4random() % 3;
                 switch (randomPowerup) {
                     case 0:
-                        powerUpString = @"BIGGER PADDLES";
+                        powerup = @"BIGGER PADDLES";
                         [_leftPaddle grow];
                         [_rightPaddle grow];
                         break;
                     case 1:
-                        powerUpString = @"HERE'S 50 POINTS";
+                        powerup = @"HERE'S 50 POINTS";
                         [self updateScore:50];
                         break;
                     case 2:
-                        powerUpString = @"SLOW DOWN";
+                        powerup = @"SLOW DOWN";
                         _slowDown += 50;
                         break;
                 }
             } else {
-                NSString *powerup = [threeBallPowerups objectAtIndex:(arc4random() % [threeBallPowerups count])];
-                if ([powerup isEqualToString:@"wrecking_ball"])  {
-                    powerUpString = @"WRECKING BALLS";
-                    _wreckingBall = YES;
-                    [threeBallPowerups removeObject:@"wrecking_ball"];
-                } else if ([powerup isEqualToString:@"gold_bricks"] && _level > _introduceTappable) {
-                    powerUpString = @"GOLD BRICKS MAKE BALLS";
-                    _goldBricksMakeBalls = YES;
-                    [threeBallPowerups removeObject:@"gold_bricks"];
-                } else if ([powerup isEqualToString:@"no_countdown"]) {
-                    powerUpString = @"NO COUNTDOWN";
-                    _noCountdown = YES;
-                    [threeBallPowerups removeObject:@"no_countdown"];
-                } else if ([powerup isEqualToString:@"double_breakthrough"]) {
-                    powerUpString = @"DOUBLE BREAKTHROUGH";
-                    _doubleBreakthrough = YES;
-                    [threeBallPowerups removeObject:@"double_breakthrough"];
-                } else {
-                    powerUpString = @"YOU ARE A COOL PERSON";
+                NSArray *allPowerups = [_threeBallPowerups allKeys];
+                int powerupNum = (arc4random() % [allPowerups count]);
+                powerup = [allPowerups objectAtIndex:powerupNum];
+                if ([powerup isEqualToString:_goldBricks] && _level < _introduceTappable) {
+                    powerup = _coolPerson;
                 }
+                NSMutableArray *powerupList = [_threeBallPowerups objectForKey:powerup];
+                [powerupList replaceObjectAtIndex:0 withObject:@([[powerupList objectAtIndex:0] intValue] + 4)];
+                SKSpriteNode *powerupToFadeOut = (SKSpriteNode *)[powerupList objectAtIndex:1];
+                [powerupToFadeOut runAction:[SKAction sequence:@[
+                                                                 [SKAction waitForDuration:.5],
+                                                                 [SKAction fadeInWithDuration:1]
+                                                                 ]]];
             }
 
             
             SKLabelNode *bonusLabel = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
-            bonusLabel.text = powerUpString;
+            bonusLabel.text = powerup;
             bonusLabel.fontSize = 25;
             bonusLabel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) - bonusLabel.frame.size.height);
             [bonusLabel setAlpha:0];
@@ -717,6 +732,23 @@ CGPoint textEnd;
         isBonusLevel = YES;
     } else {
         _level++;
+    }
+    
+    if (!isBonusLevel) {
+        for (NSString* powerup in _threeBallPowerups) {
+            NSMutableArray *powerupList = [_threeBallPowerups objectForKey:powerup];
+            int powerupCount = [[powerupList objectAtIndex:0] intValue];
+            if (powerupCount > 0) {
+                [powerupList replaceObjectAtIndex:0 withObject:@(powerupCount - 1)];
+            }
+            if (powerupCount == 1) {
+                SKSpriteNode *powerupToFadeOut = (SKSpriteNode *)[powerupList objectAtIndex:1];
+                [powerupToFadeOut runAction:[SKAction sequence:@[
+                                                                 [SKAction waitForDuration:.5],
+                                                                 [SKAction fadeOutWithDuration:1]
+                                                                 ]]];
+            }
+        }
     }
     
     self.physicsWorld.speed = 0;
@@ -778,7 +810,7 @@ CGPoint textEnd;
             if (_balls.count == 0) {
                 self.physicsWorld.speed = 0;
                 [self gameOver];
-            } else if (_balls.count == 1 && _level != 1 && _level != _introduceTappable && !_noCountdown) {
+            } else if (_balls.count == 1 && _level != 1 && _level != _introduceTappable && ![self powerupActive:_noCountdown]) {
                 [self startCountdown];
             } else if (_balls.count > 1 && _countdownTimer.isValid) {
                 [self stopCountdown];

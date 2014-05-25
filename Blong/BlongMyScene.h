@@ -21,6 +21,7 @@
 -(CGPoint) getRandomOffScreenPointForNode:(SKNode * )node;
 -(CGPoint) topLeft;
 -(void)removeBrick:(BlongBrick *)brick;
+-(BOOL)powerupActive:(NSString *)name;
 
 
 @property BOOL skipTutorial;
@@ -51,11 +52,14 @@
 @property int introduceTappable;
 
 // powerups
+@property NSMutableDictionary *threeBallPowerups;
+@property NSString *wreckingBall;
+@property NSString *doubleBreakthrough;
+@property NSString *coolPerson;
+@property NSString *goldBricks;
+@property NSString *noCountdown;
+
 @property float slowDown;
-@property BOOL doubleBreakthrough;
-@property BOOL wreckingBall;
-@property BOOL goldBricksMakeBalls;
-@property BOOL noCountdown;
 
 extern const uint32_t ballCat;
 extern const uint32_t paddleCat;

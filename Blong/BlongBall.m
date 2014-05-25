@@ -70,7 +70,7 @@
 +(BlongBall *) ballWithX:(int)x withY:(int)y withScene:(BlongMyScene *) scene {
     BlongBall *ball = [BlongBall spriteNodeWithImageNamed:@"ball"];
     ball.position = CGPointMake(x, y);
-    [ball prepareWithScene:scene withVelocity:CGVectorMake(150, 150)]; // TODO: somehow make this go the other way?
+    [ball prepareWithScene:scene withVelocity:CGVectorMake(150, 150)];
     return ball;
 }
 
@@ -83,7 +83,7 @@
     self.physicsBody.angularDamping = 0;
     self.physicsBody.categoryBitMask = ballCat;
     self.physicsBody.contactTestBitMask = paddleCat|wallCat|brickCat|tappableBrickCat;
-    if (scene.wreckingBall) {
+    if ([scene powerupActive:scene.wreckingBall]) {
         self.physicsBody.collisionBitMask = ballCat|paddleCat|wallCat|tappableBrickCat;
     } else {
         self.physicsBody.collisionBitMask = ballCat|paddleCat|brickCat|wallCat|tappableBrickCat;
