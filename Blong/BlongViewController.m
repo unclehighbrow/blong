@@ -26,10 +26,9 @@
     
     SKScene *scene;
 
-    BOOL skipMenu = NO;
-    if (skipMenu) {
-        scene = [BlongMyScene sceneWithSize:CGSizeMake(boundsSize.height, boundsSize.width)];
-        ((BlongMyScene * )scene).skipTutorial = YES;
+    float osVersion = [[[UIDevice currentDevice] systemVersion] floatValue];
+    if (osVersion > 7.5) {
+        scene = [BlongMainMenu sceneWithSize:CGSizeMake(boundsSize.width, boundsSize.height)];
     } else {
         scene = [BlongMainMenu sceneWithSize:CGSizeMake(boundsSize.height, boundsSize.width)];
     }
