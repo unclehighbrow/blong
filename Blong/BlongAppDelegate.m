@@ -70,11 +70,6 @@ BOOL gameCenter = YES;
 {
     SKView *view = (SKView *) self.window.rootViewController.view;
     view.paused = NO;
-    if ([view.scene isKindOfClass:[BlongMyScene class]]) {
-        BlongMyScene *scene = (BlongMyScene *) view.scene;
-        [BlongPauseMenu pauseMenuWithScene:(BlongMyScene *)scene];
-    }
-
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 }
 

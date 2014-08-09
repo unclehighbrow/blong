@@ -26,15 +26,20 @@ NSString *mainMenuString = @"main_menu";
         pauseMenu.userInteractionEnabled = YES;
         [scene addChild:pauseMenu];
         
-        SKSpriteNode *continueButton = [SKSpriteNode spriteNodeWithImageNamed:continueString];
+        SKLabelNode *continueButton = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+        continueButton.text = @"CONTINUE";
         continueButton.name = continueString;
-        continueButton.position = CGPointMake(CGRectGetMidX(scene.frame), CGRectGetMidY(scene.frame) + continueButton.size.height);
+        continueButton.fontColor = [SKColor yellowColor];
+        continueButton.position = CGPointMake(CGRectGetMidX(scene.frame), CGRectGetMidY(scene.frame) + continueButton.frame.size.height);
         [pauseMenu addChild:continueButton];
         
-        SKSpriteNode *mainMenuButton = [SKSpriteNode spriteNodeWithImageNamed:mainMenuString];
+        SKLabelNode *mainMenuButton = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+        mainMenuButton.text = @"MAIN MENU";
         mainMenuButton.name = mainMenuString;
-        mainMenuButton.position = CGPointMake(CGRectGetMidX(scene.frame), CGRectGetMidY(scene.frame) - mainMenuButton.size.height);
+        mainMenuButton.fontColor = [SKColor yellowColor];
+        mainMenuButton.position = CGPointMake(CGRectGetMidX(scene.frame), CGRectGetMidY(scene.frame) - mainMenuButton.frame.size.height);
         [pauseMenu addChild:mainMenuButton];
+
         scene.paused = YES;
         
         return pauseMenu;

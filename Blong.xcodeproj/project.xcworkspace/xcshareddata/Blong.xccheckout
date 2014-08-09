@@ -10,29 +10,29 @@
 	<string>Blong</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>3EBEC81D-6FFA-43D1-9350-410CBA9436F4</key>
+		<key>788215E7616CEE78F251AF2A0D02D18807089C67</key>
 		<string>https://github.com/unclehighbrow/blong.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>Blong.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>3EBEC81D-6FFA-43D1-9350-410CBA9436F4</key>
+		<key>788215E7616CEE78F251AF2A0D02D18807089C67</key>
 		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/unclehighbrow/blong.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>3EBEC81D-6FFA-43D1-9350-410CBA9436F4</string>
+	<string>788215E7616CEE78F251AF2A0D02D18807089C67</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>3EBEC81D-6FFA-43D1-9350-410CBA9436F4</string>
+			<string>788215E7616CEE78F251AF2A0D02D18807089C67</string>
 			<key>IDESourceControlWCCName</key>
 			<string>Blong</string>
 		</dict>

@@ -85,7 +85,7 @@ CGPoint textEnd;
     icon.position = CGPointMake(self.frame.size.width - icon.frame.size.width/2 - iconXOffset,
                                 self.frame.size.height - icon.frame.size.height/2);
     icon.alpha = 0;
-    [self addChild:icon];
+//    [self addChild:icon];
     iconXOffset+= icon.frame.size.width * 1.5;
     [_threeBallPowerups setObject:[NSMutableArray arrayWithObjects: @0, icon, nil] forKey:name];
 }
