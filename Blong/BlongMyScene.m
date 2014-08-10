@@ -619,12 +619,14 @@ CGPoint textEnd;
         [self.physicsWorld enumerateBodiesInRect:touchRect usingBlock:^(SKPhysicsBody *body, BOOL *stop) {
             if (body.categoryBitMask & tappableBrickCat) {
                 BlongBrick *brick = (BlongBrick *)body.node;
-                CGPoint brickPoint = brick.frame.origin;
-                [self removeBrick:brick];
-                if (_level != _introduceTappable && [self powerupActive:_goldBricks] && !brick.tapped) {
-                    [BlongBall ballWithX:brickPoint.x withY:brickPoint.y withScene:self];
+                if (!brick.tapped) {
+                    CGPoint brickPoint = brick.frame.origin;
+                    [self removeBrick:brick];
+                    if (_level != _introduceTappable && [self powerupActive:_goldBricks]) {
+                        [BlongBall ballWithX:brickPoint.x withY:brickPoint.y withScene:self];
+                    }
+                    brick.tapped = YES;
                 }
-                brick.tapped = YES;
             }
         }];
     }
