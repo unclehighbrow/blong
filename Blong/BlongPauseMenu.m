@@ -14,33 +14,34 @@ NSString *pauseMenuString = @"pause_menu";
 NSString *continueString = @"continue";
 NSString *mainMenuString = @"main_menu";
 
+BlongMyScene *blongScene;
+
 @implementation BlongPauseMenu
-+(BlongPauseMenu *) pauseMenuWithScene:(BlongMyScene *)scene {
-    if ([scene childNodeWithName:pauseMenuString] != nil) {
-        scene.paused = YES;
-        return nil;
-    }
-    if (!scene.paused) {
-        BlongPauseMenu *pauseMenu = [BlongPauseMenu new];
-        pauseMenu.name = pauseMenuString;
-        pauseMenu.userInteractionEnabled = YES;
-        [scene addChild:pauseMenu];
++(BlongPauseMenu *) pauseMenuWithScene:(BlongMyScene *)incoming {
+    if (!incoming.paused) {
+        BlongPauseMenu *pauseMenu = [[BlongPauseMenu alloc] initWithSize:incoming.size];
+        [incoming.view presentScene:pauseMenu];
+        blongScene = incoming;
+        
+        SKSpriteNode *background = [SKSpriteNode spriteNodeWithImageNamed:@"background"];
+        background.position = CGPointMake(CGRectGetMidX(pauseMenu.frame), CGRectGetMidY(pauseMenu.frame));
+        [pauseMenu addChild:background];
         
         SKLabelNode *continueButton = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
         continueButton.text = @"CONTINUE";
         continueButton.name = continueString;
-        continueButton.fontColor = [SKColor yellowColor];
-        continueButton.position = CGPointMake(CGRectGetMidX(scene.frame), CGRectGetMidY(scene.frame) + continueButton.frame.size.height);
+//        continueButton.fontColor = [SKColor yellowColor];
+        continueButton.position = CGPointMake(CGRectGetMidX(incoming.frame), CGRectGetMidY(incoming.frame) + continueButton.frame.size.height);
         [pauseMenu addChild:continueButton];
         
         SKLabelNode *mainMenuButton = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
         mainMenuButton.text = @"MAIN MENU";
         mainMenuButton.name = mainMenuString;
-        mainMenuButton.fontColor = [SKColor yellowColor];
-        mainMenuButton.position = CGPointMake(CGRectGetMidX(scene.frame), CGRectGetMidY(scene.frame) - mainMenuButton.frame.size.height);
+//        mainMenuButton.fontColor = [SKColor yellowColor];
+        mainMenuButton.position = CGPointMake(CGRectGetMidX(incoming.frame), CGRectGetMidY(incoming.frame) - mainMenuButton.frame.size.height);
         [pauseMenu addChild:mainMenuButton];
 
-        scene.paused = YES;
+        incoming.paused = YES;
         
         return pauseMenu;
     }
@@ -52,8 +53,8 @@ NSString *mainMenuString = @"main_menu";
     NSString *action =  [self nodeAtPoint:[touch locationInNode:self]].name;
     if (action != nil) {
         if ([action isEqualToString:continueString]) {
-            self.scene.paused = NO;
-            [self removeFromParent];
+//            SKTransition *transition = [SKTransition flipHorizontalWithDuration:.3];
+            [self.scene.view presentScene:blongScene]; //  transition:transition
         } else if ([action isEqualToString:mainMenuString]) {
             SKScene *menuScene = [[BlongMainMenu alloc] initWithSize:self.scene.size];
             SKTransition *transition = [SKTransition flipHorizontalWithDuration:1];

@@ -44,6 +44,7 @@
 		BEABEC6817FB16A70008B394 /* BlongPauseButton.m in Sources */ = {isa = PBXBuildFile; fileRef = BEABEC6717FB16A70008B394 /* BlongPauseButton.m */; };
 		BEABEC6B17FB205C0008B394 /* BlongPauseMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = BEABEC6A17FB205C0008B394 /* BlongPauseMenu.m */; };
 		BEAF5849199676EE00C07F4E /* title@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BEAF5848199676EE00C07F4E /* title@2x.png */; };
+		BEAF584B1997345D00C07F4E /* background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BEAF584A1997345D00C07F4E /* background@2x.png */; };
 		BEBC3105191572B60001CC48 /* explode.wav in Resources */ = {isa = PBXBuildFile; fileRef = BEBC3104191572B60001CC48 /* explode.wav */; };
 		BED2CBE8188AD01000826C06 /* BlongGameCenterButton.m in Sources */ = {isa = PBXBuildFile; fileRef = BED2CBE7188AD01000826C06 /* BlongGameCenterButton.m */; };
 		BED2CBEC188AD47400826C06 /* game_center_button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BED2CBEB188AD47400826C06 /* game_center_button@2x.png */; };
@@ -133,6 +134,7 @@
 		BEABEC6917FB205C0008B394 /* BlongPauseMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlongPauseMenu.h; sourceTree = "<group>"; };
 		BEABEC6A17FB205C0008B394 /* BlongPauseMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlongPauseMenu.m; sourceTree = "<group>"; };
 		BEAF5848199676EE00C07F4E /* title@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "title@2x.png"; sourceTree = "<group>"; };
+		BEAF584A1997345D00C07F4E /* background@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "background@2x.png"; sourceTree = "<group>"; };
 		BEBC3104191572B60001CC48 /* explode.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = explode.wav; sourceTree = "<group>"; };
 		BED2CBE6188AD01000826C06 /* BlongGameCenterButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlongGameCenterButton.h; sourceTree = "<group>"; };
 		BED2CBE7188AD01000826C06 /* BlongGameCenterButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlongGameCenterButton.m; sourceTree = "<group>"; };
@@ -320,6 +322,7 @@
 		BEDAD1131819E14D009D4563 /* img */ = {
 			isa = PBXGroup;
 			children = (
+				BEAF584A1997345D00C07F4E /* background@2x.png */,
 				BEAF5848199676EE00C07F4E /* title@2x.png */,
 				BEE5A74F1894B7220096818D /* blong_background@2x.png */,
 				BED2CBEB188AD47400826C06 /* game_center_button@2x.png */,
@@ -431,6 +434,7 @@
 				BEFBDACD1922CA4700E10C99 /* bop3.wav in Resources */,
 				BED2CBEC188AD47400826C06 /* game_center_button@2x.png in Resources */,
 				BEFBDAD71922CABC00E10C99 /* blong.wav in Resources */,
+				BEAF584B1997345D00C07F4E /* background@2x.png in Resources */,
 				BEFBDAC11922970600E10C99 /* game_over.wav in Resources */,
 				BEFBDABA1922953D00E10C99 /* balls.wav in Resources */,
 				BE533218187CED78001EB40C /* new_level.wav in Resources */,

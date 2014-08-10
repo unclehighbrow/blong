@@ -19,7 +19,10 @@ SKLabelNode *go;
     if (self = [super initWithSize:size]) {
         [self runAction:[SKAction playSoundFileNamed:@"game_over.m4a" waitForCompletion:NO]];
         
-        self.backgroundColor = [SKColor blackColor];
+        SKSpriteNode *background = [SKSpriteNode spriteNodeWithImageNamed:@"background"];
+        background.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
+        [self addChild:background];
+        
         SKLabelNode *gameOverText = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
         gameOverText.text = @"GAME OVER";
         gameOverText.color = [SKColor whiteColor];

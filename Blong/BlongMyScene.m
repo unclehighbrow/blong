@@ -112,6 +112,12 @@ CGPoint textEnd;
         [self makePowerup:_goldBricks];
         [self makePowerup:_noCountdown];
         
+        //        self.backgroundColor = [SKColor blackColor];
+        SKSpriteNode *background = [SKSpriteNode spriteNodeWithImageNamed:@"background"];
+        background.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
+        background.zPosition = -10;
+        [self addChild:background];
+        
         // score
         _score = 0;
         _scoreLabel = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"]; // "MICR Encoding"
@@ -125,7 +131,7 @@ CGPoint textEnd;
 
         _availableBlockSlots = [NSMutableOrderedSet orderedSet];
 
-        self.backgroundColor = [SKColor blackColor];
+
         
         // paddles
         _leftPaddle = [BlongPaddle paddle:@"left_paddle"];
@@ -219,6 +225,25 @@ CGPoint textEnd;
         bricksSound = [SKAction playSoundFileNamed:@"bricks.wav" waitForCompletion:NO];
         
         self.paused = NO;
+        
+        BOOL skipTutorial = NO;
+        if (skipTutorial) {
+            touchedLeft = YES;
+            touchedRight = YES;
+            started = YES;
+            [_leftPaddle getPhysical];
+            [_rightPaddle getPhysical];
+            self.physicsWorld.speed = 0;
+            //[self bonusLevel];
+            _level = 3;
+        } else {
+            touchedLeft = NO;
+            touchedRight = NO;
+            started = NO;
+            self.paused = NO;
+        }
+        [self throwInPaddles];
+        [self startLevel];
     }
     return self;
 }
@@ -233,24 +258,7 @@ CGPoint textEnd;
 
 
 -(void) didMoveToView:(SKView *)view {
-    BOOL skipTutorial = NO;
-    if (skipTutorial) {
-        touchedLeft = YES;
-        touchedRight = YES;
-        started = YES;
-        [_leftPaddle getPhysical];
-        [_rightPaddle getPhysical];
-        self.physicsWorld.speed = 0;
-        //[self bonusLevel];
-        _level = 3;
-    } else {
-        touchedLeft = NO;
-        touchedRight = NO;
-        started = NO;
-        self.paused = NO;
-    }
-    [self throwInPaddles];
-    [self startLevel];
+
 
 }
 
@@ -311,6 +319,7 @@ CGPoint textEnd;
     SKLabelNode *ready = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
     ready.text = @"READY";
     ready.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
+    ready.fontColor = [SKColor whiteColor];
     [self addChild:ready];
     [ready runAction:[SKAction sequence:@[[SKAction waitForDuration:1], _topToMiddle, _shrinkAway]]];
     [self runAction:[SKAction sequence:@[[SKAction waitForDuration:1.1], readySound]]];
@@ -327,6 +336,7 @@ CGPoint textEnd;
     // steady
     SKLabelNode *steady = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
     steady.text = @"STEADY";
+    steady.fontColor = [SKColor whiteColor];
     steady.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     steady.zPosition = -1;
     [self addChild:steady];
