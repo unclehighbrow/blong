@@ -28,14 +28,15 @@ AVAudioPlayer *backgroundAudioPlayer;
         
         go = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
         go.fontColor = [SKColor whiteColor];
+        go.alpha = 0;
         go.text = @"LET'S DO THIS.";
         go.fontSize = 40;
         go.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height/6);
-        SKAction *fadeIn = [SKAction fadeInWithDuration:1];
+        SKAction *fadeIn = [SKAction fadeInWithDuration:2];
         [go runAction:fadeIn];
         [self addChild:go];
         
-        [BlongGameCenterButton gameCenterButtonWithScene:self];
+        //[BlongGameCenterButton gameCenterButtonWithScene:self];
     }
     return self;
 }
