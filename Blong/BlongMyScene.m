@@ -81,7 +81,7 @@ CGPoint textEnd;
 }
 
 -(void)makePowerup:(NSString *) name {
-    SKSpriteNode *icon = [SKSpriteNode spriteNodeWithImageNamed:@"arrow"];
+    SKSpriteNode *icon = [SKSpriteNode spriteNodeWithImageNamed:@"ball"];
     icon.position = CGPointMake(self.frame.size.width - icon.frame.size.width/2 - iconXOffset,
                                 self.frame.size.height - icon.frame.size.height/2);
     icon.alpha = 0;
@@ -103,13 +103,13 @@ CGPoint textEnd;
         _wreckingBall = @"WRECKING BALLS";
         _doubleBreakthrough = @"DOUBLE BREAKTHROUGH";
         _coolPerson = @"YOU ARE A COOL PERSON";
-        _goldBricks = @"GOLD BRICKS MAKE BALLS";
+//        _goldBricks = @"GOLD BRICKS MAKE BALLS";
         _noCountdown = @"NO COUNTDOWN";
 
         [self makePowerup:_wreckingBall];
         [self makePowerup:_doubleBreakthrough];
         [self makePowerup:_coolPerson];
-        [self makePowerup:_goldBricks];
+//       [self makePowerup:_goldBricks];
         [self makePowerup:_noCountdown];
         
         //        self.backgroundColor = [SKColor blackColor];
@@ -632,9 +632,9 @@ CGPoint textEnd;
                 if (!brick.tapped) {
                     CGPoint brickPoint = brick.frame.origin;
                     [self removeBrick:brick];
-                    if (_level != _introduceTappable && [self powerupActive:_goldBricks]) {
-                        [BlongBall ballWithX:brickPoint.x withY:brickPoint.y withScene:self];
-                    }
+//                    if (_level != _introduceTappable && [self powerupActive:_goldBricks]) {
+//                        [BlongBall ballWithX:brickPoint.x withY:brickPoint.y withScene:self];
+//                    }
                     brick.tapped = YES;
                 }
             }
@@ -714,9 +714,9 @@ CGPoint textEnd;
                 NSArray *allPowerups = [_threeBallPowerups allKeys];
                 int powerupNum = (arc4random() % [allPowerups count]);
                 powerup = [allPowerups objectAtIndex:powerupNum];
-                if ([powerup isEqualToString:_goldBricks] && _level < _introduceTappable) {
-                    powerup = _coolPerson;
-                }
+//                if ([powerup isEqualToString:_goldBricks] && _level < _introduceTappable) {
+//                    powerup = _coolPerson;
+//                }
                 NSMutableArray *powerupList = [_threeBallPowerups objectForKey:powerup];
                 [powerupList replaceObjectAtIndex:0 withObject:@([[powerupList objectAtIndex:0] intValue] + 4)];
                 SKSpriteNode *powerupToFadeOut = (SKSpriteNode *)[powerupList objectAtIndex:1];
