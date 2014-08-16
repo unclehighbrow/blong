@@ -584,6 +584,35 @@ CGPoint textEnd;
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
     //NSLog(@"touches ended %d", touches.count);
     [self processTouches:touches withEvent:event];
+    
+    if (_level >= _introduceTappable) {
+        for (UITouch *touch in touches) {
+            float width = self.frame.size.width/10;
+            float height = self.frame.size.height/5;
+            CGPoint touchPoint = [touch locationInNode:self];
+            CGRect touchRect = CGRectMake(touchPoint.x - width/2, touchPoint.y - height/2, width, height);
+            BOOL debugTappable = NO;
+            if (debugTappable) { // the actual rect seems bigger than this looks, i'm not sure why
+                SKSpriteNode *touchRectNode = [SKSpriteNode spriteNodeWithColor:[SKColor redColor] size:touchRect.size];
+                touchRectNode.position = touchPoint;
+                [touchRectNode runAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:1], [SKAction removeFromParent]]]];
+                [self addChild:touchRectNode];
+            }
+            [self.physicsWorld enumerateBodiesInRect:touchRect usingBlock:^(SKPhysicsBody *body, BOOL *stop) {
+                if (body.categoryBitMask & tappableBrickCat) {
+                    BlongBrick *brick = (BlongBrick *)body.node;
+                    if (!brick.tapped) {
+                        [self removeBrick:brick];
+                        //CGPoint brickPoint = brick.frame.origin;
+                        //                    if (_level != _introduceTappable && [self powerupActive:_goldBricks]) {
+                        //                        [BlongBall ballWithX:brickPoint.x withY:brickPoint.y withScene:self];
+                        //                    }
+                        brick.tapped = YES;
+                    }
+                }
+            }];
+        }
+    }
 }
 
 -(void)processTouches:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -614,31 +643,6 @@ CGPoint textEnd;
             [BlongBall shootBallAtPoint:point withScene:self];
             [_rightPaddle getPhysical];
         }
-    } else if (_level >= _introduceTappable) {
-        float width = self.frame.size.width/10;
-        float height = self.frame.size.height/5;
-        CGPoint touchPoint = [touch locationInNode:self];
-        CGRect touchRect = CGRectMake(touchPoint.x - width/2, touchPoint.y - height/2, width, height);
-        BOOL debugTappable = NO;
-        if (debugTappable) { // the actual rect seems bigger than this looks, i'm not sure why
-            SKSpriteNode *touchRectNode = [SKSpriteNode spriteNodeWithColor:[SKColor redColor] size:touchRect.size];
-            touchRectNode.position = touchPoint;
-            [touchRectNode runAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:1], [SKAction removeFromParent]]]];
-            [self addChild:touchRectNode];
-        }
-        [self.physicsWorld enumerateBodiesInRect:touchRect usingBlock:^(SKPhysicsBody *body, BOOL *stop) {
-            if (body.categoryBitMask & tappableBrickCat) {
-                BlongBrick *brick = (BlongBrick *)body.node;
-                if (!brick.tapped) {
-                    CGPoint brickPoint = brick.frame.origin;
-                    [self removeBrick:brick];
-//                    if (_level != _introduceTappable && [self powerupActive:_goldBricks]) {
-//                        [BlongBall ballWithX:brickPoint.x withY:brickPoint.y withScene:self];
-//                    }
-                    brick.tapped = YES;
-                }
-            }
-        }];
     }
     
     if (touchedLeft && touchedRight) {
