@@ -155,7 +155,7 @@ CGPoint textEnd;
         _topWall.physicsBody.categoryBitMask = wallCat;
         _topWall.physicsBody.friction = 0;
         _topWall.position = CGPointMake(0, self.frame.size.height);
-        _topWall.physicsBody.dynamic = NO;
+//        _topWall.physicsBody.dynamic = NO;
         [self addChild:_topWall];
         
         _bottomWall = [SKNode node];
@@ -164,7 +164,7 @@ CGPoint textEnd;
         _bottomWall.physicsBody.categoryBitMask = wallCat;
         _bottomWall.physicsBody.friction = 0;
         _bottomWall.position = CGPointMake(0,0);
-        _bottomWall.physicsBody.dynamic = NO;
+ //       _bottomWall.physicsBody.dynamic = NO;
         [self addChild:_bottomWall];
         
         BOOL invincible = YES;
