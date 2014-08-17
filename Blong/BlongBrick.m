@@ -14,7 +14,7 @@
 @implementation BlongBrick
 +(BlongBrick *)centeredTappableBrickWithScene:(BlongMyScene *)scene {
     BlongBrick *brick = [BlongBrick spriteNodeWithImageNamed:@"brick11"];
-    brick.color = baseColor;
+    brick.color = [SKColor colorWithRed:255 green:215 blue:0 alpha:1];
     brick.colorBlendFactor = 1.0;
     brick.tappable = YES;
     brick.position = CGPointMake(CGRectGetMidX(scene.frame), CGRectGetMidY(scene.frame));
