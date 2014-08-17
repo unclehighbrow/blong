@@ -508,13 +508,13 @@ CGPoint textEnd;
     SKSpriteNode *explodeBrick = [SKSpriteNode spriteNodeWithImageNamed:@"brick11"];
     //explodeBrick.yScale = brick.yScale;
     explodeBrick.position = brick.position;
-    explodeBrick.color = activeColor; // why doesn't this do anything???
+    explodeBrick.color = activeColor;
     explodeBrick.colorBlendFactor = 1;
     explodeBrick.alpha = .9;
     explodeBrick.xScale = 1.2;
     explodeBrick.yScale = 1.2;
     [self addChild:explodeBrick];
-    SKAction *explode = [SKAction sequence:@[[SKAction group:@[ [SKAction fadeAlphaTo:0 duration:.1]]], removeFromParent]];
+    SKAction *explode = [SKAction sequence:@[[SKAction group:@[ [SKAction fadeAlphaTo:0 duration:.15]]], removeFromParent]];
     [explodeBrick runAction:explode];
     
     [brick runAction: [SKAction sequence: @[shrink, removeFromBricks, removeFromParent]]];
