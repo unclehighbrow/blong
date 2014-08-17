@@ -495,25 +495,15 @@ CGPoint textEnd;
 -(void)removeBrick:(BlongBrick *)brick {
 
     [self updateScore:1];
-    SKAction *shrink = [SKAction scaleTo:0 duration: .2];
     SKAction *removeFromBricks = [SKAction runBlock:^{
         _lastBlockCleared = brick.blockSlot;
         [_availableBlockSlots addObject:_lastBlockCleared];
         [[_bricks objectAtIndex:brick.col] replaceObjectAtIndex:brick.row withObject:[NSNull null]];
         [self checkBreakthrough];
     }];
-    SKAction *removeFromParent = [SKAction removeFromParent];
-    
-    // also explode it
-    SKSpriteNode *explodeBrick = [SKSpriteNode spriteNodeWithImageNamed:@"brick11"];
-    explodeBrick.yScale = brick.yScale;
-    explodeBrick.position = brick.position;
-    explodeBrick.color = [brick color];
-    [self addChild:explodeBrick];
-    SKAction *explode = [SKAction sequence:@[[SKAction group:@[[SKAction scaleTo:1.5 duration:.2], [SKAction fadeAlphaTo:0 duration:.2]]], removeFromParent]];
-    [explodeBrick runAction:explode];
 
-    [brick runAction: [SKAction sequence: @[shrink, removeFromBricks, removeFromParent]]];
+
+    [brick runAction: [SKAction sequence: @[removeFromBricks, [SKAction group:@[[SKAction scaleTo:1.5 duration:.2], [SKAction fadeAlphaTo:0 duration:.2]]],  [SKAction removeFromParent]]]];
     
 }
 
