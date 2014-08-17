@@ -753,7 +753,6 @@ CGPoint textEnd;
             if (powerupCount == 1) {
                 SKSpriteNode *powerupToFadeOut = (SKSpriteNode *)[powerupList objectAtIndex:1];
                 [powerupToFadeOut runAction:[SKAction sequence:@[
-                                                                 [SKAction waitForDuration:.5],
                                                                  [SKAction fadeOutWithDuration:1]
                                                                  ]]];
             }
@@ -775,7 +774,7 @@ CGPoint textEnd;
     [levelText setAlpha:0];
     [self addChild:levelText];
     SKAction *waitFadeIn_fadeOutStartLevel = [SKAction sequence:@[
-          [SKAction waitForDuration:(_level % bonusLevelEvery == 1 ? 2.5 :.5)], // after bonus level
+          [SKAction waitForDuration:(_level % bonusLevelEvery == 1 ? 2.5 : 1)], // after bonus level
           [SKAction fadeInWithDuration:1],
           [SKAction waitForDuration:.5],
           [SKAction fadeOutWithDuration:1],
