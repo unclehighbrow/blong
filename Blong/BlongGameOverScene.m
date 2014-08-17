@@ -86,7 +86,7 @@ SKLabelNode *go;
     go.fontColor = [SKColor yellowColor];
     go.colorBlendFactor = 1.0;
     SKScene *gameScene = [[BlongMyScene alloc] initWithSize:self.size];
-    SKTransition *transition = [SKTransition revealWithDirection:SKTransitionDirectionUp duration:.75];
+    SKTransition *transition = [SKTransition flipHorizontalWithDuration:1];
     transition.pausesIncomingScene = NO;
     [self.view presentScene:gameScene transition:transition];
 }
