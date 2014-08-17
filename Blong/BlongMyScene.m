@@ -165,7 +165,7 @@ CGPoint textEnd;
         _bottomWall.position = CGPointMake(0,0);
         [self addChild:_bottomWall];
         
-        BOOL invincible = NO;
+        BOOL invincible = YES;
         if (invincible) {
             SKNode *leftWall = [SKNode node];
             leftWall.physicsBody = [SKPhysicsBody bodyWithEdgeFromPoint:CGPointMake(0,0) toPoint:CGPointMake(0,self.frame.size.height)];
@@ -388,7 +388,7 @@ CGPoint textEnd;
     [blong setAlpha:0];
     SKAction *fadeIn = [SKAction fadeAlphaTo:.7 duration:0];
 
-    [blong runAction:[SKAction sequence:@[[SKAction waitForDuration:3.3], startPhysics, blongSound, fadeIn, [SKAction waitForDuration:0.2], _fadeOut]]];
+    [blong runAction:[SKAction sequence:@[[SKAction waitForDuration:3.3], startPhysics, fadeIn, blongSound, [SKAction waitForDuration:0.2], _fadeOut]]];
     blong.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     [self addChild:blong];
     
@@ -506,17 +506,13 @@ CGPoint textEnd;
     
     // also explode it
     SKSpriteNode *explodeBrick = [SKSpriteNode spriteNodeWithImageNamed:@"brick11"];
-    //explodeBrick.yScale = brick.yScale;
+    explodeBrick.yScale = brick.yScale;
     explodeBrick.position = brick.position;
-    explodeBrick.color = activeColor;
-    explodeBrick.colorBlendFactor = 1;
-    explodeBrick.alpha = .9;
-    explodeBrick.xScale = 1.2;
-    explodeBrick.yScale = 1.2;
+    explodeBrick.color = [brick color];
     [self addChild:explodeBrick];
-    SKAction *explode = [SKAction sequence:@[[SKAction group:@[ [SKAction fadeAlphaTo:0 duration:.15]]], removeFromParent]];
+    SKAction *explode = [SKAction sequence:@[[SKAction group:@[[SKAction scaleTo:1.5 duration:.2], [SKAction fadeAlphaTo:0 duration:.2]]], removeFromParent]];
     [explodeBrick runAction:explode];
-    
+
     [brick runAction: [SKAction sequence: @[shrink, removeFromBricks, removeFromParent]]];
     
 }
