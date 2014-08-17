@@ -103,13 +103,13 @@ CGPoint textEnd;
         _wreckingBall = @"WRECKING BALLS";
         _doubleBreakthrough = @"DOUBLE BREAKTHROUGH";
         _coolPerson = @"YOU ARE A COOL PERSON";
-//        _goldBricks = @"GOLD BRICKS MAKE BALLS";
+        _goldBricks = @"GOLD BRICKS MAKE BALLS";
         _noCountdown = @"NO COUNTDOWN";
 
         [self makePowerup:_wreckingBall];
         [self makePowerup:_doubleBreakthrough];
         [self makePowerup:_coolPerson];
-//       [self makePowerup:_goldBricks];
+        [self makePowerup:_goldBricks];
         [self makePowerup:_noCountdown];
         
         //        self.backgroundColor = [SKColor blackColor];
@@ -155,14 +155,16 @@ CGPoint textEnd;
         _topWall.physicsBody.categoryBitMask = wallCat;
         _topWall.physicsBody.friction = 0;
         _topWall.position = CGPointMake(0, self.frame.size.height);
+        _topWall.physicsBody.dynamic = NO;
         [self addChild:_topWall];
         
         _bottomWall = [SKNode node];
         _bottomWall.physicsBody = [SKPhysicsBody bodyWithEdgeFromPoint:CGPointMake(0,0) toPoint:CGPointMake(self.frame.size.width,0)];
         _bottomWall.physicsBody.restitution = .5;
         _bottomWall.physicsBody.categoryBitMask = wallCat;
-        _bottomWall.physicsBody.friction = NO;
+        _bottomWall.physicsBody.friction = 0;
         _bottomWall.position = CGPointMake(0,0);
+        _bottomWall.physicsBody.dynamic = NO;
         [self addChild:_bottomWall];
         
         BOOL invincible = YES;
@@ -173,6 +175,7 @@ CGPoint textEnd;
             leftWall.physicsBody.categoryBitMask = wallCat;
             leftWall.physicsBody.friction = 0;
             leftWall.position = CGPointMake(0, 0);
+            leftWall.physicsBody.dynamic = NO;
             [self addChild:leftWall];
             
             SKNode *rightWall = [SKNode node];
@@ -181,6 +184,7 @@ CGPoint textEnd;
             rightWall.physicsBody.categoryBitMask = wallCat;
             rightWall.physicsBody.friction = 0;
             rightWall.position = CGPointMake(self.frame.size.width, 0);
+            rightWall.physicsBody.dynamic = NO;
             [self addChild:rightWall];
         }
         
@@ -485,9 +489,6 @@ CGPoint textEnd;
         }
         
         if (secondBody.categoryBitMask & tappableBrickCat) {
-            // TODO: make cool sound and animation
-            //BlongBrick *brick = (BlongBrick *)secondBody.node;
-            
         }
     }
 }
@@ -594,10 +595,11 @@ CGPoint textEnd;
                     BlongBrick *brick = (BlongBrick *)body.node;
                     if (!brick.tapped) {
                         [self removeBrick:brick];
-                        //CGPoint brickPoint = brick.frame.origin;
-                        //                    if (_level != _introduceTappable && [self powerupActive:_goldBricks]) {
-                        //                        [BlongBall ballWithX:brickPoint.x withY:brickPoint.y withScene:self];
-                        //                    }
+                        [self bop];
+                        CGPoint brickPoint = brick.frame.origin;
+                        if (_level != _introduceTappable && [self powerupActive:_goldBricks]) {
+                            [BlongBall ballWithX:brickPoint.x withY:brickPoint.y withScene:self];
+                        }
                         brick.tapped = YES;
                     }
                 }
@@ -709,9 +711,9 @@ CGPoint textEnd;
                 NSArray *allPowerups = [_threeBallPowerups allKeys];
                 int powerupNum = (arc4random() % [allPowerups count]);
                 powerup = [allPowerups objectAtIndex:powerupNum];
-//                if ([powerup isEqualToString:_goldBricks] && _level < _introduceTappable) {
-//                    powerup = _coolPerson;
-//                }
+                if ([powerup isEqualToString:_goldBricks] && _level < _introduceTappable) {
+                    powerup = _coolPerson;
+                }
                 NSMutableArray *powerupList = [_threeBallPowerups objectForKey:powerup];
                 [powerupList replaceObjectAtIndex:0 withObject:@([[powerupList objectAtIndex:0] intValue] + 4)];
                 SKSpriteNode *powerupToFadeOut = (SKSpriteNode *)[powerupList objectAtIndex:1];
