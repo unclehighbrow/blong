@@ -495,7 +495,7 @@ CGPoint textEnd;
 -(void)removeBrick:(BlongBrick *)brick {
 
     [self updateScore:1];
-    SKAction *shrink = [SKAction scaleTo:0 duration: 0];
+    SKAction *shrink = [SKAction scaleTo:0 duration: .2];
     SKAction *removeFromBricks = [SKAction runBlock:^{
         _lastBlockCleared = brick.blockSlot;
         [_availableBlockSlots addObject:_lastBlockCleared];
