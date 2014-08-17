@@ -81,7 +81,7 @@ CGPoint textEnd;
 }
 
 -(void)makePowerup:(NSString *) name {
-    SKSpriteNode *icon = [SKSpriteNode spriteNodeWithImageNamed:@"arrow"];
+    SKSpriteNode *icon = [SKSpriteNode spriteNodeWithImageNamed:@"ball"];
     icon.position = CGPointMake(self.frame.size.width - icon.frame.size.width/2 - iconXOffset,
                                 self.frame.size.height - icon.frame.size.height/2);
     icon.alpha = 0;
@@ -103,14 +103,20 @@ CGPoint textEnd;
         _wreckingBall = @"WRECKING BALLS";
         _doubleBreakthrough = @"DOUBLE BREAKTHROUGH";
         _coolPerson = @"YOU ARE A COOL PERSON";
-        _goldBricks = @"GOLD BRICKS MAKE BALLS";
+//        _goldBricks = @"GOLD BRICKS MAKE BALLS";
         _noCountdown = @"NO COUNTDOWN";
 
         [self makePowerup:_wreckingBall];
         [self makePowerup:_doubleBreakthrough];
         [self makePowerup:_coolPerson];
-        [self makePowerup:_goldBricks];
+//       [self makePowerup:_goldBricks];
         [self makePowerup:_noCountdown];
+        
+        //        self.backgroundColor = [SKColor blackColor];
+        SKSpriteNode *background = [SKSpriteNode spriteNodeWithImageNamed:@"background"];
+        background.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
+        background.zPosition = -10;
+        [self addChild:background];
         
         // score
         _score = 0;
@@ -126,6 +132,7 @@ CGPoint textEnd;
         _availableBlockSlots = [NSMutableOrderedSet orderedSet];
 
         self.backgroundColor = darknessColor;
+
         
         // paddles
         _leftPaddle = [BlongPaddle paddle:@"left_paddle"];
@@ -219,6 +226,25 @@ CGPoint textEnd;
         bricksSound = [SKAction playSoundFileNamed:@"bricks.wav" waitForCompletion:NO];
         
         self.paused = NO;
+        
+        BOOL skipTutorial = NO;
+        if (skipTutorial) {
+            touchedLeft = YES;
+            touchedRight = YES;
+            started = YES;
+            [_leftPaddle getPhysical];
+            [_rightPaddle getPhysical];
+            self.physicsWorld.speed = 0;
+            //[self bonusLevel];
+            _level = 3;
+        } else {
+            touchedLeft = NO;
+            touchedRight = NO;
+            started = NO;
+            self.paused = NO;
+        }
+        [self throwInPaddles];
+        [self startLevel];
     }
     return self;
 }
@@ -233,24 +259,7 @@ CGPoint textEnd;
 
 
 -(void) didMoveToView:(SKView *)view {
-    BOOL skipTutorial = NO;
-    if (skipTutorial) {
-        touchedLeft = YES;
-        touchedRight = YES;
-        started = YES;
-        [_leftPaddle getPhysical];
-        [_rightPaddle getPhysical];
-        self.physicsWorld.speed = 0;
-        //[self bonusLevel];
-        _level = 3;
-    } else {
-        touchedLeft = NO;
-        touchedRight = NO;
-        started = NO;
-        self.paused = NO;
-    }
-    [self throwInPaddles];
-    [self startLevel];
+
 
 }
 
@@ -311,6 +320,7 @@ CGPoint textEnd;
     SKLabelNode *ready = [SKLabelNode labelNodeWithFontNamed:headFont];
     ready.text = @"READY";
     ready.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
+    ready.fontColor = [SKColor whiteColor];
     [self addChild:ready];
     [ready runAction:[SKAction sequence:@[[SKAction waitForDuration:1], _topToMiddle, _shrinkAway]]];
     [self runAction:[SKAction sequence:@[[SKAction waitForDuration:1.1], readySound]]];
@@ -327,6 +337,7 @@ CGPoint textEnd;
     // steady
     SKLabelNode *steady = [SKLabelNode labelNodeWithFontNamed:headFont];
     steady.text = @"STEADY";
+    steady.fontColor = [SKColor whiteColor];
     steady.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     steady.zPosition = -1;
     [self addChild:steady];
@@ -578,6 +589,35 @@ CGPoint textEnd;
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
     //NSLog(@"touches ended %d", touches.count);
     [self processTouches:touches withEvent:event];
+    
+    if (_level >= _introduceTappable) {
+        for (UITouch *touch in touches) {
+            float width = self.frame.size.width/10;
+            float height = self.frame.size.height/5;
+            CGPoint touchPoint = [touch locationInNode:self];
+            CGRect touchRect = CGRectMake(touchPoint.x - width/2, touchPoint.y - height/2, width, height);
+            BOOL debugTappable = NO;
+            if (debugTappable) { // the actual rect seems bigger than this looks, i'm not sure why
+                SKSpriteNode *touchRectNode = [SKSpriteNode spriteNodeWithColor:[SKColor redColor] size:touchRect.size];
+                touchRectNode.position = touchPoint;
+                [touchRectNode runAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:1], [SKAction removeFromParent]]]];
+                [self addChild:touchRectNode];
+            }
+            [self.physicsWorld enumerateBodiesInRect:touchRect usingBlock:^(SKPhysicsBody *body, BOOL *stop) {
+                if (body.categoryBitMask & tappableBrickCat) {
+                    BlongBrick *brick = (BlongBrick *)body.node;
+                    if (!brick.tapped) {
+                        [self removeBrick:brick];
+                        //CGPoint brickPoint = brick.frame.origin;
+                        //                    if (_level != _introduceTappable && [self powerupActive:_goldBricks]) {
+                        //                        [BlongBall ballWithX:brickPoint.x withY:brickPoint.y withScene:self];
+                        //                    }
+                        brick.tapped = YES;
+                    }
+                }
+            }];
+        }
+    }
 }
 
 -(void)processTouches:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -608,31 +648,6 @@ CGPoint textEnd;
             [BlongBall shootBallAtPoint:point withScene:self];
             [_rightPaddle getPhysical];
         }
-    } else if (_level >= _introduceTappable) {
-        float width = self.frame.size.width/10;
-        float height = self.frame.size.height/5;
-        CGPoint touchPoint = [touch locationInNode:self];
-        CGRect touchRect = CGRectMake(touchPoint.x - width/2, touchPoint.y - height/2, width, height);
-        BOOL debugTappable = NO;
-        if (debugTappable) { // the actual rect seems bigger than this looks, i'm not sure why
-            SKSpriteNode *touchRectNode = [SKSpriteNode spriteNodeWithColor:[SKColor redColor] size:touchRect.size];
-            touchRectNode.position = touchPoint;
-            [touchRectNode runAction:[SKAction sequence:@[[SKAction fadeOutWithDuration:1], [SKAction removeFromParent]]]];
-            [self addChild:touchRectNode];
-        }
-        [self.physicsWorld enumerateBodiesInRect:touchRect usingBlock:^(SKPhysicsBody *body, BOOL *stop) {
-            if (body.categoryBitMask & tappableBrickCat) {
-                BlongBrick *brick = (BlongBrick *)body.node;
-                if (!brick.tapped) {
-                    CGPoint brickPoint = brick.frame.origin;
-                    [self removeBrick:brick];
-                    if (_level != _introduceTappable && [self powerupActive:_goldBricks]) {
-                        [BlongBall ballWithX:brickPoint.x withY:brickPoint.y withScene:self];
-                    }
-                    brick.tapped = YES;
-                }
-            }
-        }];
     }
     
     if (touchedLeft && touchedRight) {
@@ -708,9 +723,9 @@ CGPoint textEnd;
                 NSArray *allPowerups = [_threeBallPowerups allKeys];
                 int powerupNum = (arc4random() % [allPowerups count]);
                 powerup = [allPowerups objectAtIndex:powerupNum];
-                if ([powerup isEqualToString:_goldBricks] && _level < _introduceTappable) {
-                    powerup = _coolPerson;
-                }
+//                if ([powerup isEqualToString:_goldBricks] && _level < _introduceTappable) {
+//                    powerup = _coolPerson;
+//                }
                 NSMutableArray *powerupList = [_threeBallPowerups objectForKey:powerup];
                 [powerupList replaceObjectAtIndex:0 withObject:@([[powerupList objectAtIndex:0] intValue] + 4)];
                 SKSpriteNode *powerupToFadeOut = (SKSpriteNode *)[powerupList objectAtIndex:1];

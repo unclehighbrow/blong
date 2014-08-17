@@ -9,6 +9,6 @@
 #import <SpriteKit/SpriteKit.h>
 #import "BlongMyScene.h"
 
-@interface BlongPauseMenu : SKNode
-+(BlongPauseMenu *) pauseMenuWithScene:(BlongMyScene *)scene;
+@interface BlongPauseMenu : SKScene
++(BlongPauseMenu *) pauseMenuWithScene:(BlongMyScene *)incoming;
 @end

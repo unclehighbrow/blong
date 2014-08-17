@@ -31,9 +31,10 @@ AVAudioPlayer *backgroundAudioPlayer;
         go.text = @"LET'S DO THIS";
         go.fontSize = baseFontSize;
         go.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height/5);
+
         [self addChild:go];
         
-        [BlongGameCenterButton gameCenterButtonWithScene:self];
+        //[BlongGameCenterButton gameCenterButtonWithScene:self];
     }
     return self;
 }

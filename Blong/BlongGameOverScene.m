@@ -20,7 +20,8 @@ SKLabelNode *go;
         [self runAction:[SKAction playSoundFileNamed:@"game_over.m4a" waitForCompletion:NO]];
         
         self.backgroundColor = darknessColor;
-        SKLabelNode *gameOverText = [SKLabelNode labelNodeWithFontNamed:headFont];
+        
+	SKLabelNode *gameOverText = [SKLabelNode labelNodeWithFontNamed:headFont];
         gameOverText.text = @"GAME OVER";
         gameOverText.fontColor = headColor;
         gameOverText.fontSize = headFontSize;
