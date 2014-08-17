@@ -19,60 +19,60 @@ SKLabelNode *go;
     if (self = [super initWithSize:size]) {
         [self runAction:[SKAction playSoundFileNamed:@"game_over.m4a" waitForCompletion:NO]];
         
-        self.backgroundColor = [SKColor blackColor];
-        SKLabelNode *gameOverText = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+        self.backgroundColor = darknessColor;
+        SKLabelNode *gameOverText = [SKLabelNode labelNodeWithFontNamed:headFont];
         gameOverText.text = @"GAME OVER";
-        gameOverText.color = [SKColor whiteColor];
-        gameOverText.fontSize = 40;
+        gameOverText.fontColor = headColor;
+        gameOverText.fontSize = headFontSize;
         gameOverText.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + self.frame.size.height/5);
         [self addChild:gameOverText];
         
-        SKLabelNode *scoreText = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+        SKLabelNode *scoreText = [SKLabelNode labelNodeWithFontNamed:headFont];
         scoreText.text = [NSString stringWithFormat:@"%d", score];
-        scoreText.fontSize = 50;
-        scoreText.color = [SKColor whiteColor];
+        scoreText.fontSize = headFontSize;
+        scoreText.fontColor = headColor;
         scoreText.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
         [self addChild:scoreText];
         
-        SKLabelNode *highScoreText = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+        SKLabelNode *highScoreText = [SKLabelNode labelNodeWithFontNamed:regFont];
         NSString *highScoreString = [BlongGameCenterHelper highScore];
         highScoreText.text = [NSString stringWithFormat:@"HIGH SCORE: %@", highScoreString];
-        highScoreText.fontSize = 10;
-        highScoreText.color = [SKColor whiteColor];
+        highScoreText.fontSize = tinyFontSize;
+        highScoreText.fontColor = tintColor;
         highScoreText.position = CGPointMake(highScoreText.frame.size.width/2, self.frame.size.height - highScoreText.frame.size.height);
         [self addChild:highScoreText];
         
         
         NSArray *quips = @[
-                           @"BUT WHATEVER, LET'S DO IT AGAIN.",
-                           @"ARE YOU PLAYING THIS ON THE TOILET? GROSS.",
-                           @"ARE YOU ENJOYING THIS? I AM.",
-                           @"DO YOU LIKE LIMP BIZKIT?",
-                           @"SHARE THIS ON TWITTER. BUT YOU HAVE TO DO IT YOURSELF.",
-                           @"WE'RE REALLY LETTING THE DOGS OUT.",
-                           @"I GET IT. YOU LIKE BLONG.",
-                           @"YOU EVER SEE THAT MOVIE TAKEN? IT'S PRETTY GOOD.",
-                           @"WHAT'S WITH SNAPCHAT? I REALLY DON'T GET IT.",
-                           @"ARE VIDEO GAMES ART? IS ART EVEN ART?",
-                           @"WHERE ARE THE DIAMONDS!?!",
-                           @"DO YOU LIKE INTERNET JOKES? I DO.",
-                           @"I THINK I'M FALLING IN LOVE WITH YOU.",
-                           @"THIS IS A REAL BLONG.",
-                           @"YOU'RE CUTE. BUT WHAT DO I KNOW, I'M JUST A PHONE.",
-                           @"BREAD IS WEIRD. IT'S COOKED BUT YOU COOK IT MORE AND IT'S TOAST."
+                           @"But whatever, Let's do it again.",
+                           @"Are you playing this on the toilet? gross.",
+                           @"Are you enjoying this? I am.",
+                           @"Do you like Limp Bizkit?",
+                           @"Share this on Twitter. but you have to do it yourself.",
+                           @"We're really letting the dogs out.",
+                           @"I get it. you like Blong.",
+                           @"You ever see that movie taken? it's pretty good.",
+                           @"What's with Snapchat? I really don't get it.",
+                           @"Are video games art? Is art even art?",
+                           @"Where are the diamonds!?!",
+                           @"Do you like Internet Jokes? I do.",
+                           @"I think I'm falling in love with you.",
+                           @"This is a real Blong.",
+                           @"You're cute. But what do I know, I'm just a phone.",
+                           @"Bread is weird. It's cooked but you cook it more and it's toast."
                            ];
-        
-        go = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
-        go.color = [SKColor whiteColor];
+
+        go = [SKLabelNode labelNodeWithFontNamed:headFont];
+        go.fontColor = tintColor;
         go.alpha = 0;
         if ([highScoreString isEqualToString:scoreText.text] && score > 0) {
-            go.text = @"HEY THAT'S A HIGH SCORE! LET'S DO IT AGAIN.";
+            go.text = @"Hey that's a high score! Let's do it again.";
         } else {
             go.text = quipsSeen > 2 ? [quips objectAtIndex:(arc4random() % quips.count)] : [quips objectAtIndex:0];
         }
         quipsSeen++;
-        go.fontSize = 15;
-        go.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height/5);
+        go.fontSize = baseFontSize;
+        go.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height/4);
         SKAction *fadeIn = [SKAction fadeInWithDuration:1];
         [self addChild:go];
         [go runAction:fadeIn];
@@ -82,10 +82,10 @@ SKLabelNode *go;
     return self;
 }
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    go.color = [SKColor yellowColor];
+    go.fontColor = [SKColor yellowColor];
     go.colorBlendFactor = 1.0;
     SKScene *gameScene = [[BlongMyScene alloc] initWithSize:self.size];
-    SKTransition *transition = [SKTransition flipHorizontalWithDuration:1];
+    SKTransition *transition = [SKTransition revealWithDirection:SKTransitionDirectionUp duration:.75];
     transition.pausesIncomingScene = NO;
     [self.view presentScene:gameScene transition:transition];
 }

@@ -26,17 +26,17 @@ NSString *mainMenuString = @"main_menu";
         pauseMenu.userInteractionEnabled = YES;
         [scene addChild:pauseMenu];
         
-        SKLabelNode *continueButton = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+        SKLabelNode *continueButton = [SKLabelNode labelNodeWithFontNamed:headFont];
         continueButton.text = @"CONTINUE";
         continueButton.name = continueString;
-        continueButton.fontColor = [SKColor yellowColor];
+        continueButton.fontColor = tintColor;
         continueButton.position = CGPointMake(CGRectGetMidX(scene.frame), CGRectGetMidY(scene.frame) + continueButton.frame.size.height);
         [pauseMenu addChild:continueButton];
         
-        SKLabelNode *mainMenuButton = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+        SKLabelNode *mainMenuButton = [SKLabelNode labelNodeWithFontNamed:headFont];
         mainMenuButton.text = @"MAIN MENU";
         mainMenuButton.name = mainMenuString;
-        mainMenuButton.fontColor = [SKColor yellowColor];
+        mainMenuButton.fontColor = tintColor;
         mainMenuButton.position = CGPointMake(CGRectGetMidX(scene.frame), CGRectGetMidY(scene.frame) - mainMenuButton.frame.size.height);
         [pauseMenu addChild:mainMenuButton];
 

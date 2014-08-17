@@ -19,20 +19,18 @@ AVAudioPlayer *backgroundAudioPlayer;
 
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
-        self.backgroundColor = [SKColor blackColor];
+        self.backgroundColor = darknessColor;
         SKSpriteNode *title = [SKSpriteNode spriteNodeWithImageNamed:@"title"];
         title.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
         [self addChild:title];
         [self startBackgroundMusic];
         
         
-        go = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
-        go.fontColor = [SKColor whiteColor];
-        go.text = @"LET'S DO THIS.";
-        go.fontSize = 40;
-        go.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height/6);
-        SKAction *fadeIn = [SKAction fadeInWithDuration:1];
-        [go runAction:fadeIn];
+        go = [SKLabelNode labelNodeWithFontNamed:headFont];
+        go.fontColor = tintColor;
+        go.text = @"LET'S DO THIS";
+        go.fontSize = baseFontSize;
+        go.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height/5);
         [self addChild:go];
         
         [BlongGameCenterButton gameCenterButtonWithScene:self];
@@ -57,7 +55,7 @@ AVAudioPlayer *backgroundAudioPlayer;
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     [backgroundAudioPlayer stop];
-    go.fontColor = [SKColor blackColor];
+    go.fontColor = activeColor;
     SKScene *gameScene = [[BlongMyScene alloc] initWithSize:self.size];
     SKTransition *transition = [SKTransition flipHorizontalWithDuration:1];
     transition.pausesIncomingScene = NO;

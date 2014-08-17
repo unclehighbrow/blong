@@ -114,10 +114,10 @@ CGPoint textEnd;
         
         // score
         _score = 0;
-        _scoreLabel = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"]; // "MICR Encoding"
+        _scoreLabel = [SKLabelNode labelNodeWithFontNamed:headFont]; // "MICR Encoding"
         _scoreLabel.text = @"00000";
-        _scoreLabel.fontSize = 25;
-        _scoreLabel.fontColor = [SKColor whiteColor];
+        _scoreLabel.fontSize = baseFontSize;
+        _scoreLabel.fontColor = baseColor;
         _scoreLabel.position = CGPointMake(0, 0);
         _scoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
         [self addChild:_scoreLabel];
@@ -125,7 +125,7 @@ CGPoint textEnd;
 
         _availableBlockSlots = [NSMutableOrderedSet orderedSet];
 
-        self.backgroundColor = [SKColor blackColor];
+        self.backgroundColor = darknessColor;
         
         // paddles
         _leftPaddle = [BlongPaddle paddle:@"left_paddle"];
@@ -158,7 +158,7 @@ CGPoint textEnd;
         _bottomWall.position = CGPointMake(0,0);
         [self addChild:_bottomWall];
         
-        BOOL invincible = NO;
+        BOOL invincible = YES;
         if (invincible) {
             SKNode *leftWall = [SKNode node];
             leftWall.physicsBody = [SKPhysicsBody bodyWithEdgeFromPoint:CGPointMake(0,0) toPoint:CGPointMake(0,self.frame.size.height)];
@@ -190,7 +190,7 @@ CGPoint textEnd;
         textEnd = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
         _topToMiddle = [BlongEasing easeOutElasticFrom:topStart to:textEnd for:.5];
         _shrinkAway = [SKAction scaleTo:0 duration:.3];
-        _fadeOut = [SKAction fadeOutWithDuration:2];
+        _fadeOut = [SKAction fadeOutWithDuration:.4];
         addOne = [SKAction sequence:@[[SKAction runBlock:^{
             _scoreLabel.text = [NSString stringWithFormat:@"%05d", _score];
         }], [SKAction waitForDuration:.01]]];
@@ -308,7 +308,7 @@ CGPoint textEnd;
     }
 
     // ready
-    SKLabelNode *ready = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+    SKLabelNode *ready = [SKLabelNode labelNodeWithFontNamed:headFont];
     ready.text = @"READY";
     ready.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     [self addChild:ready];
@@ -325,7 +325,7 @@ CGPoint textEnd;
     
     
     // steady
-    SKLabelNode *steady = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+    SKLabelNode *steady = [SKLabelNode labelNodeWithFontNamed:headFont];
     steady.text = @"STEADY";
     steady.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     steady.zPosition = -1;
@@ -367,7 +367,7 @@ CGPoint textEnd;
 
 
     // blong
-    SKSpriteNode *blong = [SKSpriteNode spriteNodeWithImageNamed:@"blong_background"];
+    SKSpriteNode *blong = [SKSpriteNode spriteNodeWithImageNamed:@"big_blong"];
     SKAction *startPhysics = [SKAction runBlock:^{
         self.physicsWorld.speed = 1;
         if (isBonusLevel) {
@@ -375,9 +375,9 @@ CGPoint textEnd;
         }
     }];
     [blong setAlpha:0];
-    SKAction *fadeIn = [SKAction fadeAlphaTo:.2 duration:0];
+    SKAction *fadeIn = [SKAction fadeAlphaTo:.7 duration:0];
 
-    [blong runAction:[SKAction sequence:@[[SKAction waitForDuration:3.3], startPhysics, blongSound, fadeIn, _fadeOut]]];
+    [blong runAction:[SKAction sequence:@[[SKAction waitForDuration:3.3], startPhysics, blongSound, fadeIn, [SKAction waitForDuration:0.2], _fadeOut]]];
     blong.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     [self addChild:blong];
     
@@ -484,7 +484,7 @@ CGPoint textEnd;
 -(void)removeBrick:(BlongBrick *)brick {
 
     [self updateScore:1];
-    SKAction *shrink = [SKAction scaleTo:0 duration:.2];
+    SKAction *shrink = [SKAction scaleTo:0 duration: 0];
     SKAction *removeFromBricks = [SKAction runBlock:^{
         _lastBlockCleared = brick.blockSlot;
         [_availableBlockSlots addObject:_lastBlockCleared];
@@ -494,12 +494,16 @@ CGPoint textEnd;
     SKAction *removeFromParent = [SKAction removeFromParent];
     
     // also explode it
-    SKSpriteNode *explodeBrick = [SKSpriteNode spriteNodeWithImageNamed:@"brick6"];
-    explodeBrick.yScale = brick.yScale;
+    SKSpriteNode *explodeBrick = [SKSpriteNode spriteNodeWithImageNamed:@"brick11"];
+    //explodeBrick.yScale = brick.yScale;
     explodeBrick.position = brick.position;
-    explodeBrick.color = [brick color];
+    explodeBrick.color = activeColor; // why doesn't this do anything???
+    explodeBrick.colorBlendFactor = 1;
+    explodeBrick.alpha = .9;
+    explodeBrick.xScale = 1.2;
+    explodeBrick.yScale = 1.2;
     [self addChild:explodeBrick];
-    SKAction *explode = [SKAction sequence:@[[SKAction group:@[[SKAction scaleTo:1.5 duration:.2], [SKAction fadeAlphaTo:0 duration:.2]]], removeFromParent]];
+    SKAction *explode = [SKAction sequence:@[[SKAction group:@[ [SKAction fadeAlphaTo:0 duration:.1]]], removeFromParent]];
     [explodeBrick runAction:explode];
     
     [brick runAction: [SKAction sequence: @[shrink, removeFromBricks, removeFromParent]]];
@@ -524,10 +528,10 @@ CGPoint textEnd;
                 [_leftPaddle getPhysical];
                 [_rightPaddle getPhysical];
                 
-                SKLabelNode *breakthroughLabel = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+                SKLabelNode *breakthroughLabel = [SKLabelNode labelNodeWithFontNamed:headFont];
                 breakthroughLabel.text = @"BREAKTHROUGH";
                 breakthroughLabel.position = CGPointMake(CGRectGetMidX(self.frame), 0);
-                breakthroughLabel.fontColor = [SKColor blueColor];
+                breakthroughLabel.fontColor = accentColor;
                 breakthroughLabel.zPosition = 1;
                 [self addChild:breakthroughLabel];
                 [breakthroughLabel runAction:[SKAction sequence:@[[SKAction waitForDuration:.6], _shrinkAway]]];
@@ -667,9 +671,9 @@ CGPoint textEnd;
     
     if (!isBonusLevel) {
         if (ballsSaved >= 2 && _level > 1) {
-            SKLabelNode *ballsSavedLabel = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
-            ballsSavedLabel.text = [NSString stringWithFormat:@"%ld BALLS", ballsSaved];
-            ballsSavedLabel.fontSize = 25;
+            SKLabelNode *ballsSavedLabel = [SKLabelNode labelNodeWithFontNamed:headFont];
+            ballsSavedLabel.text = [NSString stringWithFormat:@"Kept %ld BALLS", ballsSaved];
+            ballsSavedLabel.fontSize = baseFontSize;
             ballsSavedLabel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + ballsSavedLabel.frame.size.height);
             [ballsSavedLabel setAlpha:0];
             [self addChild:ballsSavedLabel];
@@ -717,9 +721,9 @@ CGPoint textEnd;
             }
 
             
-            SKLabelNode *bonusLabel = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+            SKLabelNode *bonusLabel = [SKLabelNode labelNodeWithFontNamed:headFont];
             bonusLabel.text = powerup;
-            bonusLabel.fontSize = 25;
+            bonusLabel.fontSize = baseFontSize;
             bonusLabel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) - bonusLabel.frame.size.height);
             [bonusLabel setAlpha:0];
             [self addChild:bonusLabel];
@@ -760,10 +764,10 @@ CGPoint textEnd;
 
     _balls = [NSMutableArray array];
     
-    SKLabelNode *levelText = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+    SKLabelNode *levelText = [SKLabelNode labelNodeWithFontNamed:headFont];
     NSString *levelTextText = (isBonusLevel? @"BONUS LEVEL" : [NSString stringWithFormat:@"LEVEL %d", _level]);
     levelText.text = levelTextText;
-    levelText.fontSize = 25;
+    levelText.fontSize = baseFontSize;
     levelText.position = CGPointMake(CGRectGetMidX(self.frame), levelText.frame.size.height * 2);
     [levelText setAlpha:0];
     [self addChild:levelText];
@@ -845,13 +849,13 @@ CGPoint textEnd;
 -(void)startCountdown {
     if (!_countdownTimer || !_countdownTimer.isValid) {
         _countdownTimer = [NSTimer scheduledTimerWithTimeInterval:.01f target:self selector:@selector(updateCountdown:) userInfo:nil repeats:YES];
-        _countdownClock = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+        _countdownClock = [SKLabelNode labelNodeWithFontNamed:headFont];
         if (isBonusLevel) {
             _secondsLeft = bonusCountdown;
-            _countdownClock.fontColor = [SKColor blueColor];
+            _countdownClock.fontColor = accentColor;
         } else {
             _secondsLeft = MAX((baseCountdown - floor(_level/incCountdown)), minCountdown);
-            _countdownClock.fontColor = [SKColor redColor];
+            _countdownClock.fontColor = accentColor;
         }
         _countdownClock.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
         _countdownClock.text = [NSString stringWithFormat:@"%.02f", _secondsLeft];

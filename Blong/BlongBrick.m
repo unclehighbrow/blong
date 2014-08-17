@@ -13,8 +13,8 @@
 
 @implementation BlongBrick
 +(BlongBrick *)centeredTappableBrickWithScene:(BlongMyScene *)scene {
-    BlongBrick *brick = [BlongBrick spriteNodeWithImageNamed:@"brick6"];
-    brick.color = [SKColor colorWithRed:255 green:215 blue:0 alpha:1];
+    BlongBrick *brick = [BlongBrick spriteNodeWithImageNamed:@"brick11"];
+    brick.color = baseColor;
     brick.colorBlendFactor = 1.0;
     brick.tappable = YES;
     brick.position = CGPointMake(CGRectGetMidX(scene.frame), CGRectGetMidY(scene.frame));
@@ -45,7 +45,7 @@
     if ([scene.availableBlockSlots count] == 0) {
         return nil;
     }
-    BlongBrick *brick = [BlongBrick spriteNodeWithImageNamed:@"brick6"];
+    BlongBrick *brick = [BlongBrick spriteNodeWithImageNamed:@"brick11"];
     
     [brick setYScale:6.0/(float)scene.rows];
     scene.brickSize = brick.frame.size;

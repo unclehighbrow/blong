@@ -26,6 +26,8 @@
 	<true/>
 	<key>UIAppFonts</key>
 	<array>
+		<string>Hyperspace.ttf</string>
+		<string>Hyperspace Bold.ttf</string>
 		<string>CHECKBK0.ttf</string>
 		<string>micrenc.ttf</string>
 		<string>bitwise.ttf</string>

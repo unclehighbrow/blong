@@ -15,7 +15,7 @@
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
         NSLog(@"initing loading scene");
-        SKLabelNode *loadingText = [SKLabelNode labelNodeWithFontNamed:@"Checkbook"];
+        SKLabelNode *loadingText = [SKLabelNode labelNodeWithFontNamed:headFont];
         loadingText.text = @"Loading";
         loadingText.position = CGPointMake(CGRectGetMidX(self.frame) - loadingText.frame.size.width/2, CGRectGetMidY(self.frame));
         loadingText.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
@@ -49,7 +49,7 @@
 //        [SKTexture textureWithImageNamed:@"ball"],
 //        [SKTexture textureWithImageNamed:@"pause_button"],
 //        [SKTexture textureWithImageNamed:@"title"],
-//        [SKTexture textureWithImageNamed:@"brick6"]
+//        [SKTexture textureWithImageNamed:@"brick11"]
 //    ];
 //    
 //    [SKAction playSoundFileNamed:@"intro.m4a" waitForCompletion:NO];
@@ -76,9 +76,9 @@
     
             // The textures are loaded into memory. Start the level.
             SKScene *menuScene = [[BlongMainMenu alloc] initWithSize:self.size];
-    SKTransition *transition = [SKTransition flipHorizontalWithDuration:1];
-             transition.pausesIncomingScene = NO;
-             [self.view presentScene:menuScene transition:transition];
+            SKTransition *transition = [SKTransition pushWithDirection:SKTransitionDirectionUp duration:1];
+            transition.pausesIncomingScene = NO;
+            [self.view presentScene:menuScene transition:transition];
     
 }
 
