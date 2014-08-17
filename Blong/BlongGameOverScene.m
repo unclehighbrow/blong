@@ -52,7 +52,7 @@ SKLabelNode *go;
                            @"Share this on Twitter. but you have to do it yourself.",
                            @"We're really letting the dogs out.",
                            @"I get it. you like Blong.",
-                           @"You ever see that movie taken? it's pretty good.",
+                           @"You ever see that movie Taken? it's pretty good.",
                            @"What's with Snapchat? I really don't get it.",
                            @"Are video games art? Is art even art?",
                            @"Where are the diamonds!?!",
