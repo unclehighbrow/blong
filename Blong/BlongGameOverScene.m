@@ -73,6 +73,9 @@ SKLabelNode *go;
         }
         quipsSeen++;
         go.fontSize = baseFontSize;
+        while (go.frame.size.width > self.frame.size.width  && go.fontSize > 2) {
+            go.fontSize = go.fontSize - 1;
+        }
         go.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height/4);
         SKAction *fadeIn = [SKAction fadeInWithDuration:1];
         [self addChild:go];
