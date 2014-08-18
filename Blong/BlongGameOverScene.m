@@ -78,11 +78,7 @@ SKLabelNode *go;
         go = [SKLabelNode labelNodeWithFontNamed:headFont];
         go.fontColor = tintColor;
         go.alpha = 0;
-        if ([highScoreString isEqualToString:scoreText.text] && score > 0) {
-            go.text = @"Let's do it again.";
-        } else {
-            go.text = quipsSeen > 2 ? [quips objectAtIndex:(arc4random() % quips.count)] : [quips objectAtIndex:0];
-        }
+        go.text = quipsSeen > 2 ? [quips objectAtIndex:(arc4random() % quips.count)] : [quips objectAtIndex:0];
         quipsSeen++;
         go.fontSize = tinyFontSize;
         while (go.frame.size.width > self.frame.size.width  && go.fontSize > 2) {
