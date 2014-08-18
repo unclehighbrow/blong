@@ -21,26 +21,38 @@ SKLabelNode *go;
         
         self.backgroundColor = darknessColor;
         
-	SKLabelNode *gameOverText = [SKLabelNode labelNodeWithFontNamed:headFont];
-        gameOverText.text = @"GAME OVER";
-        gameOverText.fontColor = warningColor;
-        gameOverText.fontSize = headFontSize;
-        gameOverText.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + self.frame.size.height/5);
-        [self addChild:gameOverText];
+        
         
         SKLabelNode *scoreText = [SKLabelNode labelNodeWithFontNamed:headFont];
         scoreText.text = [NSString stringWithFormat:@"%d", score];
         scoreText.fontSize = headFontSize;
         scoreText.fontColor = headColor;
-        scoreText.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
+        scoreText.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
+        scoreText.position = CGPointMake( CGRectGetMidX(self.frame), self.frame.size.height - ((self.frame.size.height/5)*2));
         [self addChild:scoreText];
         
+        
+        SKLabelNode *gameOverText = [SKLabelNode labelNodeWithFontNamed:headFont];
+        gameOverText.text = @"GAME OVER";
+        gameOverText.fontColor = warningColor;
+        gameOverText.fontSize = headFontSize;
+        gameOverText.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
+        gameOverText.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height - ((self.frame.size.height/5)*1));
+        [self addChild:gameOverText];
+        
+
         SKLabelNode *highScoreText = [SKLabelNode labelNodeWithFontNamed:regFont];
         NSString *highScoreString = [BlongGameCenterHelper highScore];
-        highScoreText.text = [NSString stringWithFormat:@"HIGH SCORE: %@", highScoreString];
-        highScoreText.fontSize = tinyFontSize;
-        highScoreText.fontColor = tintColor;
-        highScoreText.position = CGPointMake(highScoreText.frame.size.width/2, self.frame.size.height - highScoreText.frame.size.height);
+        if ([highScoreString isEqualToString:scoreText.text] && score > 0) {
+            highScoreText.text = @"Hey, that's the high score!";
+        } else {
+            highScoreText.text = [NSString stringWithFormat:@"HIGH SCORE: %@", highScoreString];
+        }
+        
+        highScoreText.fontSize = baseFontSize;
+        highScoreText.fontColor = headColor;
+        highScoreText.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
+        highScoreText.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height - ((self.frame.size.height/5)*3));
         [self addChild:highScoreText];
         
         
@@ -67,16 +79,17 @@ SKLabelNode *go;
         go.fontColor = tintColor;
         go.alpha = 0;
         if ([highScoreString isEqualToString:scoreText.text] && score > 0) {
-            go.text = @"Hey that's a high score! Let's do it again.";
+            go.text = @"Let's do it again.";
         } else {
             go.text = quipsSeen > 2 ? [quips objectAtIndex:(arc4random() % quips.count)] : [quips objectAtIndex:0];
         }
         quipsSeen++;
-        go.fontSize = baseFontSize;
+        go.fontSize = tinyFontSize;
         while (go.frame.size.width > self.frame.size.width  && go.fontSize > 2) {
             go.fontSize = go.fontSize - 1;
         }
-        go.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height/4);
+        go.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
+        go.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height - ((self.frame.size.height/5)*4) );
         SKAction *fadeIn = [SKAction fadeInWithDuration:1];
         [self addChild:go];
         [go runAction:fadeIn];

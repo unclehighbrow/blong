@@ -169,7 +169,7 @@ CGPoint textEnd;
  //       _bottomWall.physicsBody.dynamic = NO;
         [self addChild:_bottomWall];
         
-        BOOL invincible = YES;
+        BOOL invincible = NO;
         if (invincible) {
             SKNode *leftWall = [SKNode node];
             leftWall.physicsBody = [SKPhysicsBody bodyWithEdgeFromPoint:CGPointMake(0,0) toPoint:CGPointMake(0,self.frame.size.height)];

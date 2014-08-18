@@ -15,7 +15,7 @@
 +(BlongPauseButton *) pauseButtonWithScene:(BlongMyScene *)scene {
     BlongPauseButton *pauseButton = [BlongPauseButton spriteNodeWithImageNamed:@"pause_button"];
     pauseButton.userInteractionEnabled = YES;
-    pauseButton.position = CGPointMake(scene.size.width - pauseButton.size.width, pauseButton.size.height/2);
+    pauseButton.position = CGPointMake(scene.size.width - pauseButton.size.width/2, pauseButton.size.height/2);
     pauseButton.zPosition = 1;
     [scene addChild:pauseButton];
     return pauseButton;
