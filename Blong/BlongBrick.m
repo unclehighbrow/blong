@@ -36,7 +36,7 @@
 }
 
 -(void)makeTappable {
-    self.color = [SKColor colorWithRed:255 green:215 blue:0 alpha:1];
+    self.color = touchBlockColor;
     self.colorBlendFactor = 1.0;
     self.tappable = YES;
 }

@@ -23,7 +23,7 @@ SKLabelNode *go;
         
 	SKLabelNode *gameOverText = [SKLabelNode labelNodeWithFontNamed:headFont];
         gameOverText.text = @"GAME OVER";
-        gameOverText.fontColor = headColor;
+        gameOverText.fontColor = warningColor;
         gameOverText.fontSize = headFontSize;
         gameOverText.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + self.frame.size.height/5);
         [self addChild:gameOverText];

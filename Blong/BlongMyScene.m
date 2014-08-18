@@ -100,11 +100,11 @@ CGPoint textEnd;
         
         iconXOffset = 0;
         _threeBallPowerups = [NSMutableDictionary dictionary];
-        _wreckingBall = @"WRECKING BALLS";
-        _doubleBreakthrough = @"DOUBLE BREAKTHROUGH";
+        _wreckingBall = @"+ WRECKING BALLS";
+        _doubleBreakthrough = @"+ DOUBLE BREAKTHROUGH";
         _coolPerson = @"YOU ARE A COOL PERSON";
-        _goldBricks = @"GOLD BRICKS MAKE BALLS";
-        _noCountdown = @"NO COUNTDOWN";
+        _goldBricks = @"+ GOLD BRICKS MAKE BALLS";
+        _noCountdown = @"+ NO COUNTDOWN";
 
         [self makePowerup:_wreckingBall];
         [self makePowerup:_doubleBreakthrough];
@@ -326,7 +326,7 @@ CGPoint textEnd;
     SKLabelNode *ready = [SKLabelNode labelNodeWithFontNamed:headFont];
     ready.text = @"READY";
     ready.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
-    ready.fontColor = [SKColor whiteColor];
+    ready.fontColor = headColor;
     [self addChild:ready];
     [ready runAction:[SKAction sequence:@[[SKAction waitForDuration:1], _topToMiddle, _shrinkAway]]];
     [self runAction:[SKAction sequence:@[[SKAction waitForDuration:1.1], readySound]]];
@@ -343,7 +343,7 @@ CGPoint textEnd;
     // steady
     SKLabelNode *steady = [SKLabelNode labelNodeWithFontNamed:headFont];
     steady.text = @"STEADY";
-    steady.fontColor = [SKColor whiteColor];
+    steady.fontColor = headColor;
     steady.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height + ready.frame.size.height/2);
     steady.zPosition = -1;
     [self addChild:steady];
@@ -394,7 +394,7 @@ CGPoint textEnd;
     [blong setAlpha:0];
     SKAction *fadeIn = [SKAction fadeAlphaTo:.7 duration:0];
 
-    [blong runAction:[SKAction sequence:@[[SKAction waitForDuration:3.3], startPhysics, fadeIn, blongSound, [SKAction waitForDuration:0.2], _fadeOut]]];
+    [blong runAction:[SKAction sequence:@[[SKAction waitForDuration:3.3], startPhysics, fadeIn, blongSound, [SKAction waitForDuration:0.3], _fadeOut]]];
     blong.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     [self addChild:blong];
     
@@ -533,6 +533,7 @@ CGPoint textEnd;
                 breakthroughLabel.position = CGPointMake(CGRectGetMidX(self.frame), 0);
                 breakthroughLabel.fontColor = accentColor;
                 breakthroughLabel.zPosition = 1;
+
                 [self addChild:breakthroughLabel];
                 [breakthroughLabel runAction:[SKAction sequence:@[[SKAction waitForDuration:.6], _shrinkAway]]];
                 [self runAction:breakthrough];
@@ -696,7 +697,7 @@ CGPoint textEnd;
                 int randomPowerup = arc4random() % 3;
                 switch (randomPowerup) {
                     case 0:
-                        powerup = @"BIGGER PADDLES";
+                        powerup = @"+ BIGGER PADDLES";
                         [_leftPaddle grow];
                         [_rightPaddle grow];
                         break;
@@ -705,7 +706,7 @@ CGPoint textEnd;
                         [self updateScore:50];
                         break;
                     case 2:
-                        powerup = @"SLOW DOWN";
+                        powerup = @"+ SLOWDOWN";
                         _slowDown += 50;
                         break;
                 }
@@ -729,6 +730,7 @@ CGPoint textEnd;
             SKLabelNode *bonusLabel = [SKLabelNode labelNodeWithFontNamed:headFont];
             bonusLabel.text = powerup;
             bonusLabel.fontSize = baseFontSize;
+            bonusLabel.fontColor = touchBlockColor;
             bonusLabel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) - bonusLabel.frame.size.height);
             [bonusLabel setAlpha:0];
             [self addChild:bonusLabel];
