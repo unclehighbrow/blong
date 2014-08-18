@@ -23,9 +23,12 @@ BlongMyScene *blongScene;
         [incoming.view presentScene:pauseMenu];
         blongScene = incoming;
         
+        pauseMenu.backgroundColor = darknessColor;
+        /*
         SKSpriteNode *background = [SKSpriteNode spriteNodeWithImageNamed:@"background"];
         background.position = CGPointMake(CGRectGetMidX(pauseMenu.frame), CGRectGetMidY(pauseMenu.frame));
         [pauseMenu addChild:background];
+        */
         
         SKLabelNode *continueButton = [SKLabelNode labelNodeWithFontNamed:headFont];
         continueButton.text = @"CONTINUE";

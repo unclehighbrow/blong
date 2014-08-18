@@ -14,7 +14,7 @@
 @implementation BlongBrick
 +(BlongBrick *)centeredTappableBrickWithScene:(BlongMyScene *)scene {
     BlongBrick *brick = [BlongBrick spriteNodeWithImageNamed:@"brick11"];
-    brick.color = [SKColor colorWithRed:255 green:215 blue:0 alpha:1];
+    brick.color = touchBlockColor;
     brick.colorBlendFactor = 1.0;
     brick.tappable = YES;
     brick.position = CGPointMake(CGRectGetMidX(scene.frame), CGRectGetMidY(scene.frame));
@@ -89,8 +89,6 @@
             }]];
         } else {
             startX = topLeft.x + (col * brick.frame.size.width);
-            //brick.color = [SKColor redColor];
-            //brick.colorBlendFactor = 1.0;
             [moveInSequence addObject:moveIn];
             [brick getPhysical];
         }

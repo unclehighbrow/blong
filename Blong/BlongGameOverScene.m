@@ -83,7 +83,7 @@ SKLabelNode *go;
     return self;
 }
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    go.fontColor = [SKColor yellowColor];
+    go.fontColor = activeColor;
     go.colorBlendFactor = 1.0;
     SKScene *gameScene = [[BlongMyScene alloc] initWithSize:self.size];
     SKTransition *transition = [SKTransition flipHorizontalWithDuration:1];

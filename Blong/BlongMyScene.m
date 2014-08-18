@@ -112,17 +112,19 @@ CGPoint textEnd;
         [self makePowerup:_goldBricks];
         [self makePowerup:_noCountdown];
         
-        //        self.backgroundColor = [SKColor blackColor];
+        self.backgroundColor = darknessColor;
+        /*
         SKSpriteNode *background = [SKSpriteNode spriteNodeWithImageNamed:@"background"];
         background.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
         background.zPosition = -10;
         [self addChild:background];
+        */
         
         // score
         _score = 0;
         _scoreLabel = [SKLabelNode labelNodeWithFontNamed:headFont]; // "MICR Encoding"
         _scoreLabel.text = @"00000";
-        _scoreLabel.fontSize = baseFontSize;
+        _scoreLabel.fontSize = tinyFontSize;
         _scoreLabel.fontColor = baseColor;
         _scoreLabel.position = CGPointMake(0, 0);
         _scoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
@@ -504,7 +506,7 @@ CGPoint textEnd;
     }];
 
 
-    [brick runAction: [SKAction sequence: @[removeFromBricks, [SKAction group:@[[SKAction scaleTo:1.5 duration:.2], [SKAction fadeAlphaTo:0 duration:.2]]],  [SKAction removeFromParent]]]];
+    [brick runAction: [SKAction sequence: @[removeFromBricks, [SKAction group:@[ [SKAction scaleTo:1.5 duration:.2], [SKAction fadeAlphaTo:0 duration:.2]]],  [SKAction removeFromParent]]]];
     
 }
 
@@ -858,7 +860,7 @@ CGPoint textEnd;
             _countdownClock.fontColor = accentColor;
         } else {
             _secondsLeft = MAX((baseCountdown - floor(_level/incCountdown)), minCountdown);
-            _countdownClock.fontColor = accentColor;
+            _countdownClock.fontColor = warningColor;
         }
         _countdownClock.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
         _countdownClock.text = [NSString stringWithFormat:@"%.02f", _secondsLeft];
