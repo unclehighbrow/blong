@@ -157,7 +157,7 @@ CGPoint textEnd;
         _topWall.physicsBody.categoryBitMask = wallCat;
         _topWall.physicsBody.friction = 0;
         _topWall.position = CGPointMake(0, self.frame.size.height);
-        _topWall.physicsBody.dynamic = NO;
+//        _topWall.physicsBody.dynamic = NO;
         [self addChild:_topWall];
         
         _bottomWall = [SKNode node];
@@ -166,7 +166,7 @@ CGPoint textEnd;
         _bottomWall.physicsBody.categoryBitMask = wallCat;
         _bottomWall.physicsBody.friction = 0;
         _bottomWall.position = CGPointMake(0,0);
-        _bottomWall.physicsBody.dynamic = NO;
+ //       _bottomWall.physicsBody.dynamic = NO;
         [self addChild:_bottomWall];
         
         BOOL invincible = YES;
@@ -755,7 +755,6 @@ CGPoint textEnd;
             if (powerupCount == 1) {
                 SKSpriteNode *powerupToFadeOut = (SKSpriteNode *)[powerupList objectAtIndex:1];
                 [powerupToFadeOut runAction:[SKAction sequence:@[
-                                                                 [SKAction waitForDuration:.5],
                                                                  [SKAction fadeOutWithDuration:1]
                                                                  ]]];
             }
@@ -777,7 +776,7 @@ CGPoint textEnd;
     [levelText setAlpha:0];
     [self addChild:levelText];
     SKAction *waitFadeIn_fadeOutStartLevel = [SKAction sequence:@[
-          [SKAction waitForDuration:(_level % bonusLevelEvery == 1 ? 2.5 :.5)], // after bonus level
+          [SKAction waitForDuration:(_level % bonusLevelEvery == 1 ? 2.5 : 1)], // after bonus level
           [SKAction fadeInWithDuration:1],
           [SKAction waitForDuration:.5],
           [SKAction fadeOutWithDuration:1],
