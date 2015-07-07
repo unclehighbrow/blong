@@ -20,6 +20,7 @@
     SKView *skView = (SKView *)self.view;
     skView.showsFPS = NO;
     skView.showsNodeCount = NO;
+    skView.multipleTouchEnabled = YES;
     
     // Create and configure the scene.
     CGSize boundsSize = self.view.bounds.size;

@@ -14,7 +14,7 @@
 		<string>https://github.com/unclehighbrow/blong.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>Blong.xcodeproj/project.xcworkspace</string>
+	<string>Blong.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>788215E7616CEE78F251AF2A0D02D18807089C67</key>
