@@ -12,7 +12,7 @@
 #import "BlongGameCenterHelper.h"
 
 static int quipsSeen = 0;
-SKLabelNode *go;
+SKLabelNode *goGameOver;
 
 @implementation BlongGameOverScene
 -(id)initWithSize:(CGSize)size andScore:(int) score {
@@ -75,28 +75,28 @@ SKLabelNode *go;
                            @"Bread is weird. It's cooked but you cook it more and it's toast."
                            ];
 
-        go = [SKLabelNode labelNodeWithFontNamed:headFont];
-        go.fontColor = tintColor;
-        go.alpha = 0;
-        go.text = quipsSeen > 2 ? [quips objectAtIndex:(arc4random() % quips.count)] : [quips objectAtIndex:0];
+        goGameOver = [SKLabelNode labelNodeWithFontNamed:headFont];
+        goGameOver.fontColor = tintColor;
+        goGameOver.alpha = 0;
+        goGameOver.text = quipsSeen > 2 ? [quips objectAtIndex:(arc4random() % quips.count)] : [quips objectAtIndex:0];
         quipsSeen++;
-        go.fontSize = tinyFontSize;
-        while (go.frame.size.width > self.frame.size.width  && go.fontSize > 2) {
-            go.fontSize = go.fontSize - 1;
+        goGameOver.fontSize = tinyFontSize;
+        while (goGameOver.frame.size.width > self.frame.size.width  && goGameOver.fontSize > 2) {
+            goGameOver.fontSize = goGameOver.fontSize - 1;
         }
-        go.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
-        go.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height - ((self.frame.size.height/5)*4) );
+        goGameOver.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
+        goGameOver.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.size.height - ((self.frame.size.height/5)*4) );
         SKAction *fadeIn = [SKAction fadeInWithDuration:1];
-        [self addChild:go];
-        [go runAction:fadeIn];
+        [self addChild:goGameOver];
+        [goGameOver runAction:fadeIn];
         [BlongGameCenterButton gameCenterButtonWithScene:self];
 
     }
     return self;
 }
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    go.fontColor = activeColor;
-    go.colorBlendFactor = 1.0;
+    goGameOver.fontColor = activeColor;
+    goGameOver.colorBlendFactor = 1.0;
     SKScene *gameScene = [[BlongMyScene alloc] initWithSize:self.size];
     SKTransition *transition = [SKTransition flipHorizontalWithDuration:1];
     transition.pausesIncomingScene = NO;
