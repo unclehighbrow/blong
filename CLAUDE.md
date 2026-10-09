@@ -1,6 +1,6 @@
 # Blong
 
-Blong is a landscape-only iPhone game (Pong × Breakout), written in Objective-C with SpriteKit, dating from 2013–2014. Two paddles (left/right, each driven by a thumb) bounce balls into a central brick wall. ARC, iPhone only, deployment target iOS 8.0. There are no dependencies or package managers; file membership, resources, and build settings live in `Blong.xcodeproj/project.pbxproj`. If you add a source file or asset, add it to the `Blong` target in the project file too, or it won't be compiled or bundled.
+Blong is a landscape-only iPhone game (Pong × Breakout), written in Objective-C with SpriteKit, dating from 2013–2014. Two paddles (left/right, each driven by a thumb) bounce balls into a central brick wall. ARC, iPhone only, deployment target iOS 15.0 (the minimum the iOS 27 SDK accepts). There are no dependencies or package managers; file membership, resources, and build settings live in `Blong.xcodeproj/project.pbxproj`. If you add a source file or asset, add it to the `Blong` target in the project file too, or it won't be compiled or bundled.
 
 ## Build and test
 
@@ -10,13 +10,16 @@ xcodebuild -project Blong.xcodeproj -scheme Blong -destination 'generic/platform
 ```
 
 - The only scheme is in `xcuserdata/will.xcuserdatad`, which isn't shared, so other users or checkouts may need Xcode to create it automatically.
-- Current Xcode releases no longer support iOS 8.0 as a deployment target. The build may need `IPHONEOS_DEPLOYMENT_TARGET` raised. Don't raise it as a side effect of unrelated work without saying so.
 - `BlongTests/BlongTests.m` contains only the template `XCTFail` placeholder, so `xcodebuild test` always fails. That failure doesn't mean gameplay broke.
 - There's no lint or formatter configuration. Match the surrounding style: 4-space indent, `-(void)method` spacing, direct `_ivar` access, class factory methods like `+brickWithScene:`, and behavior built from `SKAction` sequences and `runBlock:`.
 
 ## Scene flow
 
-`BlongViewController` → `BlongMainMenu` (tap to start) → `BlongMyScene` (gameplay) → `BlongGameOverScene` (tap to replay). `BlongPauseMenu` is its own scene. It keeps the paused `BlongMyScene` in a file-scope global (`blongScene`) and presents it again on CONTINUE. `BlongAppDelegate` pauses the `SKView` on resign-active and shows the pause menu on become-active if gameplay was running.
+`BlongViewController` → `BlongMainMenu` (tap to start) → `BlongMyScene` (gameplay) → `BlongGameOverScene` (tap to replay). `BlongPauseMenu` is its own scene. It keeps the paused `BlongMyScene` in a file-scope global (`blongScene`) and presents it again on CONTINUE. The app uses the UIScene lifecycle (required by the iOS 27 SDK): `BlongSceneDelegate` owns the window, signs in to Game Center, pauses the `SKView` on resign-active, and shows the pause menu on become-active if gameplay was running. `BlongAppDelegate` is an empty shell.
+
+## Screen size and safe area
+
+Scenes are sized to the full screen. `BlongViewController` builds the first scene in `viewDidLayoutSubviews`, once real bounds are known, and stores `MAX(safeAreaInsets.left, .right)` in the global `blongSideInset` (declared in `AppConstants.h`). Edge-anchored HUD (score, pause button, Game Center button) and the paddles use it to stay clear of the Dynamic Island. Paddles keep the original 3.5-paddle-widths distance from the edge unless that would cross the safe area. The launch screen is the `UILaunchScreen` Info.plist key with the `LaunchBackground` color asset. Without a launch screen, iOS letterboxes the app to 568×320.
 
 `BlongLoadingScene` and `BlongThumbHole` are compiled into the app but never used.
 
@@ -35,7 +38,7 @@ xcodebuild -project Blong.xcodeproj -scheme Blong -destination 'generic/platform
 
 ### Brick grid
 
-`_bricks` is an array of columns, each holding `_rows` entries. Each entry is a `BlongBrick` or `NSNull`. A slot number is `row * cols + col`. `_availableBlockSlots` holds the **empty** slots, so the level is cleared when `_availableBlockSlots.count == _rows * _cols`. Brick height is scaled by `6.0 / rows`.
+`_bricks` is an array of columns, each holding `_rows` entries. Each entry is a `BlongBrick` or `NSNull`. A slot number is `row * cols + col`. `_availableBlockSlots` holds the **empty** slots, so the level is cleared when `_availableBlockSlots.count == _rows * _cols`. Bricks are y-scaled so `rows` bricks exactly fill the scene height. Screens taller than the original 320pt get one extra row (`extraRows`) on every level except the single-brick tappable level.
 
 ### Physics
 
@@ -44,11 +47,10 @@ Gravity is zero. The category masks are `ballCat`, `paddleCat`, `wallCat`, `bric
 ## Gotchas
 
 - **File-scope globals are shared across scene instances.** `BlongMyScene.m` keeps game state in non-static C globals (`started`, `touchedLeft`, `touchedRight`, `isBonusLevel`, `levelVelocity`, the preloaded sound actions, …). Most are reset in `initWithSize:`, but not all (`isBonusLevel`, for example). Other files do the same (`go`, `goGameOver`, `blongScene`, `float scale` in `BlongPaddle.m`). These globals aren't `static`, so new globals with the same names will cause linker collisions.
-- **Debug toggles are local `BOOL`s in the code:** `invincible` and `skipTutorial` in `BlongMyScene initWithSize:`, `debugTappable` in `touchesEnded:`, and `gameCenter` in `BlongAppDelegate.m`. Leave them `NO`/`YES` as they are before shipping.
+- **Debug toggles are local `BOOL`s in the code:** `invincible` and `skipTutorial` in `BlongMyScene initWithSize:`, `debugTappable` in `touchesEnded:`, and `gameCenter` in `BlongSceneDelegate.m`. Leave them `NO`/`YES` as they are before shipping.
 - **Timers:** the countdown and cockblock timers are `NSTimer`s, not `SKAction`s, so they skip ticks by checking `self.paused` rather than pausing with the scene.
-- **iOS version checks:** some code still branches on `systemVersion` to handle iOS 7 (paddle resize, scene size in `BlongViewController`).
 - **Shared look:** colors and fonts come from `AppConstants.h` macros (`tintColor`, `darknessColor`, `headFont` = "Hyperspace Bold", …). The fonts are bundled TTFs listed under `UIAppFonts`.
-- **Game Center:** `BlongGameCenterHelper` uses the leaderboard ID `default2014` and caches the high score in memory. It runs on deprecated GameKit APIs (`GKScore`, `playerID`).
+- **Game Center:** `BlongGameCenterHelper` uses the leaderboard ID `default2014` and caches the high score in memory. It uses the iOS 14+ `GKLeaderboard` APIs (`submitScore:…`, `loadEntriesForPlayers:…`). The `com.apple.developer.game-center` entitlement is in `Blong/Blong.entitlements`.
 
 ## Assets
 

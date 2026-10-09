@@ -12,33 +12,56 @@
 
 @implementation BlongViewController
 
+CGFloat blongSideInset = 0;
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+
     // Configure the view.
     SKView *skView = (SKView *)self.view;
     skView.showsFPS = NO;
     skView.showsNodeCount = NO;
     skView.multipleTouchEnabled = YES;
-    
-    // Create and configure the scene.
-    CGSize boundsSize = self.view.bounds.size;
-    
-    SKScene *scene;
+    skView.backgroundColor = darknessColor; // no white flash between launch screen and first scene
+}
 
-    float osVersion = [[[UIDevice currentDevice] systemVersion] floatValue];
-    if (osVersion > 7.5) {
-        scene = [BlongMainMenu sceneWithSize:CGSizeMake(boundsSize.width, boundsSize.height)];
-    } else {
-        scene = [BlongMainMenu sceneWithSize:CGSizeMake(boundsSize.height, boundsSize.width)];
+- (void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+
+    // Wait until the view is in the window so bounds and safe area are the real screen's.
+    SKView *skView = (SKView *)self.view;
+    if (skView.scene || !skView.window) {
+        return;
     }
-    
+
+    // Keep both sides symmetric, clear of the Dynamic Island / notch.
+    UIEdgeInsets safeInsets = self.view.safeAreaInsets;
+    blongSideInset = MAX(safeInsets.left, safeInsets.right);
+
+    // Create and configure the scene.
+    SKScene *scene = [BlongMainMenu sceneWithSize:self.view.bounds.size];
     scene.scaleMode = SKSceneScaleModeAspectFill;
-    
-    
+
     // Present the scene.
     [skView presentScene:scene];
+}
+
+- (BOOL)prefersStatusBarHidden
+{
+    return YES;
+}
+
+- (BOOL)prefersHomeIndicatorAutoHidden
+{
+    return YES;
+}
+
+// Thumbs live near the edges; don't let a paddle swipe pull up Home or Control Center.
+- (UIRectEdge)preferredScreenEdgesDeferringSystemGestures
+{
+    return UIRectEdgeAll;
 }
 
 - (BOOL)shouldAutorotate
@@ -51,7 +74,7 @@
     return UIInterfaceOrientationLandscapeLeft;
 }
 
-- (NSUInteger)supportedInterfaceOrientations
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
     return UIInterfaceOrientationMaskLandscapeLeft;
 }
@@ -63,7 +86,7 @@
 }
 
 - (void) showGameCenter {
-    GKGameCenterViewController *gameCenterController = [[GKGameCenterViewController alloc] init];
+    GKGameCenterViewController *gameCenterController = [[GKGameCenterViewController alloc] initWithState:GKGameCenterViewControllerStateDefault];
     if (gameCenterController != nil)
     {
         gameCenterController.gameCenterDelegate = self;

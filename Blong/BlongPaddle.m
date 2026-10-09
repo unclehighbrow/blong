@@ -42,28 +42,16 @@ static float growage = .2;
     if (self.yScale > maxGrowage) {
         return;
     }
-    
-    float osVersion = [[[UIDevice currentDevice] systemVersion] floatValue]; // 7.0 doesn't shrink the physics body
-    if (osVersion < 7.09) {
-        self.yScale = self.yScale + growage;
-        [self makePhysicsBodyWithDynamic:NO];
-    } else {
-        [self runAction:[SKAction scaleXTo:1 y:(self.yScale + growage) duration:1]];
-    }
+
+    [self runAction:[SKAction scaleXTo:1 y:(self.yScale + growage) duration:1]];
 }
 
 -(void)shrink {
     if (self.yScale < maxShrinkage) {
         return;
     }
-    
-    float osVersion = [[[UIDevice currentDevice] systemVersion] floatValue]; // 7.0 doesn't shrink the physics body
-    if (osVersion <= 7.09) {
-        self.yScale = self.yScale - shrinkage;
-        [self makePhysicsBodyWithDynamic:NO];
-    } else {
-        [self runAction:[SKAction scaleXTo:1 y:(self.yScale - shrinkage) duration:1]];
-    }
+
+    [self runAction:[SKAction scaleXTo:1 y:(self.yScale - shrinkage) duration:1]];
 }
 
 -(void) getPhysical {

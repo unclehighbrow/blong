@@ -20,3 +20,6 @@
 #define headFontSize 48
 #define baseFontSize 28
 #define tinyFontSize 22
+
+// Horizontal safe-area inset (Dynamic Island / notch), set by BlongViewController before the first scene is built.
+extern CGFloat blongSideInset;

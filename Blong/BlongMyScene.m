@@ -54,6 +54,7 @@ int scoreToAdd;
 // bigger
 int baseRows = 5;
 int maxRows = 10;
+int extraRows = 0; // one more row on screens taller than the original 320pt, set in initWithSize:
 
 int baseCols = 3;
 int maxCols = 5;
@@ -82,7 +83,7 @@ CGPoint textEnd;
 
 -(void)makePowerup:(NSString *) name {
     SKSpriteNode *icon = [SKSpriteNode spriteNodeWithImageNamed:@"ball"];
-    icon.position = CGPointMake(self.frame.size.width - icon.frame.size.width/2 - iconXOffset,
+    icon.position = CGPointMake(self.frame.size.width - blongSideInset - icon.frame.size.width/2 - iconXOffset,
                                 self.frame.size.height - icon.frame.size.height/2);
     icon.alpha = 0;
 //    [self addChild:icon];
@@ -97,6 +98,7 @@ CGPoint textEnd;
         maxYVelocity = levelVelocity *.7;
         _introduceTappable = 4;
         _slowDown = 0;
+        extraRows = size.height > 320 ? 1 : 0;
         
         iconXOffset = 0;
         _threeBallPowerups = [NSMutableDictionary dictionary];
@@ -126,7 +128,7 @@ CGPoint textEnd;
         _scoreLabel.text = @"00000";
         _scoreLabel.fontSize = tinyFontSize;
         _scoreLabel.fontColor = baseColor;
-        _scoreLabel.position = CGPointMake(0, 0);
+        _scoreLabel.position = CGPointMake(blongSideInset, 0);
         _scoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
         [self addChild:_scoreLabel];
         scoreToAdd = 0;
@@ -137,11 +139,13 @@ CGPoint textEnd;
 
         
         // paddles
+        // same distance from the screen edge as the original 568pt layout, nudged inward only if it would cross the safe area
         _leftPaddle = [BlongPaddle paddle:@"left_paddle"];
-        _leftPaddle.position = CGPointMake(3.5 * _leftPaddle.frame.size.width, self.frame.size.height); // CGRectGetMidY(self.frame)
+        float paddleInset = MAX(3.5 * _leftPaddle.frame.size.width, blongSideInset + _leftPaddle.frame.size.width/2);
+        _leftPaddle.position = CGPointMake(paddleInset, self.frame.size.height); // CGRectGetMidY(self.frame)
         [self addChild:_leftPaddle];
         _rightPaddle = [BlongPaddle paddle:@"right_paddle"];
-        _rightPaddle.position = CGPointMake(self.frame.size.width - 3.5*_rightPaddle.frame.size.width, 1);
+        _rightPaddle.position = CGPointMake(self.frame.size.width - paddleInset, 1);
         [self addChild:_rightPaddle];
         
         // bricks and balls holders
@@ -287,10 +291,10 @@ CGPoint textEnd;
         _rows = 1;
         _cols = 1;
     } else if (_level == 1) {
-        _rows = baseRows + 1;
+        _rows = baseRows + 1 + extraRows;
         _cols = baseCols - 1;
     } else {
-        _rows = MIN(baseRows + _level, maxRows);
+        _rows = MIN(baseRows + _level, maxRows) + extraRows;
         _cols = MIN(baseCols + floor(_level / incCols), maxCols);
     }
 
@@ -894,8 +898,7 @@ CGPoint textEnd;
 }
 
 -(void)makeParticleAt:(CGPoint) point {
-    NSString *particlePath = [[NSBundle mainBundle] pathForResource:@"MyParticle" ofType:@"sks"];
-    SKEmitterNode *particle = [NSKeyedUnarchiver unarchiveObjectWithFile:particlePath];
+    SKEmitterNode *particle = [SKEmitterNode nodeWithFileNamed:@"MyParticle"];
     particle.position = point;
     SKAction *stop = [SKAction runBlock:^{
         particle.particleBirthRate = 0;

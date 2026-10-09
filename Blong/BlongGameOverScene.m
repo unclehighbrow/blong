@@ -81,7 +81,7 @@ SKLabelNode *goGameOver;
         goGameOver.text = quipsSeen > 2 ? [quips objectAtIndex:(arc4random() % quips.count)] : [quips objectAtIndex:0];
         quipsSeen++;
         goGameOver.fontSize = tinyFontSize;
-        while (goGameOver.frame.size.width > self.frame.size.width  && goGameOver.fontSize > 2) {
+        while (goGameOver.frame.size.width > self.frame.size.width - 2*blongSideInset  && goGameOver.fontSize > 2) {
             goGameOver.fontSize = goGameOver.fontSize - 1;
         }
         goGameOver.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;

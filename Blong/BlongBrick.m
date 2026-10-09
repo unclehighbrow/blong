@@ -47,7 +47,7 @@
     }
     BlongBrick *brick = [BlongBrick spriteNodeWithImageNamed:@"brick11"];
     
-    [brick setYScale:6.0/(float)scene.rows];
+    [brick setYScale:scene.frame.size.height / (brick.size.height * (float)scene.rows)]; // columns fill the full height
     scene.brickSize = brick.frame.size;
 
     int blockSlotNum;

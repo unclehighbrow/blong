@@ -14,7 +14,7 @@
 }
 +(BlongGameCenterButton *)gameCenterButtonWithScene:(SKScene *)scene {
     BlongGameCenterButton *gameCenterButton = [BlongGameCenterButton spriteNodeWithImageNamed:@"game_center_button"];
-    gameCenterButton.position = CGPointMake(gameCenterButton.frame.size.width/2, gameCenterButton.frame.size.height/2);
+    gameCenterButton.position = CGPointMake(blongSideInset + gameCenterButton.frame.size.width/2, gameCenterButton.frame.size.height/2);
     gameCenterButton.userInteractionEnabled = YES;
     [scene addChild:gameCenterButton];
     return gameCenterButton;

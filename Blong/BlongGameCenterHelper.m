@@ -20,32 +20,27 @@ static NSString *scoreBoardName = @"default2014";
 +(void)retrieveScores {
     GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
     if (localPlayer.authenticated) {
-        GKLeaderboard *leaderboardRequest = [[GKLeaderboard alloc] initWithPlayerIDs: @[localPlayer.playerID]];
-        if (leaderboardRequest != nil) {
-            leaderboardRequest.playerScope = GKLeaderboardPlayerScopeFriendsOnly;
-            leaderboardRequest.timeScope = GKLeaderboardTimeScopeAllTime;
-            leaderboardRequest.identifier = scoreBoardName;
-            leaderboardRequest.range = NSMakeRange(1,1);
-            [leaderboardRequest loadScoresWithCompletionHandler: ^(NSArray *scores, NSError *error) {
+        [GKLeaderboard loadLeaderboardsWithIDs:@[scoreBoardName] completionHandler:^(NSArray<GKLeaderboard *> *leaderboards, NSError *error) {
+            if (error != nil || leaderboards.count == 0) {
+                NSLog(@"couldn't get high score");
+                return;
+            }
+            [leaderboards[0] loadEntriesForPlayers:@[localPlayer] timeScope:GKLeaderboardTimeScopeAllTime completionHandler:^(GKLeaderboardEntry *localPlayerEntry, NSArray<GKLeaderboardEntry *> *entries, NSError *error) {
                 if (error != nil) {
                     NSLog(@"couldn't get high score");
                 }
-                if (scores != nil) {
-                    _highScore = [NSString stringWithFormat:@"%lld", ((GKScore *)scores[0]).value];
+                if (localPlayerEntry != nil) {
+                    _highScore = [NSString stringWithFormat:@"%ld", (long)localPlayerEntry.score];
                 }
             }];
-        }
+        }];
     }
 }
 
 
 +(void)reportScore:(int) score {
     if ([GKLocalPlayer localPlayer].authenticated) { // logged in
-        GKScore *scoreReporter = [[GKScore alloc] initWithLeaderboardIdentifier:scoreBoardName];
-        scoreReporter.value = score;
-        scoreReporter.context = 0;
-        
-        [GKScore reportScores:@[scoreReporter] withCompletionHandler:^(NSError *error) {
+        [GKLeaderboard submitScore:score context:0 player:[GKLocalPlayer localPlayer] leaderboardIDs:@[scoreBoardName] completionHandler:^(NSError *error) {
             if (error) {
                 NSLog(@"that went poorly: %@", error);
             }
