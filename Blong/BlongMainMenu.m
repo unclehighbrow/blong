@@ -57,10 +57,17 @@ AVAudioPlayer *backgroundAudioPlayer;
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     [backgroundAudioPlayer stop];
     go.fontColor = activeColor;
-    SKScene *gameScene = [[BlongMyScene alloc] initWithSize:self.size];
-    SKTransition *transition = [SKTransition flipHorizontalWithDuration:1];
-    transition.pausesIncomingScene = NO;
-    [self.view presentScene:gameScene transition:transition];
+    self.userInteractionEnabled = NO;
+    // Give the color change a few frames to render before the game scene is built.
+    [self runAction:[SKAction sequence:@[
+        [SKAction waitForDuration:0.15],
+        [SKAction runBlock:^{
+            SKScene *gameScene = [[BlongMyScene alloc] initWithSize:self.size];
+            SKTransition *transition = [SKTransition flipHorizontalWithDuration:1];
+            transition.pausesIncomingScene = NO;
+            [self.view presentScene:gameScene transition:transition];
+        }]
+    ]]];
 }
 
 @end
